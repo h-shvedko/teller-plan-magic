@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SAMPLE_RECIPES, Recipe, getAlternatives } from "@/lib/recipes";
 import { useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/sonner";
 import { Link, useNavigate } from "react-router-dom";
 import { Shuffle, ShoppingCart } from "lucide-react";
 
