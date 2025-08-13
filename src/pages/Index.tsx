@@ -1,8 +1,9 @@
 import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Shuffle, ShoppingCart } from "lucide-react";
+import { ArrowRight, Sparkles, Shuffle, ShoppingCart, PiggyBank, Clock, BadgeCheck, Wand2, ListChecks, ChefHat } from "lucide-react";
 import heroImage from "@/assets/hero-tellerplan.jpg";
 import { Link } from "react-router-dom";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 
 const Index = () => {
   return (
@@ -18,6 +19,44 @@ const Index = () => {
           url: "/",
           logo: "/favicon.ico",
           sameAs: ["https://lovable.dev"],
+        })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "How does Tellerplan create my weekly meal plan?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "We use your tastes, dietary needs, and goals to recommend balanced recipes for the week. You can swap any meal with one click."
+              }
+            },
+            {
+              "@type": "Question",
+              name: "Can I save money with Tellerplan?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Yes. We combine ingredients into one smart list and compare prices across supermarkets to help you pick the best deals."
+              }
+            },
+            {
+              "@type": "Question",
+              name: "Is Tellerplan available in Germany?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Yes, Tellerplan is built for Germany and supports local supermarket price comparison."
+              }
+            },
+            {
+              "@type": "Question",
+              name: "What cooking styles are supported?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Daily Chef for new recipes each day, Clever Cook for leftovers, and Weekend Pro for batch-cooking with quick weekday assembly."
+              }
+            }
+          ]
         })}</script>
       </Helmet>
 
@@ -68,6 +107,173 @@ const Index = () => {
           <div className="relative">
             <img src={heroImage} alt="Tellerplan meal planning app hero image" loading="lazy" className="rounded-lg shadow-lg" />
             <div className="pointer-events-none absolute inset-0 rounded-lg" style={{ background: "radial-gradient(800px circle at 20% 10%, hsl(var(--brand) / 0.12), transparent 40%)" }} />
+          </div>
+        </section>
+
+        {/* Value Props */}
+        <section className="border-t border-border bg-card/30">
+          <div className="container py-12 md:py-20">
+            <h2 className="text-2xl md:text-3xl font-semibold">Why Tellerplan</h2>
+            <p className="text-muted-foreground mt-2">Meal planning built for busy people in Germany.</p>
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <article className="rounded-lg border border-border bg-card p-6 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <PiggyBank className="h-5 w-5 text-primary" />
+                  <h3 className="font-medium">Save money every week</h3>
+                </div>
+                <p className="text-muted-foreground mt-3">Combined shopping lists and price comparison help you shop smarter.</p>
+              </article>
+              <article className="rounded-lg border border-border bg-card p-6 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <Clock className="h-5 w-5 text-primary" />
+                  <h3 className="font-medium">Plan in minutes</h3>
+                </div>
+                <p className="text-muted-foreground mt-3">Tell us your tastes, we build a plan you can adjust in seconds.</p>
+              </article>
+              <article className="rounded-lg border border-border bg-card p-6 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <BadgeCheck className="h-5 w-5 text-primary" />
+                  <h3 className="font-medium">Delicious and flexible</h3>
+                </div>
+                <p className="text-muted-foreground mt-3">Swap any meal and adapt to cooking styles from daily to batch-cooking.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        {/* How it works */}
+        <section>
+          <div className="container py-12 md:py-20">
+            <h2 className="text-2xl md:text-3xl font-semibold">How it works</h2>
+            <div className="mt-8 grid gap-6 md:grid-cols-3">
+              <article className="rounded-lg border bg-card p-6">
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-md bg-accent/40 flex items-center justify-center">
+                    <Wand2 className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-medium">Tell us your tastes</h3>
+                </div>
+                <p className="text-muted-foreground mt-3">Choose diets, cuisines, goals, and cooking style.</p>
+              </article>
+              <article className="rounded-lg border bg-card p-6">
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-md bg-accent/40 flex items-center justify-center">
+                    <ChefHat className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-medium">Get your weekly plan</h3>
+                </div>
+                <p className="text-muted-foreground mt-3">A balanced plan tailored for your week—swap anything.</p>
+              </article>
+              <article className="rounded-lg border bg-card p-6">
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-md bg-accent/40 flex items-center justify-center">
+                    <ListChecks className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-medium">Shop smarter</h3>
+                </div>
+                <p className="text-muted-foreground mt-3">One combined list with aisle categories and price comparison.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        {/* Features grid */}
+        <section className="border-t border-border">
+          <div className="container py-12 md:py-20">
+            <h2 className="text-2xl md:text-3xl font-semibold">What you get</h2>
+            <div className="mt-8 grid gap-6 md:grid-cols-2">
+              <article className="rounded-lg border bg-card p-6">
+                <div className="flex items-center gap-3">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  <h3 className="font-medium">AI-powered plans</h3>
+                </div>
+                <p className="text-muted-foreground mt-3">Smart recommendations from a rich recipe library.</p>
+              </article>
+              <article className="rounded-lg border bg-card p-6">
+                <div className="flex items-center gap-3">
+                  <Shuffle className="h-5 w-5 text-primary" />
+                  <h3 className="font-medium">One-click swaps</h3>
+                </div>
+                <p className="text-muted-foreground mt-3">Instant alternatives that match your tastes and goals.</p>
+              </article>
+              <article className="rounded-lg border bg-card p-6">
+                <div className="flex items-center gap-3">
+                  <ShoppingCart className="h-5 w-5 text-primary" />
+                  <h3 className="font-medium">Smart shopping list</h3>
+                </div>
+                <p className="text-muted-foreground mt-3">Combined ingredients, categorized by aisle, ready for checkout.</p>
+              </article>
+              <article className="rounded-lg border bg-card p-6">
+                <div className="flex items-center gap-3">
+                  <BadgeCheck className="h-5 w-5 text-primary" />
+                  <h3 className="font-medium">Price comparison</h3>
+                </div>
+                <p className="text-muted-foreground mt-3">See where to buy for less at major supermarkets.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials */}
+        <section className="border-t border-border bg-card/30">
+          <div className="container py-12 md:py-20">
+            <h2 className="text-2xl md:text-3xl font-semibold">Loved by busy cooks</h2>
+            <div className="mt-8 grid gap-6 md:grid-cols-3">
+              <blockquote className="rounded-lg border bg-card p-6 shadow-sm">
+                <p className="text-foreground">&ldquo;I stopped overstressing dinner. The weekly plan just works.&rdquo;</p>
+                <footer className="text-sm text-muted-foreground mt-4">Sarah, Göttingen</footer>
+              </blockquote>
+              <blockquote className="rounded-lg border bg-card p-6 shadow-sm">
+                <p className="text-foreground">&ldquo;Swapping meals is so easy—and the shopping list saves me money.&rdquo;</p>
+                <footer className="text-sm text-muted-foreground mt-4">Lukas, Berlin</footer>
+              </blockquote>
+              <blockquote className="rounded-lg border bg-card p-6 shadow-sm">
+                <p className="text-foreground">&ldquo;Weekend Pro fits my schedule. Prep Sunday, 10-minute dinners all week.&rdquo;</p>
+                <footer className="text-sm text-muted-foreground mt-4">Anna, Munich</footer>
+              </blockquote>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="border-t border-border">
+          <div className="container py-12 md:py-20">
+            <h2 className="text-2xl md:text-3xl font-semibold">Frequently asked questions</h2>
+            <div className="mt-6">
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="faq-1">
+                  <AccordionTrigger>How does Tellerplan create my weekly meal plan?</AccordionTrigger>
+                  <AccordionContent>
+                    We use your tastes, dietary needs, and goals to recommend balanced recipes for the week. You can swap any meal with one click.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="faq-2">
+                  <AccordionTrigger>Can I save money with Tellerplan?</AccordionTrigger>
+                  <AccordionContent>
+                    Yes. We combine ingredients into one smart list and compare prices across supermarkets to help you pick the best deals.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="faq-3">
+                  <AccordionTrigger>What cooking styles are supported?</AccordionTrigger>
+                  <AccordionContent>
+                    Daily Chef for new recipes each day, Clever Cook for leftovers, and Weekend Pro for batch-cooking with quick weekday assembly.
+                  </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="faq-4">
+                  <AccordionTrigger>Is Tellerplan available in Germany?</AccordionTrigger>
+                  <AccordionContent>
+                    Yes, Tellerplan is built for Germany and supports local supermarket price comparison.
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
+            <div className="mt-8">
+              <Link to="/onboarding">
+                <Button variant="hero" size="lg">
+                  Start free <ArrowRight className="ml-1" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </section>
       </main>
