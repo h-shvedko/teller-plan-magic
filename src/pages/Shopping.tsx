@@ -2,8 +2,9 @@ import { Helmet } from "react-helmet-async";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Ingredient, Recipe } from "@/lib/recipes";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 function loadPlan(): Recipe[] {
   try {
@@ -38,12 +39,22 @@ function aggregate(plan: Recipe[]) {
 }
 
 const Shopping = () => {
+  const navigate = useNavigate();
   const plan = loadPlan();
   const byAisle = useMemo(() => aggregate(plan), [plan]);
+
+  useEffect(() => {
+    if (!plan.length) {
+      toast("Create a plan first.");
+      navigate("/plan");
+    }
+  }, [plan.length, navigate]);
 
   const comparePrices = () => {
     toast("Price comparison requires integrations. Connect Supabase and a data provider to enable this.");
   };
+
+  if (!plan.length) return null;
 
   return (
     <div className="min-h-screen bg-background">

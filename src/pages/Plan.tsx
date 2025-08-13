@@ -46,10 +46,14 @@ const Plan = () => {
   const [plan, setPlan] = useState<Recipe[]>([]);
 
   useEffect(() => {
+    if (!profile) {
+      navigate("/onboarding");
+      return;
+    }
     const count = Number(days);
     const selection = [...basePool].slice(0, Math.max(3, count));
     setPlan(selection.slice(0, count));
-  }, [basePool, days]);
+  }, [basePool, days, profile, navigate]);
 
   const swapAt = (idx: number, withRecipe: Recipe) => {
     setPlan((p) => p.map((r, i) => (i === idx ? withRecipe : r)));
@@ -59,6 +63,8 @@ const Plan = () => {
     localStorage.setItem("tellerplan_plan", JSON.stringify(plan));
     navigate("/shopping");
   };
+
+  if (!profile) return null;
 
   return (
     <div className="min-h-screen bg-background">
