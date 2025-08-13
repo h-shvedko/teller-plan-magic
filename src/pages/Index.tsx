@@ -1,11 +1,12 @@
 import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Shuffle, ShoppingCart, PiggyBank, Clock, BadgeCheck, Wand2, ListChecks, ChefHat } from "lucide-react";
-import heroImage from "@/assets/hero-tellerplan.jpg";
+import { Sparkles, Shuffle, ShoppingCart, PiggyBank, Clock, BadgeCheck, Wand2, ListChecks, ChefHat } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import Hero from "./index/Hero";
+import Pricing from "./index/Pricing";
+import FAQ from "./index/FAQ";
 
 const Index = () => {
   const { t, i18n } = useTranslation('landing');
@@ -62,40 +63,7 @@ const Index = () => {
       </header>
 
       <main>
-        <section className="container grid md:grid-cols-2 gap-10 items-center py-10 md:py-20">
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
-              <Sparkles className="h-4 w-4" /> {t('hero.badge')}
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-              {t('hero.h1')}
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              {t('hero.p')}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link to="/onboarding">
-                <Button variant="hero" size="xl" className="">
-                  {t('hero.ctaCreate')} <ArrowRight className="ml-1" />
-                </Button>
-              </Link>
-              <Link to="/plan">
-                <Button variant="subtle" size="xl">
-                  {t('hero.ctaDemo')}
-                </Button>
-              </Link>
-            </div>
-            <ul className="grid sm:grid-cols-3 gap-2 text-sm text-foreground/80">
-              <li className="flex items-center gap-2"><Shuffle className="h-4 w-4" /> {t('hero.bullets.swap')}</li>
-              <li className="flex items-center gap-2"><ShoppingCart className="h-4 w-4" /> {t('hero.bullets.list')}</li>
-              <li className="flex items-center gap-2"><Sparkles className="h-4 w-4" /> {t('hero.bullets.prices')}</li>
-            </ul>
-          </div>
-          <div className="relative">
-            <img src={heroImage} alt={t('hero.imageAlt')} loading="lazy" className="rounded-lg shadow-lg" />
-            <div className="pointer-events-none absolute inset-0 rounded-lg" style={{ background: "radial-gradient(800px circle at 20% 10%, hsl(var(--brand) / 0.12), transparent 40%)" }} />
-          </div>
-        </section>
+        <Hero />
 
         {/* Value Props */}
         <section className="border-t border-border bg-card/30">
@@ -202,61 +170,7 @@ const Index = () => {
         </section>
 
         {/* Pricing */}
-        <section className="border-t border-border">
-          <div className="container py-12 md:py-20">
-            <h2 className="text-2xl md:text-3xl font-semibold">{t('pricing.title')}</h2>
-            <p className="text-muted-foreground mt-2">{t('pricing.subtitle')}</p>
-            <div className="mt-8 grid gap-6 md:grid-cols-3">
-              <article className="rounded-lg border bg-card p-6 shadow-sm">
-                <h3 className="text-lg font-semibold">{t('pricing.free.title')}</h3>
-                <div className="mt-3 flex items-baseline gap-2">
-                  <span className="text-3xl font-bold">{t('pricing.free.price')}</span>
-                  <span className="text-muted-foreground">{t('pricing.free.period')}</span>
-                </div>
-                <ul className="mt-4 space-y-2 text-sm text-foreground/80">
-                  {(t('pricing.free.features', { returnObjects: true }) as string[]).map((f, i) => (
-                    <li key={i} className="flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-primary" /><span>{f}</span></li>
-                  ))}
-                </ul>
-                <div className="mt-6">
-                  <Link to="/onboarding"><Button variant="subtle" size="sm">{t('pricing.free.cta')}</Button></Link>
-                </div>
-              </article>
-
-              <article className="rounded-lg border bg-card p-6 shadow-sm ring-1 ring-primary/20">
-                <h3 className="text-lg font-semibold">{t('pricing.pro.title')}</h3>
-                <div className="mt-3 flex items-baseline gap-2">
-                  <span className="text-3xl font-bold">{t('pricing.pro.price')}</span>
-                  <span className="text-muted-foreground">{t('pricing.pro.period')}</span>
-                </div>
-                <ul className="mt-4 space-y-2 text-sm text-foreground/80">
-                  {(t('pricing.pro.features', { returnObjects: true }) as string[]).map((f, i) => (
-                    <li key={i} className="flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-primary" /><span>{f}</span></li>
-                  ))}
-                </ul>
-                <div className="mt-6">
-                  <Link to="/onboarding"><Button variant="hero" size="sm">{t('pricing.pro.cta')}</Button></Link>
-                </div>
-              </article>
-
-              <article className="rounded-lg border bg-card p-6 shadow-sm">
-                <h3 className="text-lg font-semibold">{t('pricing.family.title')}</h3>
-                <div className="mt-3 flex items-baseline gap-2">
-                  <span className="text-3xl font-bold">{t('pricing.family.price')}</span>
-                  <span className="text-muted-foreground">{t('pricing.family.period')}</span>
-                </div>
-                <ul className="mt-4 space-y-2 text-sm text-foreground/80">
-                  {(t('pricing.family.features', { returnObjects: true }) as string[]).map((f, i) => (
-                    <li key={i} className="flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-primary" /><span>{f}</span></li>
-                  ))}
-                </ul>
-                <div className="mt-6">
-                  <Link to="/onboarding"><Button variant="subtle" size="sm">{t('pricing.family.cta')}</Button></Link>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
+        <Pricing />
 
         {/* Testimonials */}
         <section className="border-t border-border bg-card/30">
@@ -280,46 +194,7 @@ const Index = () => {
         </section>
 
         {/* FAQ */}
-        <section className="border-t border-border">
-          <div className="container py-12 md:py-20">
-            <h2 className="text-2xl md:text-3xl font-semibold">{t('faq.title')}</h2>
-            <div className="mt-6">
-              <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="faq-1">
-                  <AccordionTrigger>{t('faq.q1.q')}</AccordionTrigger>
-                  <AccordionContent>
-                    {t('faq.q1.a')}
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="faq-2">
-                  <AccordionTrigger>{t('faq.q2.q')}</AccordionTrigger>
-                  <AccordionContent>
-                    {t('faq.q2.a')}
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="faq-3">
-                  <AccordionTrigger>{t('faq.q3.q')}</AccordionTrigger>
-                  <AccordionContent>
-                    {t('faq.q3.a')}
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="faq-4">
-                  <AccordionTrigger>{t('faq.q4.q')}</AccordionTrigger>
-                  <AccordionContent>
-                    {t('faq.q4.a')}
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </div>
-            <div className="mt-8">
-              <Link to="/onboarding">
-                <Button variant="hero" size="lg">
-                  {t('pricing.free.cta')} <ArrowRight className="ml-1" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
+        <FAQ />
       </main>
     </div>
   );
