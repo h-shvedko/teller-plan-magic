@@ -4,18 +4,21 @@ import { ArrowRight, Sparkles, Shuffle, ShoppingCart, PiggyBank, Clock, BadgeChe
 import heroImage from "@/assets/hero-tellerplan.jpg";
 import { Link } from "react-router-dom";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const Index = () => {
+  const { t, i18n } = useTranslation('landing');
   return (
     <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>Tellerplan: Smart Meal Planning for Germany</title>
-        <meta name="description" content="Personalized weekly meal plans, smart shopping lists and price comparison for Germany." />
+      <Helmet htmlAttributes={{ lang: i18n.language.split('-')[0] }}>
+        <title>{t('seo.title')}</title>
+        <meta name="description" content={t('seo.description')} />
         <link rel="canonical" href="/" />
         <script type="application/ld+json">{JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Organization",
-          name: "Tellerplan",
+          name: t('brand.name'),
           url: "/",
           logo: "/favicon.ico",
           sameAs: ["https://lovable.dev"],
@@ -24,38 +27,21 @@ const Index = () => {
           "@context": "https://schema.org",
           "@type": "FAQPage",
           mainEntity: [
-            {
-              "@type": "Question",
-              name: "How does Tellerplan create my weekly meal plan?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "We use your tastes, dietary needs, and goals to recommend balanced recipes for the week. You can swap any meal with one click."
-              }
-            },
-            {
-              "@type": "Question",
-              name: "Can I save money with Tellerplan?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "Yes. We combine ingredients into one smart list and compare prices across supermarkets to help you pick the best deals."
-              }
-            },
-            {
-              "@type": "Question",
-              name: "Is Tellerplan available in Germany?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "Yes, Tellerplan is built for Germany and supports local supermarket price comparison."
-              }
-            },
-            {
-              "@type": "Question",
-              name: "What cooking styles are supported?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "Daily Chef for new recipes each day, Clever Cook for leftovers, and Weekend Pro for batch-cooking with quick weekday assembly."
-              }
-            }
+            { "@type": "Question", name: t('faq.q1.q'), acceptedAnswer: { "@type": "Answer", text: t('faq.q1.a') } },
+            { "@type": "Question", name: t('faq.q2.q'), acceptedAnswer: { "@type": "Answer", text: t('faq.q2.a') } },
+            { "@type": "Question", name: t('faq.q3.q'), acceptedAnswer: { "@type": "Answer", text: t('faq.q3.a') } },
+            { "@type": "Question", name: t('faq.q4.q'), acceptedAnswer: { "@type": "Answer", text: t('faq.q4.a') } }
+          ]
+        })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: t('brand.name'),
+          description: t('seo.description'),
+          offers: [
+            {"@type":"Offer","name": t('pricing.free.title'), price: "0", priceCurrency: "EUR", priceValidUntil: "2026-12-31", availability: "https://schema.org/InStock"},
+            {"@type":"Offer","name": t('pricing.pro.title'), price: "7", priceCurrency: "EUR", priceValidUntil: "2026-12-31", availability: "https://schema.org/InStock"},
+            {"@type":"Offer","name": t('pricing.family.title'), price: "12", priceCurrency: "EUR", priceValidUntil: "2026-12-31", availability: "https://schema.org/InStock"}
           ]
         })}</script>
       </Helmet>
