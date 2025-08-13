@@ -49,14 +49,15 @@ const Index = () => {
       <header className="container py-6 flex items-center justify-between">
         <Link to="/" className="inline-flex items-center gap-2">
           <div className="h-8 w-8 rounded-md" style={{ background: "var(--gradient-primary)" }} />
-          <span className="text-lg font-semibold">Tellerplan</span>
+          <span className="text-lg font-semibold">{t('brand.name')}</span>
         </Link>
         <nav className="hidden md:flex items-center gap-6">
-          <Link to="/onboarding" className="text-sm text-foreground/70 hover:text-foreground transition-colors">How it works</Link>
-          <Link to="/plan" className="text-sm text-foreground/70 hover:text-foreground transition-colors">See a demo</Link>
+          <Link to="/onboarding" className="text-sm text-foreground/70 hover:text-foreground transition-colors">{t('nav.how')}</Link>
+          <Link to="/plan" className="text-sm text-foreground/70 hover:text-foreground transition-colors">{t('nav.demo')}</Link>
           <Link to="/onboarding">
-            <Button variant="hero" size="sm">Get started</Button>
+            <Button variant="hero" size="sm">{t('nav.getStarted')}</Button>
           </Link>
+          <LanguageSwitcher />
         </nav>
       </header>
 
@@ -64,34 +65,34 @@ const Index = () => {
         <section className="container grid md:grid-cols-2 gap-10 items-center py-10 md:py-20">
           <div className="space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
-              <Sparkles className="h-4 w-4" /> Made for Germany
+              <Sparkles className="h-4 w-4" /> {t('hero.badge')}
             </div>
             <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-              Smart weekly meal plans that fit your life and budget
+              {t('hero.h1')}
             </h1>
             <p className="text-muted-foreground text-lg">
-              Tell us your tastes and goals, and we’ll craft a delicious plan with a combined shopping list and price comparison across supermarkets.
+              {t('hero.p')}
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <Link to="/onboarding">
                 <Button variant="hero" size="xl" className="">
-                  Create my plan <ArrowRight className="ml-1" />
+                  {t('hero.ctaCreate')} <ArrowRight className="ml-1" />
                 </Button>
               </Link>
               <Link to="/plan">
                 <Button variant="subtle" size="xl">
-                  Explore a demo
+                  {t('hero.ctaDemo')}
                 </Button>
               </Link>
             </div>
             <ul className="grid sm:grid-cols-3 gap-2 text-sm text-foreground/80">
-              <li className="flex items-center gap-2"><Shuffle className="h-4 w-4" /> Swap any meal</li>
-              <li className="flex items-center gap-2"><ShoppingCart className="h-4 w-4" /> Smart shopping list</li>
-              <li className="flex items-center gap-2"><Sparkles className="h-4 w-4" /> Price comparison</li>
+              <li className="flex items-center gap-2"><Shuffle className="h-4 w-4" /> {t('hero.bullets.swap')}</li>
+              <li className="flex items-center gap-2"><ShoppingCart className="h-4 w-4" /> {t('hero.bullets.list')}</li>
+              <li className="flex items-center gap-2"><Sparkles className="h-4 w-4" /> {t('hero.bullets.prices')}</li>
             </ul>
           </div>
           <div className="relative">
-            <img src={heroImage} alt="Tellerplan meal planning app hero image" loading="lazy" className="rounded-lg shadow-lg" />
+            <img src={heroImage} alt={t('hero.imageAlt')} loading="lazy" className="rounded-lg shadow-lg" />
             <div className="pointer-events-none absolute inset-0 rounded-lg" style={{ background: "radial-gradient(800px circle at 20% 10%, hsl(var(--brand) / 0.12), transparent 40%)" }} />
           </div>
         </section>
@@ -99,29 +100,29 @@ const Index = () => {
         {/* Value Props */}
         <section className="border-t border-border bg-card/30">
           <div className="container py-12 md:py-20">
-            <h2 className="text-2xl md:text-3xl font-semibold">Why Tellerplan</h2>
-            <p className="text-muted-foreground mt-2">Meal planning built for busy people in Germany.</p>
+            <h2 className="text-2xl md:text-3xl font-semibold">{t('value.title')}</h2>
+            <p className="text-muted-foreground mt-2">{t('value.subtitle')}</p>
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               <article className="rounded-lg border border-border bg-card p-6 shadow-sm">
                 <div className="flex items-center gap-3">
                   <PiggyBank className="h-5 w-5 text-primary" />
-                  <h3 className="font-medium">Save money every week</h3>
+                  <h3 className="font-medium">{t('value.items.saveMoney.title')}</h3>
                 </div>
-                <p className="text-muted-foreground mt-3">Combined shopping lists and price comparison help you shop smarter.</p>
+                <p className="text-muted-foreground mt-3">{t('value.items.saveMoney.desc')}</p>
               </article>
               <article className="rounded-lg border border-border bg-card p-6 shadow-sm">
                 <div className="flex items-center gap-3">
                   <Clock className="h-5 w-5 text-primary" />
-                  <h3 className="font-medium">Plan in minutes</h3>
+                  <h3 className="font-medium">{t('value.items.planFast.title')}</h3>
                 </div>
-                <p className="text-muted-foreground mt-3">Tell us your tastes, we build a plan you can adjust in seconds.</p>
+                <p className="text-muted-foreground mt-3">{t('value.items.planFast.desc')}</p>
               </article>
               <article className="rounded-lg border border-border bg-card p-6 shadow-sm">
                 <div className="flex items-center gap-3">
                   <BadgeCheck className="h-5 w-5 text-primary" />
-                  <h3 className="font-medium">Delicious and flexible</h3>
+                  <h3 className="font-medium">{t('value.items.flexible.title')}</h3>
                 </div>
-                <p className="text-muted-foreground mt-3">Swap any meal and adapt to cooking styles from daily to batch-cooking.</p>
+                <p className="text-muted-foreground mt-3">{t('value.items.flexible.desc')}</p>
               </article>
             </div>
           </div>
@@ -130,34 +131,34 @@ const Index = () => {
         {/* How it works */}
         <section>
           <div className="container py-12 md:py-20">
-            <h2 className="text-2xl md:text-3xl font-semibold">How it works</h2>
+            <h2 className="text-2xl md:text-3xl font-semibold">{t('how.title')}</h2>
             <div className="mt-8 grid gap-6 md:grid-cols-3">
               <article className="rounded-lg border bg-card p-6">
                 <div className="flex items-center gap-3">
                   <div className="h-8 w-8 rounded-md bg-accent/40 flex items-center justify-center">
                     <Wand2 className="h-5 w-5" />
                   </div>
-                  <h3 className="font-medium">Tell us your tastes</h3>
+                  <h3 className="font-medium">{t('how.steps.tastes.title')}</h3>
                 </div>
-                <p className="text-muted-foreground mt-3">Choose diets, cuisines, goals, and cooking style.</p>
+                <p className="text-muted-foreground mt-3">{t('how.steps.tastes.desc')}</p>
               </article>
               <article className="rounded-lg border bg-card p-6">
                 <div className="flex items-center gap-3">
                   <div className="h-8 w-8 rounded-md bg-accent/40 flex items-center justify-center">
                     <ChefHat className="h-5 w-5" />
                   </div>
-                  <h3 className="font-medium">Get your weekly plan</h3>
+                  <h3 className="font-medium">{t('how.steps.plan.title')}</h3>
                 </div>
-                <p className="text-muted-foreground mt-3">A balanced plan tailored for your week—swap anything.</p>
+                <p className="text-muted-foreground mt-3">{t('how.steps.plan.desc')}</p>
               </article>
               <article className="rounded-lg border bg-card p-6">
                 <div className="flex items-center gap-3">
                   <div className="h-8 w-8 rounded-md bg-accent/40 flex items-center justify-center">
                     <ListChecks className="h-5 w-5" />
                   </div>
-                  <h3 className="font-medium">Shop smarter</h3>
+                  <h3 className="font-medium">{t('how.steps.shop.title')}</h3>
                 </div>
-                <p className="text-muted-foreground mt-3">One combined list with aisle categories and price comparison.</p>
+                <p className="text-muted-foreground mt-3">{t('how.steps.shop.desc')}</p>
               </article>
             </div>
           </div>
@@ -166,35 +167,92 @@ const Index = () => {
         {/* Features grid */}
         <section className="border-t border-border">
           <div className="container py-12 md:py-20">
-            <h2 className="text-2xl md:text-3xl font-semibold">What you get</h2>
+            <h2 className="text-2xl md:text-3xl font-semibold">{t('features.title')}</h2>
             <div className="mt-8 grid gap-6 md:grid-cols-2">
               <article className="rounded-lg border bg-card p-6">
                 <div className="flex items-center gap-3">
                   <Sparkles className="h-5 w-5 text-primary" />
-                  <h3 className="font-medium">AI-powered plans</h3>
+                  <h3 className="font-medium">{t('features.ai.title')}</h3>
                 </div>
-                <p className="text-muted-foreground mt-3">Smart recommendations from a rich recipe library.</p>
+                <p className="text-muted-foreground mt-3">{t('features.ai.desc')}</p>
               </article>
               <article className="rounded-lg border bg-card p-6">
                 <div className="flex items-center gap-3">
                   <Shuffle className="h-5 w-5 text-primary" />
-                  <h3 className="font-medium">One-click swaps</h3>
+                  <h3 className="font-medium">{t('features.swaps.title')}</h3>
                 </div>
-                <p className="text-muted-foreground mt-3">Instant alternatives that match your tastes and goals.</p>
+                <p className="text-muted-foreground mt-3">{t('features.swaps.desc')}</p>
               </article>
               <article className="rounded-lg border bg-card p-6">
                 <div className="flex items-center gap-3">
                   <ShoppingCart className="h-5 w-5 text-primary" />
-                  <h3 className="font-medium">Smart shopping list</h3>
+                  <h3 className="font-medium">{t('features.list.title')}</h3>
                 </div>
-                <p className="text-muted-foreground mt-3">Combined ingredients, categorized by aisle, ready for checkout.</p>
+                <p className="text-muted-foreground mt-3">{t('features.list.desc')}</p>
               </article>
               <article className="rounded-lg border bg-card p-6">
                 <div className="flex items-center gap-3">
                   <BadgeCheck className="h-5 w-5 text-primary" />
-                  <h3 className="font-medium">Price comparison</h3>
+                  <h3 className="font-medium">{t('features.prices.title')}</h3>
                 </div>
-                <p className="text-muted-foreground mt-3">See where to buy for less at major supermarkets.</p>
+                <p className="text-muted-foreground mt-3">{t('features.prices.desc')}</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        {/* Pricing */}
+        <section className="border-t border-border">
+          <div className="container py-12 md:py-20">
+            <h2 className="text-2xl md:text-3xl font-semibold">{t('pricing.title')}</h2>
+            <p className="text-muted-foreground mt-2">{t('pricing.subtitle')}</p>
+            <div className="mt-8 grid gap-6 md:grid-cols-3">
+              <article className="rounded-lg border bg-card p-6 shadow-sm">
+                <h3 className="text-lg font-semibold">{t('pricing.free.title')}</h3>
+                <div className="mt-3 flex items-baseline gap-2">
+                  <span className="text-3xl font-bold">{t('pricing.free.price')}</span>
+                  <span className="text-muted-foreground">{t('pricing.free.period')}</span>
+                </div>
+                <ul className="mt-4 space-y-2 text-sm text-foreground/80">
+                  {(t('pricing.free.features', { returnObjects: true }) as string[]).map((f, i) => (
+                    <li key={i} className="flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-primary" /><span>{f}</span></li>
+                  ))}
+                </ul>
+                <div className="mt-6">
+                  <Link to="/onboarding"><Button variant="subtle" size="sm">{t('pricing.free.cta')}</Button></Link>
+                </div>
+              </article>
+
+              <article className="rounded-lg border bg-card p-6 shadow-sm ring-1 ring-primary/20">
+                <h3 className="text-lg font-semibold">{t('pricing.pro.title')}</h3>
+                <div className="mt-3 flex items-baseline gap-2">
+                  <span className="text-3xl font-bold">{t('pricing.pro.price')}</span>
+                  <span className="text-muted-foreground">{t('pricing.pro.period')}</span>
+                </div>
+                <ul className="mt-4 space-y-2 text-sm text-foreground/80">
+                  {(t('pricing.pro.features', { returnObjects: true }) as string[]).map((f, i) => (
+                    <li key={i} className="flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-primary" /><span>{f}</span></li>
+                  ))}
+                </ul>
+                <div className="mt-6">
+                  <Link to="/onboarding"><Button variant="hero" size="sm">{t('pricing.pro.cta')}</Button></Link>
+                </div>
+              </article>
+
+              <article className="rounded-lg border bg-card p-6 shadow-sm">
+                <h3 className="text-lg font-semibold">{t('pricing.family.title')}</h3>
+                <div className="mt-3 flex items-baseline gap-2">
+                  <span className="text-3xl font-bold">{t('pricing.family.price')}</span>
+                  <span className="text-muted-foreground">{t('pricing.family.period')}</span>
+                </div>
+                <ul className="mt-4 space-y-2 text-sm text-foreground/80">
+                  {(t('pricing.family.features', { returnObjects: true }) as string[]).map((f, i) => (
+                    <li key={i} className="flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-primary" /><span>{f}</span></li>
+                  ))}
+                </ul>
+                <div className="mt-6">
+                  <Link to="/onboarding"><Button variant="subtle" size="sm">{t('pricing.family.cta')}</Button></Link>
+                </div>
               </article>
             </div>
           </div>
@@ -203,19 +261,19 @@ const Index = () => {
         {/* Testimonials */}
         <section className="border-t border-border bg-card/30">
           <div className="container py-12 md:py-20">
-            <h2 className="text-2xl md:text-3xl font-semibold">Loved by busy cooks</h2>
+            <h2 className="text-2xl md:text-3xl font-semibold">{t('testimonials.title')}</h2>
             <div className="mt-8 grid gap-6 md:grid-cols-3">
               <blockquote className="rounded-lg border bg-card p-6 shadow-sm">
-                <p className="text-foreground">&ldquo;I stopped overstressing dinner. The weekly plan just works.&rdquo;</p>
-                <footer className="text-sm text-muted-foreground mt-4">Sarah, Göttingen</footer>
+                <p className="text-foreground">&ldquo;{t('testimonials.sarah.text')}&rdquo;</p>
+                <footer className="text-sm text-muted-foreground mt-4">{t('testimonials.sarah.footer')}</footer>
               </blockquote>
               <blockquote className="rounded-lg border bg-card p-6 shadow-sm">
-                <p className="text-foreground">&ldquo;Swapping meals is so easy—and the shopping list saves me money.&rdquo;</p>
-                <footer className="text-sm text-muted-foreground mt-4">Lukas, Berlin</footer>
+                <p className="text-foreground">&ldquo;{t('testimonials.lukas.text')}&rdquo;</p>
+                <footer className="text-sm text-muted-foreground mt-4">{t('testimonials.lukas.footer')}</footer>
               </blockquote>
               <blockquote className="rounded-lg border bg-card p-6 shadow-sm">
-                <p className="text-foreground">&ldquo;Weekend Pro fits my schedule. Prep Sunday, 10-minute dinners all week.&rdquo;</p>
-                <footer className="text-sm text-muted-foreground mt-4">Anna, Munich</footer>
+                <p className="text-foreground">&ldquo;{t('testimonials.anna.text')}&rdquo;</p>
+                <footer className="text-sm text-muted-foreground mt-4">{t('testimonials.anna.footer')}</footer>
               </blockquote>
             </div>
           </div>
@@ -224,31 +282,31 @@ const Index = () => {
         {/* FAQ */}
         <section className="border-t border-border">
           <div className="container py-12 md:py-20">
-            <h2 className="text-2xl md:text-3xl font-semibold">Frequently asked questions</h2>
+            <h2 className="text-2xl md:text-3xl font-semibold">{t('faq.title')}</h2>
             <div className="mt-6">
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="faq-1">
-                  <AccordionTrigger>How does Tellerplan create my weekly meal plan?</AccordionTrigger>
+                  <AccordionTrigger>{t('faq.q1.q')}</AccordionTrigger>
                   <AccordionContent>
-                    We use your tastes, dietary needs, and goals to recommend balanced recipes for the week. You can swap any meal with one click.
+                    {t('faq.q1.a')}
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="faq-2">
-                  <AccordionTrigger>Can I save money with Tellerplan?</AccordionTrigger>
+                  <AccordionTrigger>{t('faq.q2.q')}</AccordionTrigger>
                   <AccordionContent>
-                    Yes. We combine ingredients into one smart list and compare prices across supermarkets to help you pick the best deals.
+                    {t('faq.q2.a')}
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="faq-3">
-                  <AccordionTrigger>What cooking styles are supported?</AccordionTrigger>
+                  <AccordionTrigger>{t('faq.q3.q')}</AccordionTrigger>
                   <AccordionContent>
-                    Daily Chef for new recipes each day, Clever Cook for leftovers, and Weekend Pro for batch-cooking with quick weekday assembly.
+                    {t('faq.q3.a')}
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="faq-4">
-                  <AccordionTrigger>Is Tellerplan available in Germany?</AccordionTrigger>
+                  <AccordionTrigger>{t('faq.q4.q')}</AccordionTrigger>
                   <AccordionContent>
-                    Yes, Tellerplan is built for Germany and supports local supermarket price comparison.
+                    {t('faq.q4.a')}
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
@@ -256,7 +314,7 @@ const Index = () => {
             <div className="mt-8">
               <Link to="/onboarding">
                 <Button variant="hero" size="lg">
-                  Start free <ArrowRight className="ml-1" />
+                  {t('pricing.free.cta')} <ArrowRight className="ml-1" />
                 </Button>
               </Link>
             </div>
