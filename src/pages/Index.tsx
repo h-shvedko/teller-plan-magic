@@ -4,12 +4,15 @@ import { Sparkles, Shuffle, ShoppingCart, PiggyBank, Clock, BadgeCheck, Wand2, L
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { UserMenu } from "@/components/UserMenu";
+import { useAuth } from "@/hooks/useAuth";
 import Hero from "./index/Hero";
 import Pricing from "./index/Pricing";
 import FAQ from "./index/FAQ";
 
 const Index = () => {
   const { t, i18n } = useTranslation('landing');
+  const { user } = useAuth();
   return (
     <div className="min-h-screen bg-background">
       <Helmet htmlAttributes={{ lang: i18n.language.split('-')[0] }}>
@@ -55,10 +58,13 @@ const Index = () => {
         <nav className="hidden md:flex items-center gap-6">
           <Link to="/onboarding" className="text-sm text-foreground/70 hover:text-foreground transition-colors">{t('nav.how')}</Link>
           <Link to="/plan" className="text-sm text-foreground/70 hover:text-foreground transition-colors">{t('nav.demo')}</Link>
-          <Link to="/onboarding">
-            <Button variant="hero" size="sm">{t('nav.getStarted')}</Button>
-          </Link>
+          {!user && (
+            <Link to="/onboarding">
+              <Button variant="hero" size="sm">{t('nav.getStarted')}</Button>
+            </Link>
+          )}
           <LanguageSwitcher />
+          <UserMenu />
         </nav>
       </header>
 
