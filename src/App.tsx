@@ -9,6 +9,9 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import Contact from "./pages/Contact";
+import Imprint from "./pages/Imprint";
+import Privacy from "./pages/Privacy";
 import Onboarding from "./pages/Onboarding";
 import Plan from "./pages/Plan";
 import Shopping from "./pages/Shopping";
@@ -26,6 +29,9 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/imprint" element={<Imprint />} />
+              <Route path="/privacy" element={<Privacy />} />
               <Route 
                 path="/onboarding" 
                 element={

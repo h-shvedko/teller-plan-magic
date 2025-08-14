@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { UserMenu } from "@/components/UserMenu";
 import { useAuth } from "@/hooks/useAuth";
+import { ContactForm } from "@/components/ContactForm";
 import Hero from "./index/Hero";
 import Pricing from "./index/Pricing";
 import FAQ from "./index/FAQ";
@@ -201,7 +202,79 @@ const Index = () => {
 
         {/* FAQ */}
         <FAQ />
+
+        {/* Contact Us */}
+        <section className="border-t border-border">
+          <div className="container py-12 md:py-20">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-2xl md:text-3xl font-semibold">Get in Touch</h2>
+                <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
+                  Have questions about TellerPlan? Need help getting started? We're here to help you on your meal planning journey.
+                </p>
+              </div>
+              <ContactForm compact />
+            </div>
+          </div>
+        </section>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-border bg-card/30">
+        <div className="container py-12">
+          <div className="grid gap-8 md:grid-cols-4">
+            <div className="md:col-span-2">
+              <Link to="/" className="inline-flex items-center gap-2 mb-4">
+                <div className="h-8 w-8 rounded-md" style={{ background: "var(--gradient-primary)" }} />
+                <span className="text-lg font-semibold">{t('brand.name')}</span>
+              </Link>
+              <p className="text-muted-foreground mb-4">
+                Simplify your meal planning with AI-powered recommendations, 
+                smart shopping lists, and personalized nutrition tracking.
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-4">Product</h3>
+              <div className="space-y-2">
+                <Link to="/onboarding" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Getting Started
+                </Link>
+                <Link to="/plan" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Demo
+                </Link>
+                <Link to="/contact" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Support
+                </Link>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-4">Legal</h3>
+              <div className="space-y-2">
+                <Link to="/privacy" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Privacy Policy
+                </Link>
+                <Link to="/imprint" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Imprint
+                </Link>
+                <Link to="/contact" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Contact
+                </Link>
+              </div>
+            </div>
+          </div>
+          
+          <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} TellerPlan. All rights reserved.
+            </p>
+            <div className="flex items-center gap-4">
+              <LanguageSwitcher />
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
