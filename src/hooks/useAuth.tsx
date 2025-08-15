@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -8,8 +8,13 @@ interface AuthContextType {
   session: Session | null;
   userRole: string | null;
   isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+  signUp: (
+    email: string,
+    password: string,
+    firstName?: string,
+    lastName?: string
+  ) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
   isAdmin: boolean;
 }
@@ -53,9 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         
         // Defer role fetching to avoid auth state change deadlock
         if (session?.user) {
-          setTimeout(() => {
-            fetchUserRole(session.user.id).then(setUserRole);
-          }, 0);
+          fetchUserRole(session.user.id).then(setUserRole);
         } else {
           setUserRole(null);
         }
@@ -69,9 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(false);
       
       if (session?.user) {
-        setTimeout(() => {
-          fetchUserRole(session.user.id).then(setUserRole);
-        }, 0);
+        fetchUserRole(session.user.id).then(setUserRole);
       }
     });
 
@@ -99,20 +100,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       return { error };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An unexpected error occurred.';
       toast({
         title: "Sign in failed",
-        description: "An unexpected error occurred.",
+        description: message,
         variant: "destructive",
       });
-      return { error };
+      return { error: error instanceof AuthError ? error : new AuthError(message) };
     }
   };
 
-  const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    firstName?: string,
+    lastName?: string
+  ) => {
     try {
       const redirectUrl = `${window.location.origin}/`;
-      
+
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -139,13 +146,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       return { error };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An unexpected error occurred.';
       toast({
         title: "Sign up failed",
-        description: "An unexpected error occurred.",
+        description: message,
         variant: "destructive",
       });
-      return { error };
+      return { error: error instanceof AuthError ? error : new AuthError(message) };
     }
   };
 
@@ -158,10 +166,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         title: "Signed out",
         description: "You have been signed out successfully.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'An unexpected error occurred.';
       toast({
         title: "Sign out failed",
-        description: error.message,
+        description: message,
         variant: "destructive",
       });
     }

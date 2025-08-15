@@ -33,7 +33,9 @@ function aggregate(plan: Recipe[]) {
 
   const byAisle: Record<string, Ingredient[]> = {};
   for (const item of items) {
-    byAisle[item.aisle] ||= [];
+    if (!byAisle[item.aisle]) {
+      byAisle[item.aisle] = [];
+    }
     byAisle[item.aisle].push(item);
   }
   return byAisle;

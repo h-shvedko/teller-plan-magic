@@ -62,11 +62,14 @@ export const ContactForm = ({
       });
 
       form.reset();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Contact form error:', error);
       toast({
         title: "Failed to send message",
-        description: "Please try again later or contact us directly.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Please try again later or contact us directly.",
         variant: "destructive",
       });
     } finally {

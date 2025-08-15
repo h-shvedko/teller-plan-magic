@@ -14,7 +14,7 @@ type DietTag = Recipe["dietary"][number];
 
 type Profile = {
   goals: string[];
-  diets: DietTag[];
+  diets?: DietTag[];
   ratings: Record<string, number>;
   household: number;
   style: "daily" | "clever" | "weekend";
@@ -35,11 +35,11 @@ const Plan = () => {
   const [days, setDays] = useState<string>("5");
   const basePool = useMemo(() => {
     if (!profile) return SAMPLE_RECIPES;
-    const likedCuisines = Object.entries(profile.ratings || {})
-      .filter(([, v]) => (v as number) >= 3)
+    const likedCuisines = (Object.entries(profile.ratings ?? {}) as [string, number][]) 
+      .filter(([, v]) => v >= 3)
       .map(([k]) => k);
     return SAMPLE_RECIPES.filter((r) =>
-      (!profile.diets?.length || (profile.diets as DietTag[]).every((d) => r.dietary.includes(d))) &&
+      (!profile.diets?.length || profile.diets.every((d) => r.dietary.includes(d))) &&
       (!likedCuisines.length || likedCuisines.includes(r.cuisine))
     );
   }, [profile]);
