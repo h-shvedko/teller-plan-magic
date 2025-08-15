@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { ContactForm } from '@/components/ContactForm';
+import { Header } from '@/components/Header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Mail, Phone, MapPin, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -14,15 +15,7 @@ const Contact = () => {
       </Helmet>
       
       <div className="min-h-screen bg-background">
-        {/* Header */}
-        <header className="border-b border-border">
-          <div className="container py-4">
-            <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-              ← Back to Home
-            </Link>
-          </div>
-        </header>
-
+        <Header showGetStarted={false} />
         <main className="container py-12">
           <div className="max-w-6xl mx-auto">
             {/* Page Header */}

@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Header } from '@/components/Header';
 
 const Imprint = () => {
   return (
@@ -11,15 +11,7 @@ const Imprint = () => {
       </Helmet>
       
       <div className="min-h-screen bg-background">
-        {/* Header */}
-        <header className="border-b border-border">
-          <div className="container py-4">
-            <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-              ← Back to Home
-            </Link>
-          </div>
-        </header>
-
+        <Header showGetStarted={false} />
         <main className="container py-12">
           <div className="max-w-4xl mx-auto prose prose-neutral dark:prose-invert">
             <h1>Imprint</h1>

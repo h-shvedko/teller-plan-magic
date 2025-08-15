@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Header } from "@/components/Header";
 import { SAMPLE_RECIPES, Recipe, getAlternatives } from "@/lib/recipes";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -68,6 +69,7 @@ const Plan = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Header showGetStarted={false} />
       <Helmet>
         <title>Your Weekly Meal Plan | Tellerplan</title>
         <meta name="description" content="A visual weekly plan you can tweak—swap meals, change days, and generate your shopping list." />

@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Header } from "@/components/Header";
 import { Ingredient, Recipe } from "@/lib/recipes";
 import { useEffect, useMemo } from "react";
 import { toast } from "sonner";
@@ -58,6 +59,7 @@ const Shopping = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Header showGetStarted={false} />
       <Helmet>
         <title>Shopping List | Tellerplan</title>
         <meta name="description" content="Combined, categorized shopping list generated from your weekly plan." />

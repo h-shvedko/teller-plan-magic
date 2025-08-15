@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { Header } from '@/components/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -223,6 +224,7 @@ export const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Header showGetStarted={false} />
       <div className="container mx-auto py-8 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
