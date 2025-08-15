@@ -48,18 +48,22 @@ export const UserMenu = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <User className="mr-2 h-4 w-4" />
-          <span>Profile</span>
+        <DropdownMenuItem asChild>
+          <Link to="/dashboard">
+            <User className="mr-2 h-4 w-4" />
+            <span>Dashboard</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
           <Settings className="mr-2 h-4 w-4" />
           <span>Settings</span>
         </DropdownMenuItem>
         {isAdmin && (
-          <DropdownMenuItem>
-            <Shield className="mr-2 h-4 w-4" />
-            <span>Admin Panel</span>
+          <DropdownMenuItem asChild>
+            <Link to="/admin">
+              <Shield className="mr-2 h-4 w-4" />
+              <span>Admin Panel</span>
+            </Link>
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />

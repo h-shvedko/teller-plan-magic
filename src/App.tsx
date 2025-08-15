@@ -15,6 +15,8 @@ import Privacy from "./pages/Privacy";
 import Onboarding from "./pages/Onboarding";
 import Plan from "./pages/Plan";
 import Shopping from "./pages/Shopping";
+import { Dashboard } from "./pages/Dashboard";
+import { AdminDashboard } from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +55,22 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Shopping />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin" 
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AdminDashboard />
                   </ProtectedRoute>
                 } 
               />
