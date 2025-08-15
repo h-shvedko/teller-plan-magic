@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Header } from "@/components/Header";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "@/components/ui/sonner";
@@ -48,6 +49,7 @@ const Onboarding = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Header showGetStarted={false} />
       <Helmet>
         <title>Onboarding | Tellerplan</title>
         <meta name="description" content="Tell us your tastes and goals to personalize your meal plan." />

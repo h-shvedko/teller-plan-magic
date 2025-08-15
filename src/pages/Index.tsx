@@ -1,14 +1,19 @@
 import { Helmet } from "react-helmet-async";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Shuffle, ShoppingCart, PiggyBank, Clock, BadgeCheck, Wand2, ListChecks, ChefHat } from "lucide-react";
-import heroImage from "@/assets/hero-tellerplan.jpg";
+import { Sparkles, Shuffle, ShoppingCart, PiggyBank, Clock, BadgeCheck, Wand2, ListChecks, ChefHat } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { Header } from "@/components/Header";
+import { useAuth } from "@/hooks/useAuth";
+import { ContactForm } from "@/components/ContactForm";
+import Hero from "./index/Hero";
+import Pricing from "./index/Pricing";
+import FAQ from "./index/FAQ";
 
 const Index = () => {
   const { t, i18n } = useTranslation('landing');
+  const { user } = useAuth();
   return (
     <div className="min-h-screen bg-background">
       <Helmet htmlAttributes={{ lang: i18n.language.split('-')[0] }}>
@@ -46,56 +51,10 @@ const Index = () => {
         })}</script>
       </Helmet>
 
-      <header className="container py-6 flex items-center justify-between">
-        <Link to="/" className="inline-flex items-center gap-2">
-          <div className="h-8 w-8 rounded-md" style={{ background: "var(--gradient-primary)" }} />
-          <span className="text-lg font-semibold">{t('brand.name')}</span>
-        </Link>
-        <nav className="hidden md:flex items-center gap-6">
-          <Link to="/onboarding" className="text-sm text-foreground/70 hover:text-foreground transition-colors">{t('nav.how')}</Link>
-          <Link to="/plan" className="text-sm text-foreground/70 hover:text-foreground transition-colors">{t('nav.demo')}</Link>
-          <Link to="/onboarding">
-            <Button variant="hero" size="sm">{t('nav.getStarted')}</Button>
-          </Link>
-          <LanguageSwitcher />
-        </nav>
-      </header>
+      <Header />
 
       <main>
-        <section className="container grid md:grid-cols-2 gap-10 items-center py-10 md:py-20">
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
-              <Sparkles className="h-4 w-4" /> {t('hero.badge')}
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-              {t('hero.h1')}
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              {t('hero.p')}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link to="/onboarding">
-                <Button variant="hero" size="xl" className="">
-                  {t('hero.ctaCreate')} <ArrowRight className="ml-1" />
-                </Button>
-              </Link>
-              <Link to="/plan">
-                <Button variant="subtle" size="xl">
-                  {t('hero.ctaDemo')}
-                </Button>
-              </Link>
-            </div>
-            <ul className="grid sm:grid-cols-3 gap-2 text-sm text-foreground/80">
-              <li className="flex items-center gap-2"><Shuffle className="h-4 w-4" /> {t('hero.bullets.swap')}</li>
-              <li className="flex items-center gap-2"><ShoppingCart className="h-4 w-4" /> {t('hero.bullets.list')}</li>
-              <li className="flex items-center gap-2"><Sparkles className="h-4 w-4" /> {t('hero.bullets.prices')}</li>
-            </ul>
-          </div>
-          <div className="relative">
-            <img src={heroImage} alt={t('hero.imageAlt')} loading="lazy" className="rounded-lg shadow-lg" />
-            <div className="pointer-events-none absolute inset-0 rounded-lg" style={{ background: "radial-gradient(800px circle at 20% 10%, hsl(var(--brand) / 0.12), transparent 40%)" }} />
-          </div>
-        </section>
+        <Hero />
 
         {/* Value Props */}
         <section className="border-t border-border bg-card/30">
@@ -202,61 +161,7 @@ const Index = () => {
         </section>
 
         {/* Pricing */}
-        <section className="border-t border-border">
-          <div className="container py-12 md:py-20">
-            <h2 className="text-2xl md:text-3xl font-semibold">{t('pricing.title')}</h2>
-            <p className="text-muted-foreground mt-2">{t('pricing.subtitle')}</p>
-            <div className="mt-8 grid gap-6 md:grid-cols-3">
-              <article className="rounded-lg border bg-card p-6 shadow-sm">
-                <h3 className="text-lg font-semibold">{t('pricing.free.title')}</h3>
-                <div className="mt-3 flex items-baseline gap-2">
-                  <span className="text-3xl font-bold">{t('pricing.free.price')}</span>
-                  <span className="text-muted-foreground">{t('pricing.free.period')}</span>
-                </div>
-                <ul className="mt-4 space-y-2 text-sm text-foreground/80">
-                  {(t('pricing.free.features', { returnObjects: true }) as string[]).map((f, i) => (
-                    <li key={i} className="flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-primary" /><span>{f}</span></li>
-                  ))}
-                </ul>
-                <div className="mt-6">
-                  <Link to="/onboarding"><Button variant="subtle" size="sm">{t('pricing.free.cta')}</Button></Link>
-                </div>
-              </article>
-
-              <article className="rounded-lg border bg-card p-6 shadow-sm ring-1 ring-primary/20">
-                <h3 className="text-lg font-semibold">{t('pricing.pro.title')}</h3>
-                <div className="mt-3 flex items-baseline gap-2">
-                  <span className="text-3xl font-bold">{t('pricing.pro.price')}</span>
-                  <span className="text-muted-foreground">{t('pricing.pro.period')}</span>
-                </div>
-                <ul className="mt-4 space-y-2 text-sm text-foreground/80">
-                  {(t('pricing.pro.features', { returnObjects: true }) as string[]).map((f, i) => (
-                    <li key={i} className="flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-primary" /><span>{f}</span></li>
-                  ))}
-                </ul>
-                <div className="mt-6">
-                  <Link to="/onboarding"><Button variant="hero" size="sm">{t('pricing.pro.cta')}</Button></Link>
-                </div>
-              </article>
-
-              <article className="rounded-lg border bg-card p-6 shadow-sm">
-                <h3 className="text-lg font-semibold">{t('pricing.family.title')}</h3>
-                <div className="mt-3 flex items-baseline gap-2">
-                  <span className="text-3xl font-bold">{t('pricing.family.price')}</span>
-                  <span className="text-muted-foreground">{t('pricing.family.period')}</span>
-                </div>
-                <ul className="mt-4 space-y-2 text-sm text-foreground/80">
-                  {(t('pricing.family.features', { returnObjects: true }) as string[]).map((f, i) => (
-                    <li key={i} className="flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-primary" /><span>{f}</span></li>
-                  ))}
-                </ul>
-                <div className="mt-6">
-                  <Link to="/onboarding"><Button variant="subtle" size="sm">{t('pricing.family.cta')}</Button></Link>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
+        <Pricing />
 
         {/* Testimonials */}
         <section className="border-t border-border bg-card/30">
@@ -280,47 +185,80 @@ const Index = () => {
         </section>
 
         {/* FAQ */}
+        <FAQ />
+
+        {/* Contact Us */}
         <section className="border-t border-border">
           <div className="container py-12 md:py-20">
-            <h2 className="text-2xl md:text-3xl font-semibold">{t('faq.title')}</h2>
-            <div className="mt-6">
-              <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="faq-1">
-                  <AccordionTrigger>{t('faq.q1.q')}</AccordionTrigger>
-                  <AccordionContent>
-                    {t('faq.q1.a')}
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="faq-2">
-                  <AccordionTrigger>{t('faq.q2.q')}</AccordionTrigger>
-                  <AccordionContent>
-                    {t('faq.q2.a')}
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="faq-3">
-                  <AccordionTrigger>{t('faq.q3.q')}</AccordionTrigger>
-                  <AccordionContent>
-                    {t('faq.q3.a')}
-                  </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="faq-4">
-                  <AccordionTrigger>{t('faq.q4.q')}</AccordionTrigger>
-                  <AccordionContent>
-                    {t('faq.q4.a')}
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </div>
-            <div className="mt-8">
-              <Link to="/onboarding">
-                <Button variant="hero" size="lg">
-                  {t('pricing.free.cta')} <ArrowRight className="ml-1" />
-                </Button>
-              </Link>
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-2xl md:text-3xl font-semibold">Get in Touch</h2>
+                <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
+                  Have questions about TellerPlan? Need help getting started? We're here to help you on your meal planning journey.
+                </p>
+              </div>
+              <ContactForm compact />
             </div>
           </div>
         </section>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-border bg-card/30">
+        <div className="container py-12">
+          <div className="grid gap-8 md:grid-cols-4">
+            <div className="md:col-span-2">
+              <Link to="/" className="inline-flex items-center gap-2 mb-4">
+                <div className="h-8 w-8 rounded-md" style={{ background: "var(--gradient-primary)" }} />
+                <span className="text-lg font-semibold">{t('brand.name')}</span>
+              </Link>
+              <p className="text-muted-foreground mb-4">
+                Simplify your meal planning with AI-powered recommendations, 
+                smart shopping lists, and personalized nutrition tracking.
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-4">Product</h3>
+              <div className="space-y-2">
+                <Link to="/onboarding" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Getting Started
+                </Link>
+                <Link to="/plan" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Demo
+                </Link>
+                <Link to="/contact" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Support
+                </Link>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-4">Legal</h3>
+              <div className="space-y-2">
+                <Link to="/privacy" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Privacy Policy
+                </Link>
+                <Link to="/imprint" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Imprint
+                </Link>
+                <Link to="/contact" className="block text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Contact
+                </Link>
+              </div>
+            </div>
+          </div>
+          
+          <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} TellerPlan. All rights reserved.
+            </p>
+            <div className="flex items-center gap-4">
+              <LanguageSwitcher />
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

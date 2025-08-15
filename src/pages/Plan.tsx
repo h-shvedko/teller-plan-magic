@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Header } from "@/components/Header";
 import { SAMPLE_RECIPES, Recipe, getAlternatives } from "@/lib/recipes";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "@/components/ui/sonner";
@@ -13,7 +14,7 @@ type DietTag = Recipe["dietary"][number];
 
 type Profile = {
   goals: string[];
-  diets: DietTag[];
+  diets?: DietTag[];
   ratings: Record<string, number>;
   household: number;
   style: "daily" | "clever" | "weekend";
@@ -34,11 +35,11 @@ const Plan = () => {
   const [days, setDays] = useState<string>("5");
   const basePool = useMemo(() => {
     if (!profile) return SAMPLE_RECIPES;
-    const likedCuisines = Object.entries(profile.ratings || {})
-      .filter(([, v]) => (v as number) >= 3)
+    const likedCuisines = (Object.entries(profile.ratings ?? {}) as [string, number][]) 
+      .filter(([, v]) => v >= 3)
       .map(([k]) => k);
     return SAMPLE_RECIPES.filter((r) =>
-      (!profile.diets?.length || (profile.diets as DietTag[]).every((d) => r.dietary.includes(d))) &&
+      (!profile.diets?.length || profile.diets.every((d) => r.dietary.includes(d))) &&
       (!likedCuisines.length || likedCuisines.includes(r.cuisine))
     );
   }, [profile]);
@@ -46,10 +47,14 @@ const Plan = () => {
   const [plan, setPlan] = useState<Recipe[]>([]);
 
   useEffect(() => {
+    if (!profile) {
+      navigate("/onboarding");
+      return;
+    }
     const count = Number(days);
     const selection = [...basePool].slice(0, Math.max(3, count));
     setPlan(selection.slice(0, count));
-  }, [basePool, days]);
+  }, [basePool, days, profile, navigate]);
 
   const swapAt = (idx: number, withRecipe: Recipe) => {
     setPlan((p) => p.map((r, i) => (i === idx ? withRecipe : r)));
@@ -60,8 +65,11 @@ const Plan = () => {
     navigate("/shopping");
   };
 
+  if (!profile) return null;
+
   return (
     <div className="min-h-screen bg-background">
+      <Header showGetStarted={false} />
       <Helmet>
         <title>Your Weekly Meal Plan | Tellerplan</title>
         <meta name="description" content="A visual weekly plan you can tweak—swap meals, change days, and generate your shopping list." />
