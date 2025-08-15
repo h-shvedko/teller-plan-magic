@@ -9,7 +9,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Header } from "@/components/Header";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/sonner";
 
 const CUISINES = ["Italian", "Vietnamese", "Mexican", "German", "Indian"] as const;
 const DIETS = ["Vegetarian", "Vegan", "Gluten-Free", "Dairy-Free", "Pescatarian"] as const;

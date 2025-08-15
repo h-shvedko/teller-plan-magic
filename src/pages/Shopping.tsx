@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
 import { Ingredient, Recipe } from "@/lib/recipes";
 import { useEffect, useMemo } from "react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/sonner";
 import { useNavigate } from "react-router-dom";
 
 function loadPlan(): Recipe[] {
