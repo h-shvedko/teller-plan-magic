@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Header } from '@/components/Header';
@@ -48,15 +48,9 @@ export const Dashboard = () => {
     health_goals: []
   });
 
-  useEffect(() => {
-    if (user) {
-      loadPreferences();
-    }
-  }, [user]);
-
-  const loadPreferences = async () => {
+  const loadPreferences = useCallback(async () => {
     if (!user) return;
-    
+
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -81,17 +75,23 @@ export const Dashboard = () => {
           health_goals: data.health_goals || []
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error loading preferences:', error);
       toast({
-        title: "Error",
-        description: "Failed to load your preferences",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to load your preferences',
+        variant: 'destructive'
       });
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      loadPreferences();
+    }
+  }, [user, loadPreferences]);
 
   const savePreferences = async () => {
     if (!user) return;
@@ -116,15 +116,15 @@ export const Dashboard = () => {
       if (error) throw error;
 
       toast({
-        title: "Success",
-        description: "Your preferences have been saved"
+        title: 'Success',
+        description: 'Your preferences have been saved'
       });
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error saving preferences:', error);
       toast({
-        title: "Error",
-        description: "Failed to save your preferences",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to save your preferences',
+        variant: 'destructive'
       });
     } finally {
       setSaving(false);
@@ -183,9 +183,9 @@ export const Dashboard = () => {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="cooking-style">Cooking Style</Label>
-                  <Select 
-                    value={preferences.cooking_style} 
-                    onValueChange={(value: any) => setPreferences(prev => ({ ...prev, cooking_style: value }))}
+                  <Select
+                    value={preferences.cooking_style}
+                    onValueChange={(value: string) => setPreferences(prev => ({ ...prev, cooking_style: value }))}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select cooking style" />
@@ -200,9 +200,9 @@ export const Dashboard = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="difficulty">Difficulty Level</Label>
-                  <Select 
-                    value={preferences.difficulty_level} 
-                    onValueChange={(value: any) => setPreferences(prev => ({ ...prev, difficulty_level: value }))}
+                  <Select
+                    value={preferences.difficulty_level}
+                    onValueChange={(value: string) => setPreferences(prev => ({ ...prev, difficulty_level: value }))}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select difficulty" />
@@ -229,8 +229,8 @@ export const Dashboard = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="budget">Budget Range</Label>
-                  <Select 
-                    value={preferences.budget_range} 
+                  <Select
+                    value={preferences.budget_range}
                     onValueChange={(value) => setPreferences(prev => ({ ...prev, budget_range: value }))}
                   >
                     <SelectTrigger>
@@ -325,3 +325,4 @@ export const Dashboard = () => {
     </div>
   );
 };
+

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Header } from '@/components/Header';
@@ -86,31 +86,9 @@ export const AdminDashboard = () => {
     if (user && isAdmin) {
       loadAdminData();
     }
-  }, [user, isAdmin]);
+  }, [user, isAdmin, loadAdminData]);
 
-  const loadAdminData = async () => {
-    setLoading(true);
-    try {
-      await Promise.all([
-        loadStats(),
-        loadUsers(),
-        loadRecipes(),
-        loadMealPlans(),
-        loadShoppingLists()
-      ]);
-    } catch (error) {
-      console.error('Error loading admin data:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load admin dashboard data",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
     const [usersRes, recipesRes, mealPlansRes, shoppingListsRes] = await Promise.all([
       supabase.from('profiles').select('id', { count: 'exact', head: true }),
       supabase.from('recipes').select('id', { count: 'exact', head: true }),
@@ -124,11 +102,15 @@ export const AdminDashboard = () => {
       totalMealPlans: mealPlansRes.count || 0,
       totalShoppingLists: shoppingListsRes.count || 0
     });
-  };
+  }, []);
 
-  const loadUsers = async () => {
+  interface UserWithRoles extends UserData {
+    user_roles: { role: string }[];
+  }
+
+  const loadUsers = useCallback(async () => {
     const { data, error } = await supabase
-      .from('profiles')
+      .from<UserWithRoles>('profiles')
       .select(`
         id, email, first_name, last_name, created_at,
         user_roles (role)
@@ -140,13 +122,13 @@ export const AdminDashboard = () => {
 
     const usersWithRoles = data?.map(user => ({
       ...user,
-      role: (user.user_roles as any)?.[0]?.role || 'user'
+      role: user.user_roles?.[0]?.role || 'user'
     })) || [];
 
     setUsers(usersWithRoles);
-  };
+  }, []);
 
-  const loadRecipes = async () => {
+  const loadRecipes = useCallback(async () => {
     const { data, error } = await supabase
       .from('recipes')
       .select(`
@@ -158,9 +140,9 @@ export const AdminDashboard = () => {
 
     if (error) throw error;
     setRecipes(data || []);
-  };
+  }, []);
 
-  const loadMealPlans = async () => {
+  const loadMealPlans = useCallback(async () => {
     const { data, error } = await supabase
       .from('meal_plans')
       .select(`
@@ -178,9 +160,9 @@ export const AdminDashboard = () => {
     })) || [];
 
     setMealPlans(mealPlansWithUserEmail);
-  };
+  }, []);
 
-  const loadShoppingLists = async () => {
+  const loadShoppingLists = useCallback(async () => {
     const { data, error } = await supabase
       .from('shopping_lists')
       .select(`
@@ -198,7 +180,29 @@ export const AdminDashboard = () => {
     })) || [];
 
     setShoppingLists(shoppingListsWithUserEmail);
-  };
+  }, []);
+
+  const loadAdminData = useCallback(async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        loadStats(),
+        loadUsers(),
+        loadRecipes(),
+        loadMealPlans(),
+        loadShoppingLists()
+      ]);
+    } catch (error: unknown) {
+      console.error('Error loading admin data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load admin dashboard data",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [loadStats, loadUsers, loadRecipes, loadMealPlans, loadShoppingLists]);
 
   if (!isAdmin) {
     return (
