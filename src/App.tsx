@@ -16,6 +16,9 @@ import Plan from "./pages/Plan";
 import Shopping from "./pages/Shopping";
 import { Dashboard } from "./pages/Dashboard";
 import { AdminDashboard } from "./pages/AdminDashboard";
+import { MealPlans } from "./pages/MealPlans";
+import { Recipes } from "./pages/Recipes";
+import { ShoppingLists } from "./pages/ShoppingLists";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +64,30 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/meal-plans" 
+                element={
+                  <ProtectedRoute>
+                    <MealPlans />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/recipes" 
+                element={
+                  <ProtectedRoute>
+                    <Recipes />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/shopping-lists" 
+                element={
+                  <ProtectedRoute>
+                    <ShoppingLists />
                   </ProtectedRoute>
                 } 
               />

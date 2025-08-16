@@ -27,9 +27,20 @@ export const Header = ({ showGetStarted = true }: HeaderProps) => {
           {t('nav.demo')}
         </Link>
         {user && (
-          <Link to="/dashboard" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
-            Dashboard
-          </Link>
+          <>
+            <Link to="/dashboard" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
+              Dashboard
+            </Link>
+            <Link to="/meal-plans" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
+              Meal Plans
+            </Link>
+            <Link to="/recipes" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
+              Recipes
+            </Link>
+            <Link to="/shopping-lists" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
+              Shopping Lists
+            </Link>
+          </>
         )}
         {isAdmin && (
           <Link to="/admin" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
