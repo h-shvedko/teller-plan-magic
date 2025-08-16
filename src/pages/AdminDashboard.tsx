@@ -391,10 +391,14 @@ export const AdminDashboard = () => {
         const { error } = await supabase.from('recipes').update(data).eq('id', id);
         if (error) throw error;
       } else if (table === 'meal_plans') {
-        const { error } = await supabase.from('meal_plans').update(data).eq('id', id);
+        // Filter out computed fields that don't exist in the database
+        const { user_email, ...updateData } = data;
+        const { error } = await supabase.from('meal_plans').update(updateData).eq('id', id);
         if (error) throw error;
       } else if (table === 'shopping_lists') {
-        const { error } = await supabase.from('shopping_lists').update(data).eq('id', id);
+        // Filter out computed fields that don't exist in the database
+        const { user_email, ...updateData } = data;
+        const { error } = await supabase.from('shopping_lists').update(updateData).eq('id', id);
         if (error) throw error;
       }
       
