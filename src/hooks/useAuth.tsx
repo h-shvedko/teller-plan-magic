@@ -24,27 +24,26 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [userRole, setUserRole] = useState<string | null>(null);
+  const [userRoles, setUserRoles] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  const fetchUserRole = async (userId: string) => {
+  const fetchUserRoles = async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from('user_roles')
         .select('role')
-        .eq('user_id', userId)
-        .single();
+        .eq('user_id', userId);
 
       if (error) {
-        console.error('Error fetching user role:', error);
-        return null;
+        console.error('Error fetching user roles:', error);
+        return [];
       }
 
-      return data?.role || null;
+      return data?.map(item => item.role) || [];
     } catch (error) {
-      console.error('Error fetching user role:', error);
-      return null;
+      console.error('Error fetching user roles:', error);
+      return [];
     }
   };
 
@@ -58,9 +57,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         
         // Defer role fetching to avoid auth state change deadlock
         if (session?.user) {
-          fetchUserRole(session.user.id).then(setUserRole);
+          fetchUserRoles(session.user.id).then(setUserRoles);
         } else {
-          setUserRole(null);
+          setUserRoles([]);
         }
       }
     );
@@ -72,7 +71,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(false);
       
       if (session?.user) {
-        fetchUserRole(session.user.id).then(setUserRole);
+        fetchUserRoles(session.user.id).then(setUserRoles);
       }
     });
 
@@ -176,7 +175,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const isAdmin = userRole === 'administrator';
+  const isAdmin = userRoles.includes('administrator');
+  const userRole = userRoles.length > 0 ? userRoles[0] : null; // For backward compatibility
 
   return (
     <AuthContext.Provider value={{
