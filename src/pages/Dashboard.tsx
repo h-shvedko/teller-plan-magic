@@ -9,8 +9,13 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, Save, User, Settings } from 'lucide-react';
+import { Loader2, Save, User, Settings, TrendingUp, Calendar, ChefHat, ShoppingCart, Target, Award } from 'lucide-react';
 import { useSettings } from '@/hooks/useSettings';
+import { useUserStats } from '@/hooks/useUserStats';
+import { StatCard } from '@/components/dashboard/StatCard';
+import { ActivityChart } from '@/components/dashboard/ActivityChart';
+import { CuisineChart } from '@/components/dashboard/CuisineChart';
+import { RecentActivity } from '@/components/dashboard/RecentActivity';
 
 interface UserPreferences {
   id?: string;
@@ -28,6 +33,7 @@ interface UserPreferences {
 export const Dashboard = () => {
   const { user } = useAuth();
   const { settings, loading: settingsLoading, error: settingsError } = useSettings();
+  const { stats, loading: statsLoading, error: statsError } = useUserStats();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [preferences, setPreferences] = useState<UserPreferences>({
@@ -134,22 +140,22 @@ export const Dashboard = () => {
     });
   };
 
-  if (loading || settingsLoading) {
+  if (loading || settingsLoading || statsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex items-center gap-2">
           <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Loading your preferences...</span>
+          <span>Loading your dashboard...</span>
         </div>
       </div>
     );
   }
 
-  if (settingsError) {
+  if (settingsError || statsError) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-destructive">Error loading settings: {settingsError}</p>
+          <p className="text-destructive">Error loading data: {settingsError || statsError}</p>
           <Button onClick={() => window.location.reload()} className="mt-4">
             Retry
           </Button>
@@ -169,7 +175,46 @@ export const Dashboard = () => {
               <User className="h-8 w-8 text-primary" />
               <h1 className="text-3xl font-bold">Dashboard</h1>
             </div>
-            <p className="text-muted-foreground">Customize your meal planning preferences</p>
+            <p className="text-muted-foreground">Your meal planning analytics and preferences</p>
+          </div>
+
+          {/* Statistics Overview */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <StatCard
+              title="Meal Plans"
+              value={stats.totalMealPlans}
+              description={`${stats.activeMealPlans} active`}
+              icon={<Calendar />}
+            />
+            <StatCard
+              title="Recipes"
+              value={stats.totalRecipes}
+              description={`${stats.publicRecipes} public`}
+              icon={<ChefHat />}
+            />
+            <StatCard
+              title="Shopping Lists"
+              value={stats.totalShoppingLists}
+              description={`${Math.round(stats.completionRate)}% completion rate`}
+              icon={<ShoppingCart />}
+            />
+            <StatCard
+              title="Current Streak"
+              value={`${stats.currentStreak} weeks`}
+              description={`Longest: ${stats.longestStreak} weeks`}
+              icon={<Award />}
+            />
+          </div>
+
+          {/* Charts and Analytics */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <ActivityChart data={stats.weeklyActivity} />
+            <CuisineChart data={stats.cuisineDistribution} />
+          </div>
+
+          {/* Recent Activity */}
+          <div className="mb-8">
+            <RecentActivity data={stats.recentActivity} />
           </div>
 
           {/* Preferences Form */}
