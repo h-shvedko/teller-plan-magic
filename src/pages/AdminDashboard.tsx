@@ -301,32 +301,16 @@ export const AdminDashboard = () => {
         const { error } = await supabase.from('recipes').insert(insertData);
         if (error) throw error;
       } else if (table === 'meal_plans') {
-        // Get the current user's profile ID for user_id field
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('user_id', user?.id)
-          .single();
-        
-        if (profileError) throw profileError;
-        
-        insertData.user_id = profileData.id;
+        // Use auth user ID for meal_plans as RLS policy expects auth.uid()
+        insertData.user_id = user?.id;
         if (!insertData.week_start_date) {
           insertData.week_start_date = new Date().toISOString().split('T')[0];
         }
         const { error } = await supabase.from('meal_plans').insert(insertData);
         if (error) throw error;
       } else if (table === 'shopping_lists') {
-        // Get the current user's profile ID for user_id field
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('user_id', user?.id)
-          .single();
-        
-        if (profileError) throw profileError;
-        
-        insertData.user_id = profileData.id;
+        // Use auth user ID for shopping_lists as RLS policy expects auth.uid()
+        insertData.user_id = user?.id;
         const { error } = await supabase.from('shopping_lists').insert(insertData);
         if (error) throw error;
       }
