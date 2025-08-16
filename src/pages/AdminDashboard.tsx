@@ -51,6 +51,7 @@ interface AdminStats {
 
 interface UserData {
   id: string;
+  user_id: string;
   email: string;
   first_name: string | null;
   last_name: string | null;
@@ -127,7 +128,7 @@ export const AdminDashboard = () => {
     // First get users without roles to avoid foreign key issues
     const { data: usersData, error: usersError } = await supabase
       .from('profiles')
-      .select('id, email, first_name, last_name, created_at')
+      .select('id, user_id, email, first_name, last_name, created_at')
       .order('created_at', { ascending: false })
       .limit(50);
 
@@ -140,10 +141,10 @@ export const AdminDashboard = () => {
 
     if (rolesError) throw rolesError;
 
-    // Combine the data
+    // Combine the data - use user_id as the key for matching
     const usersWithRoles = usersData?.map(user => ({
       ...user,
-      role: rolesData?.find(role => role.user_id === user.id)?.role || 'user'
+      role: rolesData?.find(role => role.user_id === user.user_id)?.role || 'user'
     })) || [];
 
     setUsers(usersWithRoles);
@@ -323,7 +324,7 @@ export const AdminDashboard = () => {
             last_name: data.last_name,
             email: data.email
           })
-          .eq('user_id', id);
+          .eq('user_id', id);  // Use user_id instead of id
         
         if (profileError) throw profileError;
 
@@ -332,7 +333,7 @@ export const AdminDashboard = () => {
           const { error: roleError } = await supabase
             .from('user_roles')
             .upsert({
-              user_id: id,
+              user_id: id,  // This is the auth.users.id
               role: data.role
             });
           
@@ -719,7 +720,7 @@ export const AdminDashboard = () => {
                     </TableHeader>
                     <TableBody>
                       {users.map((user) => (
-                        <TableRow key={user.id}>
+                        <TableRow key={user.user_id}>
                           <TableCell>{user.email}</TableCell>
                           <TableCell>
                             {user.first_name && user.last_name 
@@ -740,14 +741,14 @@ export const AdminDashboard = () => {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => openEditDialog({...user, user_id: user.id}, 'users')}
+                                onClick={() => openEditDialog({...user}, 'users')}
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => handleDelete('users', user.id)}
+                                onClick={() => handleDelete('users', user.user_id)}
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -992,7 +993,7 @@ export const AdminDashboard = () => {
                 <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
                   Cancel
                 </Button>
-                <Button onClick={() => currentTable && handleUpdate(currentTable as 'recipes' | 'meal_plans' | 'shopping_lists' | 'users', editingItem?.id || editingItem?.user_id, formData)}>
+                <Button onClick={() => currentTable && handleUpdate(currentTable as 'recipes' | 'meal_plans' | 'shopping_lists' | 'users', editingItem?.user_id || editingItem?.id, formData)}>
                   <Save className="h-4 w-4 mr-2" />
                   Update
                 </Button>
