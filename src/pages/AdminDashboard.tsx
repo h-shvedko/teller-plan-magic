@@ -349,23 +349,26 @@ export const AdminDashboard = () => {
         
         if (profileError) throw profileError;
 
-        // Update role if changed
+        // Update role if changed using edge function
         if (data.role) {
-          // First, remove any existing roles to avoid conflicts
-          await supabase
-            .from('user_roles')
-            .delete()
-            .eq('user_id', id);
-
-          // Then insert the new role
-          const { error: roleError } = await supabase
-            .from('user_roles')
-            .insert({
-              user_id: id,
+          const { data: sessionData } = await supabase.auth.getSession();
+          const response = await fetch(`https://hxrppmdwujlfpkcfumpm.supabase.co/functions/v1/manage-user-roles`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${sessionData.session?.access_token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              action: 'update',
+              userId: id,
               role: data.role
-            });
-          
-          if (roleError) throw roleError;
+            })
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to update role');
+          }
         }
       } else if (table === 'recipes') {
         data.servings = parseInt(data.servings) || 2;
