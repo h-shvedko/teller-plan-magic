@@ -165,40 +165,56 @@ export const AdminDashboard = () => {
   }, []);
 
   const loadMealPlans = useCallback(async () => {
-    const { data, error } = await supabase
+    // Since meal_plans.user_id now references auth.users, we can't directly join with profiles
+    // We'll load meal plans and get user emails separately
+    const { data: mealPlansData, error } = await supabase
       .from('meal_plans')
-      .select(`
-        id, name, week_start_date, is_active, created_at,
-        profiles (email)
-      `)
+      .select('id, name, week_start_date, is_active, created_at, user_id')
       .order('created_at', { ascending: false })
       .limit(50);
 
     if (error) throw error;
 
-    const mealPlansWithUserEmail = data?.map(plan => ({
+    // Get user emails from profiles table
+    const userIds = mealPlansData?.map(plan => plan.user_id).filter(Boolean) || [];
+    const { data: profilesData } = await supabase
+      .from('profiles')
+      .select('user_id, email')
+      .in('user_id', userIds);
+
+    const profilesMap = new Map(profilesData?.map(p => [p.user_id, p.email]) || []);
+
+    const mealPlansWithUserEmail = mealPlansData?.map(plan => ({
       ...plan,
-      user_email: plan.profiles?.email || 'Unknown'
+      user_email: profilesMap.get(plan.user_id) || 'Unknown'
     })) || [];
 
     setMealPlans(mealPlansWithUserEmail);
   }, []);
 
   const loadShoppingLists = useCallback(async () => {
-    const { data, error } = await supabase
+    // Since shopping_lists.user_id now references auth.users, we can't directly join with profiles
+    // We'll load shopping lists and get user emails separately
+    const { data: shoppingListsData, error } = await supabase
       .from('shopping_lists')
-      .select(`
-        id, name, is_completed, created_at,
-        profiles!user_id (email)
-      `)
+      .select('id, name, is_completed, created_at, user_id')
       .order('created_at', { ascending: false })
       .limit(50);
 
     if (error) throw error;
 
-    const shoppingListsWithUserEmail = data?.map(list => ({
+    // Get user emails from profiles table
+    const userIds = shoppingListsData?.map(list => list.user_id).filter(Boolean) || [];
+    const { data: profilesData } = await supabase
+      .from('profiles')
+      .select('user_id, email')
+      .in('user_id', userIds);
+
+    const profilesMap = new Map(profilesData?.map(p => [p.user_id, p.email]) || []);
+
+    const shoppingListsWithUserEmail = shoppingListsData?.map(list => ({
       ...list,
-      user_email: (list.profiles as any)?.email || 'Unknown'
+      user_email: profilesMap.get(list.user_id) || 'Unknown'
     })) || [];
 
     setShoppingLists(shoppingListsWithUserEmail);
