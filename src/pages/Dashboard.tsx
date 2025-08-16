@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
 import { Loader2, Save, User, Settings } from 'lucide-react';
+import { useSettings } from '@/hooks/useSettings';
 
 interface UserPreferences {
   id?: string;
@@ -22,20 +23,11 @@ interface UserPreferences {
   health_goals: string[];
 }
 
-const DIETARY_OPTIONS = [
-  'vegetarian', 'vegan', 'gluten-free', 'dairy-free', 'nut-free', 'low-carb', 'keto', 'paleo'
-];
-
-const CUISINE_OPTIONS = [
-  'italian', 'mexican', 'asian', 'mediterranean', 'indian', 'american', 'french', 'thai', 'chinese', 'japanese'
-];
-
-const HEALTH_GOALS = [
-  'weight-loss', 'muscle-gain', 'heart-health', 'diabetes-friendly', 'high-protein', 'low-sodium'
-];
+// Settings will be loaded from database via useSettings hook
 
 export const Dashboard = () => {
   const { user } = useAuth();
+  const { settings, loading: settingsLoading, error: settingsError } = useSettings();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [preferences, setPreferences] = useState<UserPreferences>({
@@ -142,12 +134,25 @@ export const Dashboard = () => {
     });
   };
 
-  if (loading) {
+  if (loading || settingsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex items-center gap-2">
           <Loader2 className="h-6 w-6 animate-spin" />
           <span>Loading your preferences...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (settingsError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-destructive">Error loading settings: {settingsError}</p>
+          <Button onClick={() => window.location.reload()} className="mt-4">
+            Retry
+          </Button>
         </div>
       </div>
     );
@@ -191,9 +196,11 @@ export const Dashboard = () => {
                       <SelectValue placeholder="Select cooking style" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="quick">Quick & Easy</SelectItem>
-                      <SelectItem value="elaborate">Elaborate & Detailed</SelectItem>
-                      <SelectItem value="mixed">Mixed</SelectItem>
+                      {settings.cookingStyles.map((style) => (
+                        <SelectItem key={style.id} value={style.name}>
+                          {style.name.charAt(0).toUpperCase() + style.name.slice(1)}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -249,15 +256,15 @@ export const Dashboard = () => {
               <div className="space-y-3">
                 <Label>Dietary Restrictions</Label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {DIETARY_OPTIONS.map((option) => (
-                    <div key={option} className="flex items-center space-x-2">
+                  {settings.dietaryPreferences.map((option) => (
+                    <div key={option.id} className="flex items-center space-x-2">
                       <Checkbox
-                        id={option}
-                        checked={preferences.dietary_restrictions.includes(option)}
-                        onCheckedChange={(checked) => updateArrayField('dietary_restrictions', option, !!checked)}
+                        id={option.name}
+                        checked={preferences.dietary_restrictions.includes(option.name)}
+                        onCheckedChange={(checked) => updateArrayField('dietary_restrictions', option.name, !!checked)}
                       />
-                      <Label htmlFor={option} className="text-sm capitalize">
-                        {option.replace('-', ' ')}
+                      <Label htmlFor={option.name} className="text-sm">
+                        {option.name}
                       </Label>
                     </div>
                   ))}
@@ -268,15 +275,15 @@ export const Dashboard = () => {
               <div className="space-y-3">
                 <Label>Favorite Cuisines</Label>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                  {CUISINE_OPTIONS.map((cuisine) => (
-                    <div key={cuisine} className="flex items-center space-x-2">
+                  {settings.cuisines.map((cuisine) => (
+                    <div key={cuisine.id} className="flex items-center space-x-2">
                       <Checkbox
-                        id={cuisine}
-                        checked={preferences.favorite_cuisines.includes(cuisine)}
-                        onCheckedChange={(checked) => updateArrayField('favorite_cuisines', cuisine, !!checked)}
+                        id={cuisine.name}
+                        checked={preferences.favorite_cuisines.includes(cuisine.name)}
+                        onCheckedChange={(checked) => updateArrayField('favorite_cuisines', cuisine.name, !!checked)}
                       />
-                      <Label htmlFor={cuisine} className="text-sm capitalize">
-                        {cuisine}
+                      <Label htmlFor={cuisine.name} className="text-sm">
+                        {cuisine.name}
                       </Label>
                     </div>
                   ))}
@@ -287,15 +294,15 @@ export const Dashboard = () => {
               <div className="space-y-3">
                 <Label>Health Goals</Label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {HEALTH_GOALS.map((goal) => (
-                    <div key={goal} className="flex items-center space-x-2">
+                  {settings.healthGoals.map((goal) => (
+                    <div key={goal.id} className="flex items-center space-x-2">
                       <Checkbox
-                        id={goal}
-                        checked={preferences.health_goals.includes(goal)}
-                        onCheckedChange={(checked) => updateArrayField('health_goals', goal, !!checked)}
+                        id={goal.name}
+                        checked={preferences.health_goals.includes(goal.name)}
+                        onCheckedChange={(checked) => updateArrayField('health_goals', goal.name, !!checked)}
                       />
-                      <Label htmlFor={goal} className="text-sm capitalize">
-                        {goal.replace('-', ' ')}
+                      <Label htmlFor={goal.name} className="text-sm">
+                        {goal.name}
                       </Label>
                     </div>
                   ))}
