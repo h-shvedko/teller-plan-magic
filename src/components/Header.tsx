@@ -11,7 +11,7 @@ interface HeaderProps {
 
 export const Header = ({ showGetStarted = true }: HeaderProps) => {
   const { t } = useTranslation('landing');
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
 
   return (
     <header className="container py-6 flex items-center justify-between">
@@ -29,6 +29,11 @@ export const Header = ({ showGetStarted = true }: HeaderProps) => {
         {user && (
           <Link to="/dashboard" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
             Dashboard
+          </Link>
+        )}
+        {isAdmin && (
+          <Link to="/admin" className="text-sm text-foreground/70 hover:text-foreground transition-colors">
+            Admin
           </Link>
         )}
         {!user && showGetStarted && (

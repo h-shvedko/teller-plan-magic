@@ -14,6 +14,19 @@ import {
   TableHeader, 
   TableRow 
 } from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { 
   Users, 
   ChefHat, 
@@ -21,7 +34,11 @@ import {
   ShoppingCart, 
   Settings, 
   Calendar,
-  Loader2
+  Loader2,
+  Plus,
+  Edit,
+  Trash2,
+  Save
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
@@ -81,6 +98,13 @@ export const AdminDashboard = () => {
   const [recipes, setRecipes] = useState<RecipeData[]>([]);
   const [mealPlans, setMealPlans] = useState<MealPlanData[]>([]);
   const [shoppingLists, setShoppingLists] = useState<ShoppingListData[]>([]);
+  
+  // Edit states
+  const [editingItem, setEditingItem] = useState<any>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [currentTable, setCurrentTable] = useState<'recipes' | 'meal_plans' | 'shopping_lists' | ''>('');
+  const [formData, setFormData] = useState<any>({});
 
   const loadStats = useCallback(async () => {
     const [usersRes, recipesRes, mealPlansRes, shoppingListsRes] = await Promise.all([
@@ -205,6 +229,235 @@ export const AdminDashboard = () => {
       loadAdminData();
     }
   }, [user, isAdmin, loadAdminData]);
+
+  // CRUD Operations
+  const handleCreate = async (table: 'recipes' | 'meal_plans' | 'shopping_lists', data: any) => {
+    try {
+      let insertData = { ...data };
+      
+      if (table === 'recipes') {
+        insertData.created_by = user?.id;
+        const { error } = await supabase.from('recipes').insert(insertData);
+        if (error) throw error;
+      } else if (table === 'meal_plans') {
+        insertData.user_id = user?.id;
+        const { error } = await supabase.from('meal_plans').insert(insertData);
+        if (error) throw error;
+      } else if (table === 'shopping_lists') {
+        insertData.user_id = user?.id;
+        const { error } = await supabase.from('shopping_lists').insert(insertData);
+        if (error) throw error;
+      }
+      
+      toast({
+        title: "Success",
+        description: `${table.replace('_', ' ')} created successfully`
+      });
+      
+      await loadAdminData();
+      setCreateDialogOpen(false);
+      setFormData({});
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleUpdate = async (table: 'recipes' | 'meal_plans' | 'shopping_lists', id: string, data: any) => {
+    try {
+      if (table === 'recipes') {
+        const { error } = await supabase.from('recipes').update(data).eq('id', id);
+        if (error) throw error;
+      } else if (table === 'meal_plans') {
+        const { error } = await supabase.from('meal_plans').update(data).eq('id', id);
+        if (error) throw error;
+      } else if (table === 'shopping_lists') {
+        const { error } = await supabase.from('shopping_lists').update(data).eq('id', id);
+        if (error) throw error;
+      }
+      
+      toast({
+        title: "Success",
+        description: `${table.replace('_', ' ')} updated successfully`
+      });
+      
+      await loadAdminData();
+      setEditDialogOpen(false);
+      setEditingItem(null);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleDelete = async (table: 'recipes' | 'meal_plans' | 'shopping_lists', id: string) => {
+    if (!confirm('Are you sure you want to delete this item?')) return;
+    
+    try {
+      if (table === 'recipes') {
+        const { error } = await supabase.from('recipes').delete().eq('id', id);
+        if (error) throw error;
+      } else if (table === 'meal_plans') {
+        const { error } = await supabase.from('meal_plans').delete().eq('id', id);
+        if (error) throw error;
+      } else if (table === 'shopping_lists') {
+        const { error } = await supabase.from('shopping_lists').delete().eq('id', id);
+        if (error) throw error;
+      }
+      
+      toast({
+        title: "Success",
+        description: `${table.replace('_', ' ')} deleted successfully`
+      });
+      
+      await loadAdminData();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
+
+  const openEditDialog = (item: any, table: 'recipes' | 'meal_plans' | 'shopping_lists') => {
+    setEditingItem(item);
+    setCurrentTable(table);
+    setFormData(item);
+    setEditDialogOpen(true);
+  };
+
+  const openCreateDialog = (table: 'recipes' | 'meal_plans' | 'shopping_lists') => {
+    setCurrentTable(table);
+    setFormData({});
+    setCreateDialogOpen(true);
+  };
+
+  const renderFormFields = (isEdit = false) => {
+    switch (currentTable) {
+      case 'recipes':
+        return (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                value={formData.name || ''}
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+              />
+            </div>
+            <div>
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={formData.description || ''}
+                onChange={(e) => setFormData({...formData, description: e.target.value})}
+              />
+            </div>
+            <div>
+              <Label htmlFor="cuisine">Cuisine</Label>
+              <Input
+                id="cuisine"
+                value={formData.cuisine || ''}
+                onChange={(e) => setFormData({...formData, cuisine: e.target.value})}
+              />
+            </div>
+            <div>
+              <Label htmlFor="difficulty">Difficulty</Label>
+              <Select 
+                value={formData.difficulty || 'intermediate'}
+                onValueChange={(value) => setFormData({...formData, difficulty: value})}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select difficulty" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="beginner">Beginner</SelectItem>
+                  <SelectItem value="intermediate">Intermediate</SelectItem>
+                  <SelectItem value="advanced">Advanced</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="servings">Servings</Label>
+              <Input
+                id="servings"
+                type="number"
+                value={formData.servings || 2}
+                onChange={(e) => setFormData({...formData, servings: parseInt(e.target.value)})}
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="is_public"
+                checked={formData.is_public !== false}
+                onCheckedChange={(checked) => setFormData({...formData, is_public: checked})}
+              />
+              <Label htmlFor="is_public">Public Recipe</Label>
+            </div>
+          </div>
+        );
+      case 'meal_plans':
+        return (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                value={formData.name || ''}
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+              />
+            </div>
+            <div>
+              <Label htmlFor="week_start_date">Week Start Date</Label>
+              <Input
+                id="week_start_date"
+                type="date"
+                value={formData.week_start_date || ''}
+                onChange={(e) => setFormData({...formData, week_start_date: e.target.value})}
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="is_active"
+                checked={formData.is_active !== false}
+                onCheckedChange={(checked) => setFormData({...formData, is_active: checked})}
+              />
+              <Label htmlFor="is_active">Active</Label>
+            </div>
+          </div>
+        );
+      case 'shopping_lists':
+        return (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                value={formData.name || ''}
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="is_completed"
+                checked={formData.is_completed || false}
+                onCheckedChange={(checked) => setFormData({...formData, is_completed: checked})}
+              />
+              <Label htmlFor="is_completed">Completed</Label>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
 
   if (!isAdmin) {
@@ -339,9 +592,15 @@ export const AdminDashboard = () => {
 
             <TabsContent value="recipes">
               <Card>
-                <CardHeader>
-                  <CardTitle>Recipes</CardTitle>
-                  <CardDescription>Recently created recipes</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>Recipes</CardTitle>
+                    <CardDescription>Recently created recipes</CardDescription>
+                  </div>
+                  <Button onClick={() => openCreateDialog('recipes')}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Recipe
+                  </Button>
                 </CardHeader>
                 <CardContent>
                   <Table>
@@ -352,6 +611,7 @@ export const AdminDashboard = () => {
                         <TableHead>Difficulty</TableHead>
                         <TableHead>Visibility</TableHead>
                         <TableHead>Created</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -370,6 +630,24 @@ export const AdminDashboard = () => {
                           <TableCell>
                             {new Date(recipe.created_at).toLocaleDateString()}
                           </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => openEditDialog(recipe, 'recipes')}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleDelete('recipes', recipe.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -380,9 +658,15 @@ export const AdminDashboard = () => {
 
             <TabsContent value="meal-plans">
               <Card>
-                <CardHeader>
-                  <CardTitle>Meal Plans</CardTitle>
-                  <CardDescription>User meal plans and their status</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>Meal Plans</CardTitle>
+                    <CardDescription>User meal plans and their status</CardDescription>
+                  </div>
+                  <Button onClick={() => openCreateDialog('meal_plans')}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Meal Plan
+                  </Button>
                 </CardHeader>
                 <CardContent>
                   <Table>
@@ -393,6 +677,7 @@ export const AdminDashboard = () => {
                         <TableHead>Week Start</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Created</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -411,6 +696,24 @@ export const AdminDashboard = () => {
                           <TableCell>
                             {new Date(plan.created_at).toLocaleDateString()}
                           </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => openEditDialog(plan, 'meal_plans')}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleDelete('meal_plans', plan.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -421,9 +724,15 @@ export const AdminDashboard = () => {
 
             <TabsContent value="shopping-lists">
               <Card>
-                <CardHeader>
-                  <CardTitle>Shopping Lists</CardTitle>
-                  <CardDescription>User shopping lists and completion status</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>Shopping Lists</CardTitle>
+                    <CardDescription>User shopping lists and completion status</CardDescription>
+                  </div>
+                  <Button onClick={() => openCreateDialog('shopping_lists')}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Shopping List
+                  </Button>
                 </CardHeader>
                 <CardContent>
                   <Table>
@@ -433,6 +742,7 @@ export const AdminDashboard = () => {
                         <TableHead>User</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Created</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -448,6 +758,24 @@ export const AdminDashboard = () => {
                           <TableCell>
                             {new Date(list.created_at).toLocaleDateString()}
                           </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => openEditDialog(list, 'shopping_lists')}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleDelete('shopping_lists', list.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -456,6 +784,50 @@ export const AdminDashboard = () => {
               </Card>
             </TabsContent>
           </Tabs>
+
+          {/* Create Dialog */}
+          <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create New {currentTable.replace('_', ' ')}</DialogTitle>
+                <DialogDescription>
+                  Add a new {currentTable.replace('_', ' ')} to the system.
+                </DialogDescription>
+              </DialogHeader>
+              {renderFormFields()}
+              <div className="flex justify-end gap-2 mt-4">
+                <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={() => currentTable && handleCreate(currentTable as 'recipes' | 'meal_plans' | 'shopping_lists', formData)}>
+                  <Save className="h-4 w-4 mr-2" />
+                  Create
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {/* Edit Dialog */}
+          <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Edit {currentTable.replace('_', ' ')}</DialogTitle>
+                <DialogDescription>
+                  Update the {currentTable.replace('_', ' ')} information.
+                </DialogDescription>
+              </DialogHeader>
+              {renderFormFields(true)}
+              <div className="flex justify-end gap-2 mt-4">
+                <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={() => currentTable && handleUpdate(currentTable as 'recipes' | 'meal_plans' | 'shopping_lists', editingItem?.id, formData)}>
+                  <Save className="h-4 w-4 mr-2" />
+                  Update
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>
