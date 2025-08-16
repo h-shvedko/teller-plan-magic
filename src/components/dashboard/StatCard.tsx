@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 interface StatCardProps {
   title: string;
@@ -12,11 +13,12 @@ interface StatCardProps {
     isPositive: boolean;
   };
   className?: string;
+  href?: string;
 }
 
-export const StatCard = ({ title, value, description, icon, trend, className }: StatCardProps) => {
-  return (
-    <Card className={cn("", className)}>
+export const StatCard = ({ title, value, description, icon, trend, className, href }: StatCardProps) => {
+  const cardContent = (
+    <>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         {icon && <div className="h-4 w-4 text-muted-foreground">{icon}</div>}
@@ -35,6 +37,22 @@ export const StatCard = ({ title, value, description, icon, trend, className }: 
           </div>
         )}
       </CardContent>
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link to={href} className="block">
+        <Card className={cn("hover:shadow-md transition-shadow cursor-pointer", className)}>
+          {cardContent}
+        </Card>
+      </Link>
+    );
+  }
+
+  return (
+    <Card className={cn("", className)}>
+      {cardContent}
     </Card>
   );
 };

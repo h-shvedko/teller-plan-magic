@@ -185,18 +185,21 @@ export const Dashboard = () => {
               value={stats.totalMealPlans}
               description={`${stats.activeMealPlans} active`}
               icon={<Calendar />}
+              href="/meal-plans"
             />
             <StatCard
               title="Recipes"
               value={stats.totalRecipes}
               description={`${stats.publicRecipes} public`}
               icon={<ChefHat />}
+              href="/recipes"
             />
             <StatCard
               title="Shopping Lists"
               value={stats.totalShoppingLists}
               description={`${Math.round(stats.completionRate)}% completion rate`}
               icon={<ShoppingCart />}
+              href="/shopping-lists"
             />
             <StatCard
               title="Current Streak"
