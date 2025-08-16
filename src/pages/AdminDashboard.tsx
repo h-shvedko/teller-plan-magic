@@ -267,21 +267,41 @@ export const AdminDashboard = () => {
 
         // The user creation is handled by the trigger, but let's ensure role assignment
         if (insertData.role && insertData.role !== 'user') {
-          const { error: roleError } = await supabase
+          // Check if role already exists to avoid duplicate key error
+          const { data: existingRole } = await supabase
             .from('user_roles')
-            .insert({
-              user_id: authData.user.id,
-              role: insertData.role
-            });
-          
-          if (roleError) console.error('Role assignment error:', roleError);
+            .select('id')
+            .eq('user_id', authData.user.id)
+            .eq('role', insertData.role)
+            .single();
+
+          if (!existingRole) {
+            const { error: roleError } = await supabase
+              .from('user_roles')
+              .insert({
+                user_id: authData.user.id,
+                role: insertData.role
+              });
+            
+            if (roleError) console.error('Role assignment error:', roleError);
+          }
         }
       } else if (table === 'recipes') {
-        insertData.created_by = user?.id;
+        // Get the current user's profile ID to use as created_by
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('user_id', user?.id)
+          .single();
+        
+        if (profileError) throw profileError;
+        
+        insertData.created_by = profileData.id;
         insertData.servings = parseInt(insertData.servings) || 2;
         const { error } = await supabase.from('recipes').insert(insertData);
         if (error) throw error;
       } else if (table === 'meal_plans') {
+        // Get the current user's ID for user_id field
         insertData.user_id = user?.id;
         if (!insertData.week_start_date) {
           insertData.week_start_date = new Date().toISOString().split('T')[0];
@@ -289,6 +309,7 @@ export const AdminDashboard = () => {
         const { error } = await supabase.from('meal_plans').insert(insertData);
         if (error) throw error;
       } else if (table === 'shopping_lists') {
+        // Get the current user's ID for user_id field
         insertData.user_id = user?.id;
         const { error } = await supabase.from('shopping_lists').insert(insertData);
         if (error) throw error;
@@ -330,10 +351,17 @@ export const AdminDashboard = () => {
 
         // Update role if changed
         if (data.role) {
+          // First, remove any existing roles to avoid conflicts
+          await supabase
+            .from('user_roles')
+            .delete()
+            .eq('user_id', id);
+
+          // Then insert the new role
           const { error: roleError } = await supabase
             .from('user_roles')
-            .upsert({
-              user_id: id,  // This is the auth.users.id
+            .insert({
+              user_id: id,
               role: data.role
             });
           
