@@ -103,8 +103,9 @@ export const AdminDashboard = () => {
   const [editingItem, setEditingItem] = useState<any>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [currentTable, setCurrentTable] = useState<'recipes' | 'meal_plans' | 'shopping_lists' | ''>('');
+  const [currentTable, setCurrentTable] = useState<'recipes' | 'meal_plans' | 'shopping_lists' | 'users' | ''>('');
   const [formData, setFormData] = useState<any>({});
+  const [formErrors, setFormErrors] = useState<any>({});
 
   const loadStats = useCallback(async () => {
     const [usersRes, recipesRes, mealPlansRes, shoppingListsRes] = await Promise.all([
@@ -231,16 +232,59 @@ export const AdminDashboard = () => {
   }, [user, isAdmin, loadAdminData]);
 
   // CRUD Operations
-  const handleCreate = async (table: 'recipes' | 'meal_plans' | 'shopping_lists', data: any) => {
+  const handleCreate = async (table: 'recipes' | 'meal_plans' | 'shopping_lists' | 'users', data: any) => {
     try {
+      setFormErrors({});
       let insertData = { ...data };
       
-      if (table === 'recipes') {
+      // Validate required fields
+      if (!insertData.name && table !== 'users') {
+        setFormErrors({ name: 'Name is required' });
+        return;
+      }
+
+      if (table === 'users') {
+        if (!insertData.email || !insertData.password) {
+          setFormErrors({ 
+            email: !insertData.email ? 'Email is required' : '',
+            password: !insertData.password ? 'Password is required' : ''
+          });
+          return;
+        }
+
+        // Create user via Supabase Auth
+        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+          email: insertData.email,
+          password: insertData.password,
+          user_metadata: {
+            first_name: insertData.first_name,
+            last_name: insertData.last_name
+          }
+        });
+
+        if (authError) throw authError;
+
+        // The user creation is handled by the trigger, but let's ensure role assignment
+        if (insertData.role && insertData.role !== 'user') {
+          const { error: roleError } = await supabase
+            .from('user_roles')
+            .insert({
+              user_id: authData.user.id,
+              role: insertData.role
+            });
+          
+          if (roleError) console.error('Role assignment error:', roleError);
+        }
+      } else if (table === 'recipes') {
         insertData.created_by = user?.id;
+        insertData.servings = parseInt(insertData.servings) || 2;
         const { error } = await supabase.from('recipes').insert(insertData);
         if (error) throw error;
       } else if (table === 'meal_plans') {
         insertData.user_id = user?.id;
+        if (!insertData.week_start_date) {
+          insertData.week_start_date = new Date().toISOString().split('T')[0];
+        }
         const { error } = await supabase.from('meal_plans').insert(insertData);
         if (error) throw error;
       } else if (table === 'shopping_lists') {
@@ -266,9 +310,36 @@ export const AdminDashboard = () => {
     }
   };
 
-  const handleUpdate = async (table: 'recipes' | 'meal_plans' | 'shopping_lists', id: string, data: any) => {
+  const handleUpdate = async (table: 'recipes' | 'meal_plans' | 'shopping_lists' | 'users', id: string, data: any) => {
     try {
-      if (table === 'recipes') {
+      setFormErrors({});
+
+      if (table === 'users') {
+        // Update profile
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({
+            first_name: data.first_name,
+            last_name: data.last_name,
+            email: data.email
+          })
+          .eq('user_id', id);
+        
+        if (profileError) throw profileError;
+
+        // Update role if changed
+        if (data.role) {
+          const { error: roleError } = await supabase
+            .from('user_roles')
+            .upsert({
+              user_id: id,
+              role: data.role
+            });
+          
+          if (roleError) throw roleError;
+        }
+      } else if (table === 'recipes') {
+        data.servings = parseInt(data.servings) || 2;
         const { error } = await supabase.from('recipes').update(data).eq('id', id);
         if (error) throw error;
       } else if (table === 'meal_plans') {
@@ -296,11 +367,15 @@ export const AdminDashboard = () => {
     }
   };
 
-  const handleDelete = async (table: 'recipes' | 'meal_plans' | 'shopping_lists', id: string) => {
+  const handleDelete = async (table: 'recipes' | 'meal_plans' | 'shopping_lists' | 'users', id: string) => {
     if (!confirm('Are you sure you want to delete this item?')) return;
     
     try {
-      if (table === 'recipes') {
+      if (table === 'users') {
+        // Delete user via Supabase Auth Admin API
+        const { error } = await supabase.auth.admin.deleteUser(id);
+        if (error) throw error;
+      } else if (table === 'recipes') {
         const { error } = await supabase.from('recipes').delete().eq('id', id);
         if (error) throw error;
       } else if (table === 'meal_plans') {
@@ -326,31 +401,100 @@ export const AdminDashboard = () => {
     }
   };
 
-  const openEditDialog = (item: any, table: 'recipes' | 'meal_plans' | 'shopping_lists') => {
+  const openEditDialog = (item: any, table: 'recipes' | 'meal_plans' | 'shopping_lists' | 'users') => {
     setEditingItem(item);
     setCurrentTable(table);
     setFormData(item);
+    setFormErrors({});
     setEditDialogOpen(true);
   };
 
-  const openCreateDialog = (table: 'recipes' | 'meal_plans' | 'shopping_lists') => {
+  const openCreateDialog = (table: 'recipes' | 'meal_plans' | 'shopping_lists' | 'users') => {
     setCurrentTable(table);
     setFormData({});
+    setFormErrors({});
     setCreateDialogOpen(true);
   };
 
   const renderFormFields = (isEdit = false) => {
+    const renderFieldError = (field: string) => {
+      if (formErrors[field]) {
+        return <span className="text-sm text-destructive">{formErrors[field]}</span>;
+      }
+      return null;
+    };
+
     switch (currentTable) {
+      case 'users':
+        return (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="email">Email *</Label>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email || ''}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                disabled={isEdit}
+              />
+              {renderFieldError('email')}
+            </div>
+            {!isEdit && (
+              <div>
+                <Label htmlFor="password">Password *</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={formData.password || ''}
+                  onChange={(e) => setFormData({...formData, password: e.target.value})}
+                />
+                {renderFieldError('password')}
+              </div>
+            )}
+            <div>
+              <Label htmlFor="first_name">First Name</Label>
+              <Input
+                id="first_name"
+                value={formData.first_name || ''}
+                onChange={(e) => setFormData({...formData, first_name: e.target.value})}
+              />
+            </div>
+            <div>
+              <Label htmlFor="last_name">Last Name</Label>
+              <Input
+                id="last_name"
+                value={formData.last_name || ''}
+                onChange={(e) => setFormData({...formData, last_name: e.target.value})}
+              />
+            </div>
+            <div>
+              <Label htmlFor="role">Role</Label>
+              <Select 
+                value={formData.role || 'user'}
+                onValueChange={(value) => setFormData({...formData, role: value})}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="administrator">Administrator</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        );
       case 'recipes':
         return (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">Name *</Label>
               <Input
                 id="name"
                 value={formData.name || ''}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
               />
+              {renderFieldError('name')}
             </div>
             <div>
               <Label htmlFor="description">Description</Label>
@@ -407,12 +551,13 @@ export const AdminDashboard = () => {
         return (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">Name *</Label>
               <Input
                 id="name"
                 value={formData.name || ''}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
               />
+              {renderFieldError('name')}
             </div>
             <div>
               <Label htmlFor="week_start_date">Week Start Date</Label>
@@ -437,12 +582,13 @@ export const AdminDashboard = () => {
         return (
           <div className="space-y-4">
             <div>
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">Name *</Label>
               <Input
                 id="name"
                 value={formData.name || ''}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
               />
+              {renderFieldError('name')}
             </div>
             <div className="flex items-center space-x-2">
               <Switch
@@ -550,9 +696,15 @@ export const AdminDashboard = () => {
 
             <TabsContent value="users">
               <Card>
-                <CardHeader>
-                  <CardTitle>Users</CardTitle>
-                  <CardDescription>Recent user registrations and their roles</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>Users</CardTitle>
+                    <CardDescription>Recent user registrations and their roles</CardDescription>
+                  </div>
+                  <Button onClick={() => openCreateDialog('users')}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add User
+                  </Button>
                 </CardHeader>
                 <CardContent>
                   <Table>
@@ -562,6 +714,7 @@ export const AdminDashboard = () => {
                         <TableHead>Name</TableHead>
                         <TableHead>Role</TableHead>
                         <TableHead>Created</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -581,6 +734,24 @@ export const AdminDashboard = () => {
                           </TableCell>
                           <TableCell>
                             {new Date(user.created_at).toLocaleDateString()}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => openEditDialog({...user, user_id: user.id}, 'users')}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleDelete('users', user.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -799,7 +970,7 @@ export const AdminDashboard = () => {
                 <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>
                   Cancel
                 </Button>
-                <Button onClick={() => currentTable && handleCreate(currentTable as 'recipes' | 'meal_plans' | 'shopping_lists', formData)}>
+                <Button onClick={() => currentTable && handleCreate(currentTable as 'recipes' | 'meal_plans' | 'shopping_lists' | 'users', formData)}>
                   <Save className="h-4 w-4 mr-2" />
                   Create
                 </Button>
@@ -821,7 +992,7 @@ export const AdminDashboard = () => {
                 <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
                   Cancel
                 </Button>
-                <Button onClick={() => currentTable && handleUpdate(currentTable as 'recipes' | 'meal_plans' | 'shopping_lists', editingItem?.id, formData)}>
+                <Button onClick={() => currentTable && handleUpdate(currentTable as 'recipes' | 'meal_plans' | 'shopping_lists' | 'users', editingItem?.id || editingItem?.user_id, formData)}>
                   <Save className="h-4 w-4 mr-2" />
                   Update
                 </Button>
