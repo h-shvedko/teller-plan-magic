@@ -185,7 +185,7 @@ export const Dashboard = () => {
                   <Label htmlFor="cooking-style">Cooking Style</Label>
                   <Select
                     value={preferences.cooking_style}
-                    onValueChange={(value: string) => setPreferences(prev => ({ ...prev, cooking_style: value }))}
+                    onValueChange={(value: 'quick' | 'elaborate' | 'mixed') => setPreferences(prev => ({ ...prev, cooking_style: value }))}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select cooking style" />
@@ -202,7 +202,7 @@ export const Dashboard = () => {
                   <Label htmlFor="difficulty">Difficulty Level</Label>
                   <Select
                     value={preferences.difficulty_level}
-                    onValueChange={(value: string) => setPreferences(prev => ({ ...prev, difficulty_level: value }))}
+                    onValueChange={(value: 'beginner' | 'intermediate' | 'advanced') => setPreferences(prev => ({ ...prev, difficulty_level: value }))}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select difficulty" />

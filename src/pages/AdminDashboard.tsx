@@ -82,12 +82,6 @@ export const AdminDashboard = () => {
   const [mealPlans, setMealPlans] = useState<MealPlanData[]>([]);
   const [shoppingLists, setShoppingLists] = useState<ShoppingListData[]>([]);
 
-  useEffect(() => {
-    if (user && isAdmin) {
-      loadAdminData();
-    }
-  }, [user, isAdmin, loadAdminData]);
-
   const loadStats = useCallback(async () => {
     const [usersRes, recipesRes, mealPlansRes, shoppingListsRes] = await Promise.all([
       supabase.from('profiles').select('id', { count: 'exact', head: true }),
@@ -104,25 +98,27 @@ export const AdminDashboard = () => {
     });
   }, []);
 
-  interface UserWithRoles extends UserData {
-    user_roles: { role: string }[];
-  }
-
   const loadUsers = useCallback(async () => {
-    const { data, error } = await supabase
-      .from<UserWithRoles>('profiles')
-      .select(`
-        id, email, first_name, last_name, created_at,
-        user_roles (role)
-      `)
+    // First get users without roles to avoid foreign key issues
+    const { data: usersData, error: usersError } = await supabase
+      .from('profiles')
+      .select('id, email, first_name, last_name, created_at')
       .order('created_at', { ascending: false })
       .limit(50);
 
-    if (error) throw error;
+    if (usersError) throw usersError;
 
-    const usersWithRoles = data?.map(user => ({
+    // Then get their roles separately
+    const { data: rolesData, error: rolesError } = await supabase
+      .from('user_roles')
+      .select('user_id, role');
+
+    if (rolesError) throw rolesError;
+
+    // Combine the data
+    const usersWithRoles = usersData?.map(user => ({
       ...user,
-      role: user.user_roles?.[0]?.role || 'user'
+      role: rolesData?.find(role => role.user_id === user.id)?.role || 'user'
     })) || [];
 
     setUsers(usersWithRoles);
@@ -167,7 +163,7 @@ export const AdminDashboard = () => {
       .from('shopping_lists')
       .select(`
         id, name, is_completed, created_at,
-        profiles (email)
+        profiles!user_id (email)
       `)
       .order('created_at', { ascending: false })
       .limit(50);
@@ -176,7 +172,7 @@ export const AdminDashboard = () => {
 
     const shoppingListsWithUserEmail = data?.map(list => ({
       ...list,
-      user_email: list.profiles?.email || 'Unknown'
+      user_email: (list.profiles as any)?.email || 'Unknown'
     })) || [];
 
     setShoppingLists(shoppingListsWithUserEmail);
@@ -203,6 +199,13 @@ export const AdminDashboard = () => {
       setLoading(false);
     }
   }, [loadStats, loadUsers, loadRecipes, loadMealPlans, loadShoppingLists]);
+
+  useEffect(() => {
+    if (user && isAdmin) {
+      loadAdminData();
+    }
+  }, [user, isAdmin, loadAdminData]);
+
 
   if (!isAdmin) {
     return (
