@@ -79,24 +79,40 @@ const Auth = () => {
 
   const handleSubscription = async (plan: string) => {
     try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { plan }
-      });
+      // First, save subscription info to database
+      await supabase.from('subscribers').upsert({
+        user_id: user?.id,
+        email: user?.email || email,
+        subscribed: plan !== 'free',
+        subscription_tier: plan,
+        subscription_end: plan !== 'free' ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() : null,
+      }, { onConflict: 'user_id' });
 
-      if (error) throw error;
-      
-      // Open Stripe checkout in a new tab
-      window.open(data.url, '_blank');
-      
-      toast({
-        title: "Redirecting to payment",
-        description: "Opening Stripe checkout in a new tab...",
-      });
+      if (plan !== 'free') {
+        const { data, error } = await supabase.functions.invoke('create-checkout', {
+          body: { plan }
+        });
+
+        if (error) throw error;
+        
+        // Open Stripe checkout in a new tab
+        window.open(data.url, '_blank');
+        
+        toast({
+          title: "Redirecting to payment",
+          description: "Opening Stripe checkout in a new tab...",
+        });
+      } else {
+        toast({
+          title: "Welcome to TellerPlan!",
+          description: "Your free account is ready to use.",
+        });
+      }
     } catch (error) {
       console.error('Error creating checkout:', error);
       toast({
         title: "Error",
-        description: "Failed to create checkout session. Please try again.",
+        description: "Failed to set up subscription. Please try again.",
         variant: "destructive",
       });
     }

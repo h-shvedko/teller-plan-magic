@@ -1,39 +1,93 @@
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useSubscription } from '@/hooks/useSubscription';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import { Crown, CreditCard, Calendar, AlertTriangle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-export const SubscriptionWidget = () => {
-  const { 
-    subscription, 
-    isLoading, 
-    error, 
-    openCustomerPortal, 
-    createCheckout,
-    isSubscribed,
-    subscriptionTier,
-    subscriptionEnd 
-  } = useSubscription();
-  const { toast } = useToast();
+interface Subscription {
+  subscribed: boolean;
+  subscription_tier: string | null;
+  subscription_end: string | null;
+}
 
-  const handleManageSubscription = async () => {
+export const SubscriptionWidget = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadSubscription = async () => {
+    if (!user) {
+      setSubscription(null);
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      await openCustomerPortal();
+      setIsLoading(true);
+      setError(null);
+
+      const { data, error } = await supabase
+        .from('subscribers')
+        .select('subscribed, subscription_tier, subscription_end')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data) {
+        setSubscription(data);
+      } else {
+        // No subscription record found, create default free subscription
+        const { error: insertError } = await supabase
+          .from('subscribers')
+          .insert({
+            user_id: user.id,
+            email: user.email || '',
+            subscribed: false,
+            subscription_tier: 'free',
+            subscription_end: null
+          });
+
+        if (!insertError) {
+          setSubscription({
+            subscribed: false,
+            subscription_tier: 'free',
+            subscription_end: null
+          });
+        }
+      }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to open subscription management. Please try again.",
-        variant: "destructive",
-      });
+      console.error('Error loading subscription:', error);
+      setError(error instanceof Error ? error.message : 'Failed to load subscription');
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  useEffect(() => {
+    loadSubscription();
+  }, [user]);
+
   const handleUpgrade = async (plan: string) => {
     try {
-      await createCheckout(plan);
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { plan }
+      });
+
+      if (error) throw error;
+      
+      window.open(data.url, '_blank');
+      
+      toast({
+        title: "Redirecting to payment",
+        description: "Opening Stripe checkout in a new tab...",
+      });
     } catch (error) {
       toast({
         title: "Error",
@@ -64,12 +118,13 @@ export const SubscriptionWidget = () => {
     );
   }
 
-  const subscriptionEndDate = subscriptionEnd ? new Date(subscriptionEnd) : null;
+  const subscriptionEndDate = subscription?.subscription_end ? new Date(subscription.subscription_end) : null;
   const daysUntilRenewal = subscriptionEndDate 
     ? Math.ceil((subscriptionEndDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
     : 0;
 
   const isExpiringSoon = daysUntilRenewal <= 7 && daysUntilRenewal > 0;
+  const isSubscribed = subscription?.subscribed || false;
 
   if (!isSubscribed) {
     return (
@@ -114,7 +169,7 @@ export const SubscriptionWidget = () => {
           <Crown className="h-5 w-5 text-primary" />
           Your Subscription
           <Badge variant="secondary" className="ml-auto">
-            {subscriptionTier}
+            {subscription?.subscription_tier || 'Free'}
           </Badge>
         </CardTitle>
         <CardDescription>
@@ -145,12 +200,12 @@ export const SubscriptionWidget = () => {
 
         <div className="flex gap-2">
           <Button 
-            onClick={handleManageSubscription} 
+            onClick={() => handleUpgrade('pro')} 
             variant="outline" 
             className="flex-1"
           >
             <CreditCard className="h-4 w-4 mr-2" />
-            Manage Subscription
+            Upgrade Plan
           </Button>
         </div>
       </CardContent>

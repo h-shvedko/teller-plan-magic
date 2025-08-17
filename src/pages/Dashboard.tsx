@@ -56,10 +56,11 @@ export const Dashboard = () => {
         .from('user_preferences')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle 0 rows
 
-      if (error && error.code !== 'PGRST116') {
-        throw error;
+      if (error) {
+        console.error('Error loading preferences:', error);
+        return;
       }
 
       if (data) {
@@ -73,6 +74,9 @@ export const Dashboard = () => {
           favorite_cuisines: data.favorite_cuisines || [],
           health_goals: data.health_goals || []
         });
+      } else {
+        // No preferences found, using defaults
+        console.log('No user preferences found, using defaults');
       }
     } catch (error: unknown) {
       console.error('Error loading preferences:', error);
