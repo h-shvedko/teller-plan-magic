@@ -25,6 +25,16 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
+    // Validate Stripe secret key
+    const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeSecretKey) {
+      throw new Error("STRIPE_SECRET_KEY environment variable is not set");
+    }
+    if (!stripeSecretKey.startsWith("sk_")) {
+      throw new Error("Invalid Stripe secret key format. Must start with 'sk_'");
+    }
+    logStep("Stripe key validated", { keyPrefix: stripeSecretKey.substring(0, 10) + "..." });
+
     const authHeader = req.headers.get("Authorization")!;
     const token = authHeader.replace("Bearer ", "");
     const { data } = await supabaseClient.auth.getUser(token);
@@ -36,7 +46,7 @@ serve(async (req) => {
     if (!plan) throw new Error("Plan type is required");
     logStep("Plan received", { plan });
 
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { 
+    const stripe = new Stripe(stripeSecretKey, { 
       apiVersion: "2023-10-16" 
     });
 
