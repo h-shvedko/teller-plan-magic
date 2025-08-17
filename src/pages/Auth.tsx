@@ -161,7 +161,7 @@ const Auth = () => {
       </Helmet>
       
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-2xl">
           <Link
             to="/"
             className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-primary transition-colors mb-6"
@@ -180,7 +180,7 @@ const Auth = () => {
               </CardDescription>
             </CardHeader>
             
-            <CardContent className="px-8 pb-8">
+            <CardContent className="px-10 pb-8">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mb-6">
                 <TabsList className="grid w-full grid-cols-2 bg-gray-100">
                   <TabsTrigger value="signin" className="data-[state=active]:bg-white">
@@ -296,7 +296,7 @@ const Auth = () => {
                         <p className="text-sm text-gray-600">Select the plan that fits your cooking goals</p>
                       </div>
 
-                      <div className="space-y-3">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {plans.map((plan) => (
                           <div
                             key={plan.id}
@@ -315,34 +315,29 @@ const Auth = () => {
                               </Badge>
                             )}
                             
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-2">
-                                  <div className="w-8 h-8 rounded bg-blue-100 flex items-center justify-center">
-                                    <span className="text-blue-600 text-sm font-semibold">
-                                      {plan.name.charAt(0)}
-                                    </span>
-                                  </div>
-                                  <div>
-                                    <h4 className="font-semibold text-gray-900">{plan.name}</h4>
-                                    <p className="text-xs text-gray-600">{plan.description}</p>
-                                  </div>
-                                </div>
-                                
-                                <div className="text-right mb-3">
-                                  <span className="text-2xl font-bold text-gray-900">{plan.price}</span>
-                                  <span className="text-sm text-gray-600 ml-1">{plan.period}</span>
-                                </div>
-                                
-                                <ul className="text-xs text-gray-600 space-y-1">
-                                  {plan.features.map((feature, index) => (
-                                    <li key={index} className="flex items-center gap-2">
-                                      <Check className="h-3 w-3 text-green-500 flex-shrink-0" />
-                                      {feature}
-                                    </li>
-                                  ))}
-                                </ul>
+                            <div className="text-center">
+                              <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mx-auto mb-3">
+                                <span className="text-blue-600 text-lg font-bold">
+                                  {plan.name.charAt(0)}
+                                </span>
                               </div>
+                              
+                              <h4 className="font-semibold text-gray-900 mb-1">{plan.name}</h4>
+                              <p className="text-xs text-gray-600 mb-3">{plan.description}</p>
+                              
+                              <div className="mb-4">
+                                <span className="text-2xl font-bold text-gray-900">{plan.price}</span>
+                                <span className="text-sm text-gray-600 block">{plan.period}</span>
+                              </div>
+                              
+                              <ul className="text-xs text-gray-600 space-y-2 text-left">
+                                {plan.features.map((feature, index) => (
+                                  <li key={index} className="flex items-start gap-2">
+                                    <Check className="h-3 w-3 text-green-500 flex-shrink-0 mt-0.5" />
+                                    <span>{feature}</span>
+                                  </li>
+                                ))}
+                              </ul>
                             </div>
                           </div>
                         ))}
