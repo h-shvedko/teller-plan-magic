@@ -347,15 +347,7 @@ export type Database = {
           servings?: number | null
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "recipes_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       shopping_list_items: {
         Row: {
