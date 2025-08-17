@@ -25,7 +25,7 @@ const Pricing = () => {
               ))}
             </ul>
             <div className="mt-6">
-              <Link to="/onboarding"><Button variant="subtle" size="sm">{t('pricing.free.cta')}</Button></Link>
+              <Link to="/auth?plan=free"><Button variant="subtle" size="sm">{t('pricing.free.cta')}</Button></Link>
             </div>
           </article>
 
@@ -43,7 +43,7 @@ const Pricing = () => {
               ))}
             </ul>
             <div className="mt-6">
-              <Link to="/onboarding"><Button variant="hero" size="sm">{t('pricing.pro.cta')}</Button></Link>
+              <Link to="/auth?plan=pro"><Button variant="hero" size="sm">{t('pricing.pro.cta')}</Button></Link>
             </div>
           </article>
 
@@ -61,7 +61,7 @@ const Pricing = () => {
               ))}
             </ul>
             <div className="mt-6">
-              <Link to="/onboarding"><Button variant="subtle" size="sm">{t('pricing.family.cta')}</Button></Link>
+              <Link to="/auth?plan=family"><Button variant="subtle" size="sm">{t('pricing.family.cta')}</Button></Link>
             </div>
           </article>
         </div>

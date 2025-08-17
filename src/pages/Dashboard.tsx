@@ -16,6 +16,7 @@ import { StatCard } from '@/components/dashboard/StatCard';
 import { ActivityChart } from '@/components/dashboard/ActivityChart';
 import { CuisineChart } from '@/components/dashboard/CuisineChart';
 import { RecentActivity } from '@/components/dashboard/RecentActivity';
+import { SubscriptionWidget } from '@/components/dashboard/SubscriptionWidget';
 
 interface UserPreferences {
   id?: string;
@@ -31,7 +32,7 @@ interface UserPreferences {
 // Settings will be loaded from database via useSettings hook
 
 export const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { settings, loading: settingsLoading, error: settingsError } = useSettings();
   const { stats, loading: statsLoading, error: statsError } = useUserStats();
   const [loading, setLoading] = useState(false);
@@ -208,6 +209,13 @@ export const Dashboard = () => {
               icon={<Award />}
             />
           </div>
+
+          {/* Subscription Widget for non-admin users */}
+          {!isAdmin && (
+            <div className="mb-8">
+              <SubscriptionWidget />
+            </div>
+          )}
 
           {/* Charts and Analytics */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
