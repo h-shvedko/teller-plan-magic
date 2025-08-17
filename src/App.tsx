@@ -16,6 +16,7 @@ import Plan from "./pages/Plan";
 import Shopping from "./pages/Shopping";
 import { Dashboard } from "./pages/Dashboard";
 import { AdminDashboard } from "./pages/AdminDashboard";
+import { AdminPayments } from "./pages/AdminPayments";
 import { MealPlans } from "./pages/MealPlans";
 import { Recipes } from "./pages/Recipes";
 import { ShoppingLists } from "./pages/ShoppingLists";
@@ -96,6 +97,14 @@ const App = () => (
                 element={
                   <ProtectedRoute requireAdmin>
                     <AdminDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/payments" 
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AdminPayments />
                   </ProtectedRoute>
                 } 
               />

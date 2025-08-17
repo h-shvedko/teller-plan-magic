@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -36,7 +37,8 @@ import {
   Plus,
   Edit,
   Trash2,
-  Save
+  Save,
+  CreditCard
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
@@ -45,6 +47,9 @@ interface AdminStats {
   totalRecipes: number;
   totalMealPlans: number;
   totalShoppingLists: number;
+  totalPayments: number;
+  totalRevenue: number;
+  activeUsers: number;
 }
 
 interface ProfileItem {
@@ -99,7 +104,10 @@ export const AdminDashboard = () => {
     totalUsers: 0,
     totalRecipes: 0,
     totalMealPlans: 0,
-    totalShoppingLists: 0
+    totalShoppingLists: 0,
+    totalPayments: 0,
+    totalRevenue: 0,
+    activeUsers: 0
   });
   
   // Data state
@@ -127,18 +135,25 @@ export const AdminDashboard = () => {
       setError(null);
 
       // Load stats
-      const [profilesResult, recipesResult, mealPlansResult, shoppingListsResult] = await Promise.all([
+      const [profilesResult, recipesResult, mealPlansResult, shoppingListsResult, paymentsResult] = await Promise.all([
         supabase.from('profiles').select('id'),
         supabase.from('recipes').select('id'),
         supabase.from('meal_plans').select('id'),
-        supabase.from('shopping_lists').select('id')
+        supabase.from('shopping_lists').select('id'),
+        supabase.from('payments').select('amount, status')
       ]);
+
+      const paidPayments = paymentsResult.data?.filter(p => p.status === 'paid') || [];
+      const totalRevenue = paidPayments.reduce((sum, p) => sum + p.amount, 0);
 
       setStats({
         totalUsers: profilesResult.data?.length || 0,
         totalRecipes: recipesResult.data?.length || 0,
         totalMealPlans: mealPlansResult.data?.length || 0,
-        totalShoppingLists: shoppingListsResult.data?.length || 0
+        totalShoppingLists: shoppingListsResult.data?.length || 0,
+        totalPayments: paymentsResult.data?.length || 0,
+        totalRevenue,
+        activeUsers: profilesResult.data?.length || 0 // For now, same as total users
       });
 
       // Load detailed data
@@ -472,6 +487,21 @@ export const AdminDashboard = () => {
                   <div className="text-2xl font-bold">{stats.totalShoppingLists}</div>
                 </CardContent>
               </Card>
+              
+              <Link to="/admin/payments">
+                <Card className="hover:shadow-md transition-shadow cursor-pointer">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Total Payments</CardTitle>
+                    <CreditCard className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{stats.totalPayments}</div>
+                    <p className="text-xs text-muted-foreground">
+                      ${(stats.totalRevenue / 100).toFixed(2)} revenue
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
             </div>
           </TabsContent>
 

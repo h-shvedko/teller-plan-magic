@@ -16,14 +16,10 @@ interface Payment {
   stripe_session_id: string;
   amount: number;
   currency: string;
-  status: 'pending' | 'paid' | 'canceled' | 'failed';
+  status: string;
   plan_type: string;
   created_at: string;
-  profiles?: {
-    email: string;
-    first_name: string;
-    last_name: string;
-  };
+  profiles?: any; // More flexible type to handle database response
 }
 
 export const AdminPayments = () => {
@@ -40,12 +36,12 @@ export const AdminPayments = () => {
         .from('payments')
         .select(`
           *,
-          profiles!inner(email, first_name, last_name)
+          profiles(email, first_name, last_name)
         `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setPayments(data || []);
+      setPayments((data || []) as Payment[]);
     } catch (error) {
       console.error('Error loading payments:', error);
       toast({
@@ -63,7 +59,9 @@ export const AdminPayments = () => {
   }, []);
 
   const filteredPayments = payments.filter(payment => {
-    const matchesSearch = payment.profiles?.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const profileData = payment.profiles;
+    const email = profileData?.email || '';
+    const matchesSearch = email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          payment.plan_type.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || payment.status === statusFilter;
     return matchesSearch && matchesStatus;
@@ -201,16 +199,16 @@ export const AdminPayments = () => {
               <TableBody>
                 {filteredPayments.map((payment) => (
                   <TableRow key={payment.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">
-                          {payment.profiles?.first_name} {payment.profiles?.last_name}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {payment.profiles?.email}
-                        </div>
-                      </div>
-                    </TableCell>
+                     <TableCell>
+                       <div>
+                         <div className="font-medium">
+                           {payment.profiles?.first_name || ''} {payment.profiles?.last_name || ''}
+                         </div>
+                         <div className="text-sm text-muted-foreground">
+                           {payment.profiles?.email || 'No email'}
+                         </div>
+                       </div>
+                     </TableCell>
                     <TableCell className="capitalize">{payment.plan_type}</TableCell>
                     <TableCell>${(payment.amount / 100).toFixed(2)}</TableCell>
                     <TableCell>{getStatusBadge(payment.status)}</TableCell>
