@@ -115,6 +115,7 @@ export const AdminDashboard = () => {
   const [recipes, setRecipes] = useState<RecipeItem[]>([]);
   const [mealPlans, setMealPlans] = useState<MealPlanItem[]>([]);
   const [shoppingLists, setShoppingLists] = useState<ShoppingListItem[]>([]);
+  const [payments, setPayments] = useState<any[]>([]);
   
   // Settings state
   const [cuisines, setCuisines] = useState<SettingItem[]>([]);
@@ -162,6 +163,7 @@ export const AdminDashboard = () => {
         recipesData,
         mealPlansData,
         shoppingListsData,
+        paymentsData,
         cuisinesData,
         dietaryData,
         goalsData,
@@ -171,6 +173,7 @@ export const AdminDashboard = () => {
         supabase.from('recipes').select('*').order('created_at', { ascending: false }),
         supabase.from('meal_plans').select('*').order('created_at', { ascending: false }),
         supabase.from('shopping_lists').select('*').order('created_at', { ascending: false }),
+        supabase.from('payments').select('*, profiles(first_name, last_name, email)').order('created_at', { ascending: false }),
         supabase.from('cuisines').select('*').order('name'),
         supabase.from('dietary_preferences').select('*').order('name'),
         supabase.from('health_goals').select('*').order('name'),
@@ -194,6 +197,7 @@ export const AdminDashboard = () => {
       setRecipes(recipesData.data || []);
       setMealPlans(enrichedMealPlans);
       setShoppingLists(enrichedShoppingLists);
+      setPayments(paymentsData.data || []);
       setCuisines(cuisinesData.data || []);
       setDietaryPreferences(dietaryData.data || []);
       setHealthGoals(goalsData.data || []);
@@ -440,9 +444,9 @@ export const AdminDashboard = () => {
             <TabsTrigger value="recipes">Recipes</TabsTrigger>
             <TabsTrigger value="meal_plans">Meal Plans</TabsTrigger>
             <TabsTrigger value="shopping_lists">Shopping Lists</TabsTrigger>
+            <TabsTrigger value="payments">Payments</TabsTrigger>
             <TabsTrigger value="cuisines">Cuisines</TabsTrigger>
             <TabsTrigger value="dietary_preferences">Dietary</TabsTrigger>
-            <TabsTrigger value="health_goals">Goals</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -625,6 +629,78 @@ export const AdminDashboard = () => {
                     ))}
                   </TableBody>
                 </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Payments Tab */}
+          <TabsContent value="payments">
+            <Card>
+              <CardHeader>
+                <CardTitle>Payments</CardTitle>
+                <CardDescription>View all payment transactions and their status</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Customer</TableHead>
+                      <TableHead>Plan</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Date</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {payments.slice(0, 10).map((payment: any) => (
+                      <TableRow key={payment.id}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">
+                              {payment.profiles?.first_name} {payment.profiles?.last_name}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {payment.profiles?.email}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="capitalize">
+                            {payment.plan_type}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-medium">
+                            ${(payment.amount / 100).toFixed(2)}
+                          </div>
+                          <div className="text-sm text-muted-foreground uppercase">
+                            {payment.currency || 'USD'}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge 
+                            variant={payment.status === 'paid' ? 'default' : 
+                                   payment.status === 'pending' ? 'secondary' : 'destructive'}
+                          >
+                            {payment.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {new Date(payment.created_at).toLocaleDateString()}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                {payments.length > 10 && (
+                  <div className="mt-4 text-center">
+                    <Link to="/admin/payments">
+                      <Button variant="outline">
+                        View All Payments ({payments.length})
+                      </Button>
+                    </Link>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

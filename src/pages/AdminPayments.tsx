@@ -1,33 +1,45 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { Header } from '@/components/Header';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Search, CreditCard, DollarSign, Users, TrendingUp } from 'lucide-react';
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
+import { supabase } from '@/integrations/supabase/client';
+import { CreditCard, DollarSign, TrendingUp, AlertCircle, Loader2, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { formatDistanceToNow } from 'date-fns';
 
 interface Payment {
   id: string;
-  user_id: string;
-  stripe_session_id: string;
+  user_id: string | null;
+  stripe_session_id: string | null;
   amount: number;
   currency: string;
   status: string;
   plan_type: string;
   created_at: string;
-  profiles?: any; // More flexible type to handle database response
+  profiles?: {
+    first_name: string | null;
+    last_name: string | null;
+    email: string;
+  };
 }
 
 export const AdminPayments = () => {
+  const { toast } = useToast();
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const { toast } = useToast();
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const loadPayments = async () => {
     try {
@@ -36,18 +48,18 @@ export const AdminPayments = () => {
         .from('payments')
         .select(`
           *,
-          profiles(email, first_name, last_name)
+          profiles(first_name, last_name, email)
         `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setPayments((data || []) as Payment[]);
+      setPayments((data as any) || []);
     } catch (error) {
       console.error('Error loading payments:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to load payments',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to load payments",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -59,39 +71,54 @@ export const AdminPayments = () => {
   }, []);
 
   const filteredPayments = payments.filter(payment => {
-    const profileData = payment.profiles;
-    const email = profileData?.email || '';
-    const matchesSearch = email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         payment.plan_type.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = 
+      payment.profiles?.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      payment.profiles?.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      payment.profiles?.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      payment.plan_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      payment.stripe_session_id?.toLowerCase().includes(searchTerm.toLowerCase());
+    
     const matchesStatus = statusFilter === 'all' || payment.status === statusFilter;
+    
     return matchesSearch && matchesStatus;
   });
 
   const stats = {
-    totalRevenue: payments.filter(p => p.status === 'paid').reduce((sum, p) => sum + p.amount, 0),
+    totalRevenue: payments
+      .filter(p => p.status === 'paid')
+      .reduce((sum, p) => sum + p.amount, 0),
     totalPayments: payments.length,
     paidPayments: payments.filter(p => p.status === 'paid').length,
     pendingPayments: payments.filter(p => p.status === 'pending').length,
   };
 
   const getStatusBadge = (status: string) => {
-    const variants = {
-      paid: 'default',
-      pending: 'secondary',
-      canceled: 'outline',
-      failed: 'destructive'
-    };
-    return (
-      <Badge variant={variants[status as keyof typeof variants] as any}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
-    );
+    switch (status) {
+      case 'paid':
+        return <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">Paid</Badge>;
+      case 'pending':
+        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 border-yellow-200">Pending</Badge>;
+      case 'failed':
+        return <Badge variant="destructive">Failed</Badge>;
+      case 'cancelled':
+        return <Badge variant="outline">Cancelled</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="min-h-screen bg-background">
+        <Header showGetStarted={false} />
+        <div className="container mx-auto py-8 px-4">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-6 w-6 animate-spin" />
+              <span>Loading payments...</span>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -101,19 +128,21 @@ export const AdminPayments = () => {
       <Header showGetStarted={false} />
       <div className="container mx-auto py-8 px-4">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Payment Management</h1>
+          <h1 className="text-3xl font-bold">Payment Management</h1>
           <p className="text-muted-foreground">Monitor and manage subscription payments</p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">${(stats.totalRevenue / 100).toFixed(2)}</div>
+              <div className="text-2xl font-bold">
+                ${(stats.totalRevenue / 100).toFixed(2)}
+              </div>
             </CardContent>
           </Card>
           
@@ -133,48 +162,54 @@ export const AdminPayments = () => {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.paidPayments}</div>
+              <div className="text-2xl font-bold text-green-600">{stats.paidPayments}</div>
             </CardContent>
           </Card>
           
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Pending</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <AlertCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.pendingPayments}</div>
+              <div className="text-2xl font-bold text-yellow-600">{stats.pendingPayments}</div>
             </CardContent>
           </Card>
         </div>
 
         {/* Filters */}
         <Card className="mb-6">
-          <CardContent className="pt-6">
-            <div className="flex gap-4">
+          <CardHeader>
+            <CardTitle>Filter Payments</CardTitle>
+            <CardDescription>Search and filter payment records</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-4 flex-col md:flex-row">
               <div className="flex-1">
                 <div className="relative">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                   <Input
-                    placeholder="Search by email or plan..."
+                    placeholder="Search by email, name, plan, or session ID..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-8"
+                    className="pl-10"
                   />
                 </div>
               </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="paid">Paid</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="canceled">Canceled</SelectItem>
-                  <SelectItem value="failed">Failed</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="w-full md:w-48">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="paid">Paid</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="failed">Failed</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -182,42 +217,79 @@ export const AdminPayments = () => {
         {/* Payments Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Payments ({filteredPayments.length})</CardTitle>
+            <CardTitle>Payment Records</CardTitle>
+            <CardDescription>
+              {filteredPayments.length} of {payments.length} payments
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Plan</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Stripe Session</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredPayments.map((payment) => (
-                  <TableRow key={payment.id}>
-                     <TableCell>
-                       <div>
-                         <div className="font-medium">
-                           {payment.profiles?.first_name || ''} {payment.profiles?.last_name || ''}
-                         </div>
-                         <div className="text-sm text-muted-foreground">
-                           {payment.profiles?.email || 'No email'}
-                         </div>
-                       </div>
-                     </TableCell>
-                    <TableCell className="capitalize">{payment.plan_type}</TableCell>
-                    <TableCell>${(payment.amount / 100).toFixed(2)}</TableCell>
-                    <TableCell>{getStatusBadge(payment.status)}</TableCell>
-                    <TableCell>{new Date(payment.created_at).toLocaleDateString()}</TableCell>
-                    <TableCell className="font-mono text-xs">{payment.stripe_session_id}</TableCell>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Plan</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Session ID</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredPayments.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                        No payments found
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredPayments.map((payment) => (
+                      <TableRow key={payment.id}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">
+                              {payment.profiles?.first_name} {payment.profiles?.last_name}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {payment.profiles?.email}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="capitalize">
+                            {payment.plan_type}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-medium">
+                            ${(payment.amount / 100).toFixed(2)}
+                          </div>
+                          <div className="text-sm text-muted-foreground uppercase">
+                            {payment.currency}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {getStatusBadge(payment.status)}
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm">
+                            {formatDistanceToNow(new Date(payment.created_at), { addSuffix: true })}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm font-mono text-muted-foreground">
+                            {payment.stripe_session_id ? 
+                              payment.stripe_session_id.substring(0, 20) + '...' : 
+                              'N/A'
+                            }
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </div>
