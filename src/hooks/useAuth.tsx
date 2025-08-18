@@ -36,13 +36,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .eq('user_id', userId);
 
       if (error) {
-        console.error('Error fetching user roles:', error);
+        // Error is handled silently to avoid disrupting user experience
+        // In production, this should be logged to an error monitoring service
         return [];
       }
 
       return data?.map(item => item.role) || [];
     } catch (error) {
-      console.error('Error fetching user roles:', error);
+      // Error is handled silently to avoid disrupting user experience
+      // In production, this should be logged to an error monitoring service
       return [];
     }
   };

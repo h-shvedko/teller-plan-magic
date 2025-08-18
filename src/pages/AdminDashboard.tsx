@@ -97,6 +97,23 @@ interface SettingItem {
   created_at: string;
 }
 
+interface PaymentItem {
+  id: string;
+  amount: number;
+  status: string;
+  customer_email?: string;
+  subscription_id?: string;
+  created_at: string;
+}
+
+interface EditingItem {
+  table: string;
+  [key: string]: unknown;
+}
+
+type AdminTableItem = ProfileItem | RecipeItem | MealPlanItem | ShoppingListItem | SettingItem;
+type AdminFormData = Partial<AdminTableItem & { table?: string; user_email?: string; }>;
+
 export const AdminDashboard = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('stats');
@@ -115,7 +132,7 @@ export const AdminDashboard = () => {
   const [recipes, setRecipes] = useState<RecipeItem[]>([]);
   const [mealPlans, setMealPlans] = useState<MealPlanItem[]>([]);
   const [shoppingLists, setShoppingLists] = useState<ShoppingListItem[]>([]);
-  const [payments, setPayments] = useState<any[]>([]);
+  const [payments, setPayments] = useState<PaymentItem[]>([]);
   
   // Settings state
   const [cuisines, setCuisines] = useState<SettingItem[]>([]);
@@ -124,11 +141,11 @@ export const AdminDashboard = () => {
   const [cookingStyles, setCookingStyles] = useState<SettingItem[]>([]);
   
   // UI state
-  const [editingItem, setEditingItem] = useState<any>(null);
+  const [editingItem, setEditingItem] = useState<EditingItem | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<any>({});
+  const [formData, setFormData] = useState<AdminFormData>({});
 
   const loadData = useCallback(async () => {
     try {
@@ -215,7 +232,7 @@ export const AdminDashboard = () => {
     loadData();
   }, [loadData]);
 
-  const handleEdit = (table: string, item: any) => {
+  const handleEdit = (table: string, item: AdminTableItem) => {
     setEditingItem({ ...item, table });
     setFormData(item);
     setShowEditDialog(true);
@@ -231,7 +248,7 @@ export const AdminDashboard = () => {
     }
   };
 
-  const handleUpdate = async (table: string, id: string, data: any) => {
+  const handleUpdate = async (table: string, id: string, data: AdminFormData) => {
     try {
       if (table === 'recipes') {
         const { error } = await supabase.from('recipes').update(data).eq('id', id);
@@ -325,7 +342,7 @@ export const AdminDashboard = () => {
       } else if (table === 'cooking_styles') {
         ({ error } = await supabase.from('cooking_styles').delete().eq('id', id));
       } else {
-        ({ error } = await supabase.from(table as any).delete().eq('id', id));
+        throw new Error(`Unsupported table: ${table}`);
       }
       if (error) throw error;
       
@@ -345,7 +362,7 @@ export const AdminDashboard = () => {
   };
 
   const handleAdd = (table: string) => {
-    let newItem: any = { id: '', name: '', created_at: new Date().toISOString() };
+    let newItem: AdminFormData = { id: '', name: '', created_at: new Date().toISOString() };
     
     if (table === 'recipes') {
       newItem = { ...newItem, cuisine: '', difficulty: 'intermediate', is_public: true };
@@ -360,7 +377,7 @@ export const AdminDashboard = () => {
     setShowEditDialog(true);
   };
 
-  const handleCreate = async (table: string, data: any) => {
+  const handleCreate = async (table: string, data: AdminFormData) => {
     try {
       const { table: tableField, user_email, id, ...createData } = data;
       let error;
@@ -373,7 +390,7 @@ export const AdminDashboard = () => {
       } else if (table === 'cooking_styles') {
         ({ error } = await supabase.from('cooking_styles').insert([createData]));
       } else {
-        ({ error } = await supabase.from(table as any).insert([createData]));
+        throw new Error(`Unsupported table: ${table}`);
       }
       if (error) throw error;
       
@@ -652,7 +669,7 @@ export const AdminDashboard = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {payments.slice(0, 10).map((payment: any) => (
+                    {payments.slice(0, 10).map((payment: PaymentItem) => (
                       <TableRow key={payment.id}>
                         <TableCell>
                           <div>

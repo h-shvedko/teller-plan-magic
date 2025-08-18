@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
@@ -14,7 +14,7 @@ export const useSubscription = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const checkSubscription = async () => {
+  const checkSubscription = useCallback(async () => {
     if (!user) {
       setSubscription(null);
       setIsLoading(false);
@@ -36,11 +36,11 @@ export const useSubscription = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     checkSubscription();
-  }, [user]);
+  }, [checkSubscription]);
 
   const openCustomerPortal = async () => {
     try {

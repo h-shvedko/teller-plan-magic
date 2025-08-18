@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -27,7 +27,7 @@ export const SubscriptionWidget = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadSubscription = async () => {
+  const loadSubscription = useCallback(async () => {
     if (!user) {
       setSubscription(null);
       setPaymentStatus(null);
@@ -97,11 +97,11 @@ export const SubscriptionWidget = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     loadSubscription();
-  }, [user]);
+  }, [user, loadSubscription]);
 
   const handleUpgrade = async (plan: string) => {
     if (!user) {

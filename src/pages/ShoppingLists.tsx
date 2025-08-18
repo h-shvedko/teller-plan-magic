@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Header } from '@/components/Header';
@@ -34,11 +34,7 @@ export const ShoppingLists = () => {
   });
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    loadShoppingLists();
-  }, [user]);
-
-  const loadShoppingLists = async () => {
+  const loadShoppingLists = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -61,7 +57,11 @@ export const ShoppingLists = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    loadShoppingLists();
+  }, [loadShoppingLists]);
 
   const handleSave = async () => {
     if (!user || !formData.name) {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Header } from '@/components/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -41,7 +41,7 @@ export const AdminPayments = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  const loadPayments = async () => {
+  const loadPayments = useCallback(async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -53,7 +53,7 @@ export const AdminPayments = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setPayments((data as any) || []);
+      setPayments(data || []);
     } catch (error) {
       console.error('Error loading payments:', error);
       toast({
@@ -64,11 +64,11 @@ export const AdminPayments = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
     loadPayments();
-  }, []);
+  }, [loadPayments]);
 
   const filteredPayments = payments.filter(payment => {
     const matchesSearch = 

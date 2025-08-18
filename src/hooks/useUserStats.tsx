@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
+
+type Recipe = Database['public']['Tables']['recipes']['Row'];
+type MealPlan = Database['public']['Tables']['meal_plans']['Row'];
+type ShoppingList = Database['public']['Tables']['shopping_lists']['Row'];
 
 interface UserStats {
   // Activity counts
@@ -177,7 +182,7 @@ export const useUserStats = () => {
 };
 
 // Helper functions
-function calculateWeeklyActivity(mealPlans: any[], recipes: any[], shoppingLists: any[]) {
+function calculateWeeklyActivity(mealPlans: MealPlan[], recipes: Recipe[], shoppingLists: ShoppingList[]) {
   const weeks = [];
   const now = new Date();
   
@@ -215,7 +220,7 @@ function calculateWeeklyActivity(mealPlans: any[], recipes: any[], shoppingLists
   return weeks;
 }
 
-function calculateCuisineDistribution(recipes: any[]) {
+function calculateCuisineDistribution(recipes: Recipe[]) {
   const cuisineCounts: Record<string, number> = {};
   const total = recipes.length;
   
@@ -235,7 +240,7 @@ function calculateCuisineDistribution(recipes: any[]) {
     .slice(0, 5); // Top 5 cuisines
 }
 
-function calculateMealTypeDistribution(recipes: any[]) {
+function calculateMealTypeDistribution(recipes: Recipe[]) {
   const mealTypeCounts: Record<string, number> = {};
   
   recipes.forEach(recipe => {
@@ -250,7 +255,7 @@ function calculateMealTypeDistribution(recipes: any[]) {
   }));
 }
 
-function calculateDifficultyDistribution(recipes: any[]) {
+function calculateDifficultyDistribution(recipes: Recipe[]) {
   const difficultyCounts: Record<string, number> = {};
   
   recipes.forEach(recipe => {
@@ -265,7 +270,7 @@ function calculateDifficultyDistribution(recipes: any[]) {
   }));
 }
 
-function calculateStreaks(weeklyActivity: any[]) {
+function calculateStreaks(weeklyActivity: UserStats['weeklyActivity']) {
   let currentStreak = 0;
   let longestStreak = 0;
   let tempStreak = 0;
@@ -295,7 +300,7 @@ function calculateStreaks(weeklyActivity: any[]) {
   return { currentStreak, longestStreak };
 }
 
-function getRecentActivity(mealPlans: any[], recipes: any[], shoppingLists: any[]) {
+function getRecentActivity(mealPlans: MealPlan[], recipes: Recipe[], shoppingLists: ShoppingList[]) {
   const allActivity = [
     ...mealPlans.map(mp => ({
       type: 'meal_plan' as const,

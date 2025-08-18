@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Header } from '@/components/Header';
@@ -35,11 +35,7 @@ export const MealPlans = () => {
   });
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    loadMealPlans();
-  }, [user]);
-
-  const loadMealPlans = async () => {
+  const loadMealPlans = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -62,7 +58,11 @@ export const MealPlans = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    loadMealPlans();
+  }, [loadMealPlans]);
 
   const handleSave = async () => {
     if (!user || !formData.name || !formData.week_start_date) {

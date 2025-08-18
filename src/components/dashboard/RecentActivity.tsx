@@ -81,7 +81,7 @@ export const RecentActivity = ({ data }: RecentActivityProps) => {
               <div>
                 <p className="font-medium">{activity.name}</p>
                 <div className="flex items-center gap-2">
-                  <Badge variant={getTypeColor(activity.type) as any}>
+                  <Badge variant={getTypeColor(activity.type) as "default" | "secondary" | "destructive" | "outline"}>
                     {getTypeLabel(activity.type)}
                   </Badge>
                 </div>
