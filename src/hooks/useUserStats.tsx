@@ -93,15 +93,15 @@ export const useUserStats = () => {
         const [mealPlansResult, recipesResult, shoppingListsResult] = await Promise.all([
           supabase
             .from('meal_plans')
-            .select('id, is_active, created_at, name')
+            .select('*')
             .eq('user_id', user.id),
           supabase
             .from('recipes')
-            .select('id, is_public, created_at, name, cuisine, cook_time, prep_time, difficulty, meal_type')
+            .select('*')
             .eq('created_by', user.id),
           supabase
             .from('shopping_lists')
-            .select('id, is_completed, created_at, name')
+            .select('*')
             .eq('user_id', user.id)
         ]);
 

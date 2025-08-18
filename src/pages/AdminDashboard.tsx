@@ -104,6 +104,13 @@ interface PaymentItem {
   customer_email?: string;
   subscription_id?: string;
   created_at: string;
+  plan_type?: string;
+  currency?: string;
+  profiles?: {
+    first_name: string;
+    last_name: string;
+    email: string;
+  };
 }
 
 interface EditingItem {
@@ -112,7 +119,7 @@ interface EditingItem {
 }
 
 type AdminTableItem = ProfileItem | RecipeItem | MealPlanItem | ShoppingListItem | SettingItem;
-type AdminFormData = Partial<AdminTableItem & { table?: string; user_email?: string; }>;
+type AdminFormData = Record<string, any>;
 
 export const AdminDashboard = () => {
   const { user } = useAuth();
@@ -190,7 +197,7 @@ export const AdminDashboard = () => {
         supabase.from('recipes').select('*').order('created_at', { ascending: false }),
         supabase.from('meal_plans').select('*').order('created_at', { ascending: false }),
         supabase.from('shopping_lists').select('*').order('created_at', { ascending: false }),
-        supabase.from('payments').select('*, profiles(first_name, last_name, email)').order('created_at', { ascending: false }),
+        supabase.from('payments').select('*').order('created_at', { ascending: false }),
         supabase.from('cuisines').select('*').order('name'),
         supabase.from('dietary_preferences').select('*').order('name'),
         supabase.from('health_goals').select('*').order('name'),
@@ -242,16 +249,17 @@ export const AdminDashboard = () => {
     e.preventDefault();
     
     if (editingItem?.id) {
-      await handleUpdate(editingItem.table, editingItem.id, formData);
+      await handleUpdate(editingItem.table as string, editingItem.id as string, formData);
     } else {
-      await handleCreate(editingItem.table, formData);
+      await handleCreate(editingItem.table as string, formData);
     }
   };
 
   const handleUpdate = async (table: string, id: string, data: AdminFormData) => {
     try {
       if (table === 'recipes') {
-        const { error } = await supabase.from('recipes').update(data).eq('id', id);
+        const { table: tableField, user_email, ...updateData } = data;
+        const { error } = await supabase.from('recipes').update(updateData).eq('id', id);
         if (error) throw error;
       } else if (table === 'meal_plans') {
         const { user_email, ...updateData } = data;
@@ -262,16 +270,20 @@ export const AdminDashboard = () => {
         const { error } = await supabase.from('shopping_lists').update(updateData).eq('id', id);
         if (error) throw error;
       } else if (table === 'cuisines') {
-        const { error } = await supabase.from('cuisines').update(data).eq('id', id);
+        const { table: tableField, user_email, ...updateData } = data;
+        const { error } = await supabase.from('cuisines').update(updateData).eq('id', id);
         if (error) throw error;
       } else if (table === 'dietary_preferences') {
-        const { error } = await supabase.from('dietary_preferences').update(data).eq('id', id);
+        const { table: tableField, user_email, ...updateData } = data;
+        const { error } = await supabase.from('dietary_preferences').update(updateData).eq('id', id);
         if (error) throw error;
       } else if (table === 'health_goals') {
-        const { error } = await supabase.from('health_goals').update(data).eq('id', id);
+        const { table: tableField, user_email, ...updateData } = data;
+        const { error } = await supabase.from('health_goals').update(updateData).eq('id', id);
         if (error) throw error;
       } else if (table === 'cooking_styles') {
-        const { error } = await supabase.from('cooking_styles').update(data).eq('id', id);
+        const { table: tableField, user_email, ...updateData } = data;
+        const { error } = await supabase.from('cooking_styles').update(updateData).eq('id', id);
         if (error) throw error;
       }
       
@@ -381,16 +393,30 @@ export const AdminDashboard = () => {
     try {
       const { table: tableField, user_email, id, ...createData } = data;
       let error;
-      if (table === 'cuisines') {
-        ({ error } = await supabase.from('cuisines').insert([createData]));
-      } else if (table === 'dietary_preferences') {
-        ({ error } = await supabase.from('dietary_preferences').insert([createData]));
-      } else if (table === 'health_goals') {
-        ({ error } = await supabase.from('health_goals').insert([createData]));
-      } else if (table === 'cooking_styles') {
-        ({ error } = await supabase.from('cooking_styles').insert([createData]));
+      
+      // Type-safe inserts based on table
+      if (table === 'cuisines' && createData.name) {
+        ({ error } = await supabase.from('cuisines').insert({ 
+          name: createData.name, 
+          description: createData.description || null 
+        }));
+      } else if (table === 'dietary_preferences' && createData.name) {
+        ({ error } = await supabase.from('dietary_preferences').insert({ 
+          name: createData.name, 
+          description: createData.description || null 
+        }));
+      } else if (table === 'health_goals' && createData.name) {
+        ({ error } = await supabase.from('health_goals').insert({ 
+          name: createData.name, 
+          description: createData.description || null 
+        }));
+      } else if (table === 'cooking_styles' && createData.name) {
+        ({ error } = await supabase.from('cooking_styles').insert({ 
+          name: createData.name, 
+          description: createData.description || null 
+        }));
       } else {
-        throw new Error(`Unsupported table: ${table}`);
+        throw new Error(`Unsupported table or missing required fields: ${table}`);
       }
       if (error) throw error;
       
@@ -669,31 +695,31 @@ export const AdminDashboard = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {payments.slice(0, 10).map((payment: PaymentItem) => (
-                      <TableRow key={payment.id}>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium">
-                              {payment.profiles?.first_name} {payment.profiles?.last_name}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              {payment.profiles?.email}
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="capitalize">
-                            {payment.plan_type}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="font-medium">
-                            ${(payment.amount / 100).toFixed(2)}
-                          </div>
-                          <div className="text-sm text-muted-foreground uppercase">
-                            {payment.currency || 'USD'}
-                          </div>
-                        </TableCell>
+                     {payments.slice(0, 10).map((payment: PaymentItem) => (
+                       <TableRow key={payment.id}>
+                         <TableCell>
+                           <div>
+                             <div className="font-medium">
+                               Payment #{payment.id.slice(0, 8)}
+                             </div>
+                             <div className="text-sm text-muted-foreground">
+                               {payment.customer_email || 'N/A'}
+                             </div>
+                           </div>
+                         </TableCell>
+                         <TableCell>
+                           <Badge variant="outline" className="capitalize">
+                             {payment.plan_type || 'N/A'}
+                           </Badge>
+                         </TableCell>
+                         <TableCell>
+                           <div className="font-medium">
+                             ${(payment.amount / 100).toFixed(2)}
+                           </div>
+                           <div className="text-sm text-muted-foreground uppercase">
+                             {payment.currency || 'USD'}
+                           </div>
+                         </TableCell>
                         <TableCell>
                           <Badge 
                             variant={payment.status === 'paid' ? 'default' : 
