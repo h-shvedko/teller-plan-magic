@@ -113,12 +113,29 @@ interface PaymentItem {
   };
 }
 
+interface OpenAICallItem {
+  id: string;
+  user_id: string;
+  function_name: string;
+  prompt: string;
+  response?: string;
+  model_used: string;
+  input_tokens: number;
+  output_tokens: number;
+  total_tokens: number;
+  cost_usd: number;
+  status: string;
+  error_message?: string;
+  execution_time_ms?: number;
+  created_at: string;
+}
+
 interface EditingItem {
   table: string;
   [key: string]: unknown;
 }
 
-type AdminTableItem = ProfileItem | RecipeItem | MealPlanItem | ShoppingListItem | SettingItem;
+type AdminTableItem = ProfileItem | RecipeItem | MealPlanItem | ShoppingListItem | SettingItem | OpenAICallItem;
 type AdminFormData = Record<string, any>;
 
 export const AdminDashboard = () => {
@@ -140,6 +157,7 @@ export const AdminDashboard = () => {
   const [mealPlans, setMealPlans] = useState<MealPlanItem[]>([]);
   const [shoppingLists, setShoppingLists] = useState<ShoppingListItem[]>([]);
   const [payments, setPayments] = useState<PaymentItem[]>([]);
+  const [openaiCalls, setOpenaiCalls] = useState<OpenAICallItem[]>([]);
   
   // Settings state
   const [cuisines, setCuisines] = useState<SettingItem[]>([]);
@@ -188,6 +206,7 @@ export const AdminDashboard = () => {
         mealPlansData,
         shoppingListsData,
         paymentsData,
+        openaiCallsData,
         cuisinesData,
         dietaryData,
         goalsData,
@@ -198,6 +217,7 @@ export const AdminDashboard = () => {
         supabase.from('meal_plans').select('*').order('created_at', { ascending: false }),
         supabase.from('shopping_lists').select('*').order('created_at', { ascending: false }),
         supabase.from('payments').select('*').order('created_at', { ascending: false }),
+        supabase.from('openai_api_calls').select('*').order('created_at', { ascending: false }),
         supabase.from('cuisines').select('*').order('name'),
         supabase.from('dietary_preferences').select('*').order('name'),
         supabase.from('health_goals').select('*').order('name'),
@@ -222,6 +242,7 @@ export const AdminDashboard = () => {
       setMealPlans(enrichedMealPlans);
       setShoppingLists(enrichedShoppingLists);
       setPayments(paymentsData.data || []);
+      setOpenaiCalls(openaiCallsData.data || []);
       setCuisines(cuisinesData.data || []);
       setDietaryPreferences(dietaryData.data || []);
       setHealthGoals(goalsData.data || []);
@@ -353,6 +374,8 @@ export const AdminDashboard = () => {
         ({ error } = await supabase.from('health_goals').delete().eq('id', id));
       } else if (table === 'cooking_styles') {
         ({ error } = await supabase.from('cooking_styles').delete().eq('id', id));
+      } else if (table === 'openai_calls') {
+        ({ error } = await supabase.from('openai_api_calls').delete().eq('id', id));
       } else {
         throw new Error(`Unsupported table: ${table}`);
       }
@@ -481,13 +504,14 @@ export const AdminDashboard = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-8">
+          <TabsList className="grid w-full grid-cols-9">
             <TabsTrigger value="stats">Overview</TabsTrigger>
             <TabsTrigger value="profiles">Users</TabsTrigger>
             <TabsTrigger value="recipes">Recipes</TabsTrigger>
             <TabsTrigger value="meal_plans">Meal Plans</TabsTrigger>
             <TabsTrigger value="shopping_lists">Shopping Lists</TabsTrigger>
             <TabsTrigger value="payments">Payments</TabsTrigger>
+            <TabsTrigger value="openai_calls">AI Calls</TabsTrigger>
             <TabsTrigger value="cuisines">Cuisines</TabsTrigger>
             <TabsTrigger value="dietary_preferences">Dietary</TabsTrigger>
           </TabsList>
@@ -744,6 +768,91 @@ export const AdminDashboard = () => {
                     </Link>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* OpenAI API Calls Tab */}
+          <TabsContent value="openai_calls">
+            <Card>
+              <CardHeader>
+                <CardTitle>OpenAI API Calls</CardTitle>
+                <CardDescription>
+                  {openaiCalls.length} API calls total
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User ID</TableHead>
+                      <TableHead>Function</TableHead>
+                      <TableHead>Model</TableHead>
+                      <TableHead>Tokens</TableHead>
+                      <TableHead>Cost</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {openaiCalls.slice(0, 20).map((call: OpenAICallItem) => (
+                      <TableRow key={call.id}>
+                        <TableCell>
+                          <div className="font-mono text-sm">
+                            {call.user_id?.slice(0, 8)}...
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{call.function_name}</Badge>
+                        </TableCell>
+                        <TableCell>{call.model_used}</TableCell>
+                        <TableCell>
+                          <div className="text-sm">
+                            <div>In: {call.input_tokens}</div>
+                            <div>Out: {call.output_tokens}</div>
+                            <div className="font-medium">Total: {call.total_tokens}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-medium">
+                            ${call.cost_usd.toFixed(4)}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge 
+                            variant={call.status === 'success' ? 'default' : 'destructive'}
+                          >
+                            {call.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-sm">
+                            {new Date(call.created_at).toLocaleDateString()}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEdit('openai_calls', call)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDelete('openai_calls', call.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </CardContent>
             </Card>
           </TabsContent>

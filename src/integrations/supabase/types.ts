@@ -182,6 +182,60 @@ export type Database = {
         }
         Relationships: []
       }
+      openai_api_calls: {
+        Row: {
+          cost_usd: number | null
+          created_at: string
+          error_message: string | null
+          execution_time_ms: number | null
+          function_name: string
+          id: string
+          input_tokens: number | null
+          model_used: string
+          output_tokens: number | null
+          prompt: string
+          response: string | null
+          status: string
+          total_tokens: number | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          cost_usd?: number | null
+          created_at?: string
+          error_message?: string | null
+          execution_time_ms?: number | null
+          function_name: string
+          id?: string
+          input_tokens?: number | null
+          model_used: string
+          output_tokens?: number | null
+          prompt: string
+          response?: string | null
+          status?: string
+          total_tokens?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          cost_usd?: number | null
+          created_at?: string
+          error_message?: string | null
+          execution_time_ms?: number | null
+          function_name?: string
+          id?: string
+          input_tokens?: number | null
+          model_used?: string
+          output_tokens?: number | null
+          prompt?: string
+          response?: string | null
+          status?: string
+          total_tokens?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
