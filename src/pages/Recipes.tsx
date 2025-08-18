@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Header } from '@/components/Header';
@@ -33,6 +34,7 @@ interface Recipe {
 }
 
 export const Recipes = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { settings, loading: settingsLoading } = useSettings();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -212,13 +214,17 @@ export const Recipes = () => {
               </div>
               <p className="text-muted-foreground">Create and manage your recipe collection</p>
             </div>
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button onClick={openCreateDialog}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Recipe
-                </Button>
-              </DialogTrigger>
+            <div className="flex gap-4">
+              <Button onClick={() => navigate('/create-recipe')}>
+                <Plus className="h-4 w-4 mr-2" />
+                Create Recipe
+              </Button>
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" onClick={openCreateDialog}>
+                    Quick Add
+                  </Button>
+                </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>
@@ -370,6 +376,7 @@ export const Recipes = () => {
               </DialogContent>
             </Dialog>
           </div>
+        </div>
 
           {/* Recipes Table */}
           <Card>
@@ -387,9 +394,9 @@ export const Recipes = () => {
                   <p className="text-muted-foreground mb-4">
                     Add your first recipe to start building your collection
                   </p>
-                  <Button onClick={openCreateDialog}>
+                  <Button onClick={() => navigate('/create-recipe')}>
                     <Plus className="h-4 w-4 mr-2" />
-                    Add Your First Recipe
+                    Create Your First Recipe
                   </Button>
                 </div>
               ) : (

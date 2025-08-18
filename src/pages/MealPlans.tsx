@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Header } from '@/components/Header';
@@ -23,6 +24,7 @@ interface MealPlan {
 }
 
 export const MealPlans = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [mealPlans, setMealPlans] = useState<MealPlan[]>([]);
   const [loading, setLoading] = useState(true);
@@ -187,6 +189,9 @@ export const MealPlans = () => {
                   Create Meal Plan
                 </Button>
               </DialogTrigger>
+              <Button onClick={() => navigate('/create-meal-plan')} variant="outline">
+                Create with AI
+              </Button>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>

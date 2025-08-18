@@ -46,10 +46,7 @@ export const AdminPayments = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('payments')
-        .select(`
-          *,
-          profiles(first_name, last_name, email)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -72,11 +69,9 @@ export const AdminPayments = () => {
 
   const filteredPayments = payments.filter(payment => {
     const matchesSearch = 
-      payment.profiles?.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.profiles?.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.profiles?.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.plan_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.stripe_session_id?.toLowerCase().includes(searchTerm.toLowerCase());
+      payment.plan_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      payment.stripe_session_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      payment.id.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || payment.status === statusFilter;
     
@@ -248,10 +243,10 @@ export const AdminPayments = () => {
                         <TableCell>
                           <div>
                             <div className="font-medium">
-                              {payment.profiles?.first_name} {payment.profiles?.last_name}
+                              Payment #{payment.id.slice(0, 8)}
                             </div>
                             <div className="text-sm text-muted-foreground">
-                              {payment.profiles?.email}
+                              User: {payment.user_id?.slice(0, 8) || 'N/A'}
                             </div>
                           </div>
                         </TableCell>

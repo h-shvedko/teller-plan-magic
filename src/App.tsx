@@ -20,6 +20,8 @@ import { AdminPayments } from "./pages/AdminPayments";
 import { MealPlans } from "./pages/MealPlans";
 import { Recipes } from "./pages/Recipes";
 import { ShoppingLists } from "./pages/ShoppingLists";
+import { CreateRecipe } from "./pages/CreateRecipe";
+import { CreateMealPlan } from "./pages/CreateMealPlan";
 
 const queryClient = new QueryClient();
 
@@ -89,6 +91,22 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <ShoppingLists />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/create-recipe" 
+                element={
+                  <ProtectedRoute>
+                    <CreateRecipe />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/create-meal-plan" 
+                element={
+                  <ProtectedRoute>
+                    <CreateMealPlan />
                   </ProtectedRoute>
                 } 
               />
