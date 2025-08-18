@@ -5,9 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Loader2, Wand2, User } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useSettings } from '@/hooks/useSettings';
 
 interface AIRecipeSuggestionProps {
   onRecipeSelect: (recipe: any) => void;
@@ -18,6 +21,18 @@ export const AIRecipeSuggestion = ({ onRecipeSelect }: AIRecipeSuggestionProps) 
   const [loading, setLoading] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
   const [suggestions, setSuggestions] = useState<any[]>([]);
+  const { settings, loading: settingsLoading } = useSettings();
+
+  // AI preferences state
+  const [preferences, setPreferences] = useState({
+    cuisines: [] as string[],
+    dietaryPreferences: [] as string[],
+    mealType: 'dinner',
+    difficulty: 'intermediate',
+    maxPrepTime: 60,
+    maxCookTime: 60,
+    servings: 4
+  });
 
   // Manual recipe form state
   const [manualRecipe, setManualRecipe] = useState({
@@ -44,7 +59,10 @@ export const AIRecipeSuggestion = ({ onRecipeSelect }: AIRecipeSuggestionProps) 
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('ai-recipe-suggestions', {
-        body: { prompt: aiPrompt }
+        body: { 
+          prompt: aiPrompt,
+          preferences: preferences
+        }
       });
 
       if (error) throw error;
@@ -204,14 +222,144 @@ export const AIRecipeSuggestion = ({ onRecipeSelect }: AIRecipeSuggestionProps) 
             <CardTitle>AI Recipe Suggestions</CardTitle>
             <CardDescription>Get recipe suggestions from AI based on your preferences</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
+            {/* Preferences Section */}
+            <div className="space-y-4">
+              <h4 className="text-sm font-medium">Recipe Preferences</h4>
+              
+              {/* Cuisine Preferences */}
+              <div>
+                <Label className="text-sm font-medium">Favorite Cuisines</Label>
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  {!settingsLoading && settings.cuisines.map((cuisine) => (
+                    <div key={cuisine.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`cuisine-${cuisine.id}`}
+                        checked={preferences.cuisines.includes(cuisine.name)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setPreferences(prev => ({
+                              ...prev,
+                              cuisines: [...prev.cuisines, cuisine.name]
+                            }));
+                          } else {
+                            setPreferences(prev => ({
+                              ...prev,
+                              cuisines: prev.cuisines.filter(c => c !== cuisine.name)
+                            }));
+                          }
+                        }}
+                      />
+                      <Label htmlFor={`cuisine-${cuisine.id}`} className="text-sm">{cuisine.name}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Dietary Preferences */}
+              <div>
+                <Label className="text-sm font-medium">Dietary Preferences</Label>
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  {!settingsLoading && settings.dietaryPreferences.map((diet) => (
+                    <div key={diet.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`diet-${diet.id}`}
+                        checked={preferences.dietaryPreferences.includes(diet.name)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setPreferences(prev => ({
+                              ...prev,
+                              dietaryPreferences: [...prev.dietaryPreferences, diet.name]
+                            }));
+                          } else {
+                            setPreferences(prev => ({
+                              ...prev,
+                              dietaryPreferences: prev.dietaryPreferences.filter(d => d !== diet.name)
+                            }));
+                          }
+                        }}
+                      />
+                      <Label htmlFor={`diet-${diet.id}`} className="text-sm">{diet.name}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recipe Settings */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="mealType" className="text-sm font-medium">Meal Type</Label>
+                  <Select value={preferences.mealType} onValueChange={(value) => setPreferences(prev => ({ ...prev, mealType: value }))}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="breakfast">Breakfast</SelectItem>
+                      <SelectItem value="lunch">Lunch</SelectItem>
+                      <SelectItem value="dinner">Dinner</SelectItem>
+                      <SelectItem value="snack">Snack</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="difficulty" className="text-sm font-medium">Difficulty</Label>
+                  <Select value={preferences.difficulty} onValueChange={(value) => setPreferences(prev => ({ ...prev, difficulty: value }))}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="beginner">Beginner</SelectItem>
+                      <SelectItem value="intermediate">Intermediate</SelectItem>
+                      <SelectItem value="advanced">Advanced</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="maxPrepTime" className="text-sm font-medium">Max Prep Time (min)</Label>
+                  <Input
+                    id="maxPrepTime"
+                    type="number"
+                    min="5"
+                    max="180"
+                    value={preferences.maxPrepTime}
+                    onChange={(e) => setPreferences(prev => ({ ...prev, maxPrepTime: parseInt(e.target.value) || 60 }))}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="maxCookTime" className="text-sm font-medium">Max Cook Time (min)</Label>
+                  <Input
+                    id="maxCookTime"
+                    type="number"
+                    min="5"
+                    max="240"
+                    value={preferences.maxCookTime}
+                    onChange={(e) => setPreferences(prev => ({ ...prev, maxCookTime: parseInt(e.target.value) || 60 }))}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="servings" className="text-sm font-medium">Servings</Label>
+                  <Input
+                    id="servings"
+                    type="number"
+                    min="1"
+                    max="12"
+                    value={preferences.servings}
+                    onChange={(e) => setPreferences(prev => ({ ...prev, servings: parseInt(e.target.value) || 4 }))}
+                  />
+                </div>
+              </div>
+            </div>
+
             <div>
-              <Label htmlFor="prompt">Describe what you want to cook</Label>
+              <Label htmlFor="prompt">Additional Description (Optional)</Label>
               <Textarea
                 id="prompt"
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
-                placeholder="e.g., Quick Italian pasta dish with chicken, healthy vegetarian dinner under 30 minutes"
+                placeholder="e.g., Using ingredients I have at home, something spicy, comfort food..."
                 rows={3}
               />
             </div>

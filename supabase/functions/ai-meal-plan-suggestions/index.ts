@@ -18,7 +18,7 @@ serve(async (req) => {
   }
 
   try {
-    const { prompt } = await req.json();
+    const { prompt, preferences } = await req.json();
     const startTime = Date.now();
     
     // Get user ID from request headers
@@ -72,7 +72,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are a professional meal planning expert. Generate 2-3 complete meal plan suggestions based on the user's prompt. 
+            content: `You are a professional meal planning expert. Generate 2-3 complete meal plan suggestions based on the user's prompt and preferences. 
             
             Return a JSON object with a "suggestions" array containing meal plan objects with these exact fields:
             - name: string (meal plan name)
@@ -90,9 +90,22 @@ serve(async (req) => {
               - cook_time: number (cooking time in minutes)
               - difficulty: string (one of: "beginner", "intermediate", "advanced")
             
-            Make sure meal plans are balanced, practical, and match the user's dietary preferences and lifestyle.`
+            Make sure meal plans are balanced, practical, and match the user's dietary preferences and lifestyle.
+            
+            ${preferences ? `
+            IMPORTANT: Consider these user preferences:
+            - Favorite cuisines: ${preferences.cuisines?.join(', ') || 'None specified'}
+            - Dietary preferences: ${preferences.dietaryPreferences?.join(', ') || 'None specified'}
+            - Health goals: ${preferences.healthGoals?.join(', ') || 'None specified'}
+            - Cooking style: ${preferences.cookingStyle || 'Mixed'}
+            - Household size: ${preferences.householdSize || 2} people
+            - Difficulty level: ${preferences.difficultyLevel || 'intermediate'}
+            - Budget range: ${preferences.budgetRange || 'medium'}
+            
+            Ensure recipes match these preferences, especially dietary restrictions and cooking difficulty.
+            ` : ''}`
           },
-          { role: 'user', content: prompt }
+          { role: 'user', content: prompt || 'Create a balanced weekly meal plan' }
         ],
         max_tokens: 3000,
         temperature: 0.7

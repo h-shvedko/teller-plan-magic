@@ -18,7 +18,7 @@ serve(async (req) => {
   }
 
   try {
-    const { prompt } = await req.json();
+    const { prompt, preferences } = await req.json();
     const startTime = Date.now();
     
     // Get user ID from request headers
@@ -72,7 +72,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are a professional chef and recipe creator. Generate 3 recipe suggestions based on the user's prompt. 
+            content: `You are a professional chef and recipe creator. Generate 3 recipe suggestions based on the user's prompt and preferences. 
             
             Return a JSON object with a "suggestions" array containing recipe objects with these exact fields:
             - name: string (recipe name)
@@ -87,9 +87,22 @@ serve(async (req) => {
             - meal_type: string (one of: "breakfast", "lunch", "dinner", "snack")
             - servings: number (number of servings)
             
-            Make sure recipes are practical, delicious, and match the user's request.`
+            Make sure recipes are practical, delicious, and match the user's request.
+            
+            ${preferences ? `
+            IMPORTANT: Consider these user preferences:
+            - Favorite cuisines: ${preferences.cuisines?.join(', ') || 'None specified'}
+            - Dietary preferences: ${preferences.dietaryPreferences?.join(', ') || 'None specified'}
+            - Meal type: ${preferences.mealType || 'dinner'}
+            - Difficulty level: ${preferences.difficulty || 'intermediate'}
+            - Max prep time: ${preferences.maxPrepTime || 60} minutes
+            - Max cook time: ${preferences.maxCookTime || 60} minutes
+            - Servings: ${preferences.servings || 4} people
+            
+            Ensure recipes match these preferences, especially dietary restrictions, time constraints, and difficulty level.
+            ` : ''}`
           },
-          { role: 'user', content: prompt }
+          { role: 'user', content: prompt || 'Suggest some delicious recipes' }
         ],
         max_tokens: 2000,
         temperature: 0.7
