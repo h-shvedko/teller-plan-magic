@@ -60,6 +60,11 @@ src/
 │   ├── RecipeScaler.tsx                # v1.2: Recipe scaling for different serving sizes
 │   ├── RecipeVariations.tsx            # v1.2: Recipe variation suggestions and substitutions
 │   ├── NutritionalAnalysis.tsx         # v1.2: Complete nutritional analysis and tracking
+│   ├── PriceComparisonWidget.tsx       # v1.3: Multi-store price comparison with savings analysis
+│   ├── SmartSubstitutionsPanel.tsx     # v1.3: AI-powered ingredient substitutions with confidence scoring
+│   ├── PantryInventoryManager.tsx      # v1.3: Complete pantry management with inventory tracking
+│   ├── ShoppingListOptimizer.tsx       # v1.3: Store layout optimization with route planning
+│   ├── BulkBuyingRecommendations.tsx   # v1.3: Intelligent bulk purchasing with savings analysis
 │   ├── ai/                       # AI-powered components
 │   │   ├── AIMealPlanSuggestion.tsx    # AI meal plan generation
 │   │   └── AIRecipeSuggestion.tsx      # AI recipe suggestions
@@ -136,7 +141,8 @@ src/
 │   ├── recipes.ts                # Recipe data structures and utilities
 │   ├── utils.ts                  # General utility functions
 │   ├── mealPlanTemplates.ts      # v1.1: Meal plan templates and seasonal logic
-│   └── recipeEnhancements.ts     # v1.2: Recipe rating, scaling, variations, nutrition, and time estimation logic
+│   ├── recipeEnhancements.ts     # v1.2: Recipe rating, scaling, variations, nutrition, and time estimation logic
+│   └── shoppingOptimization.ts   # v1.3: Price comparison, substitutions, pantry management, route optimization, and bulk buying logic
 ├── pages/                        # Route-based page components
 │   ├── Index.tsx                 # Landing page
 │   ├── Auth.tsx                  # Authentication page
@@ -227,6 +233,13 @@ supabase/
 - **Recipe Scaling**: Mathematical recipe scaling with precision tracking and equipment considerations
 - **Recipe Variations**: Intelligent recipe variations with dietary substitutions and cuisine adaptations
 - **Nutritional Analysis**: Complete nutritional breakdown with macro/micronutrient tracking and daily values
+
+### New v1.3 Intelligent Shopping List Architecture
+- **Price Comparison System**: Multi-store price comparison with real-time updates, availability tracking, and savings optimization
+- **Smart Substitutions Engine**: AI-powered ingredient substitutions with confidence scoring, health benefits, and cost analysis
+- **Pantry Inventory Management**: Complete inventory tracking with expiration monitoring, low stock alerts, and automated reordering
+- **Shopping Route Optimization**: Store layout-based route planning with time estimates, aisle organization, and progress tracking
+- **Bulk Buying Intelligence**: Advanced bulk purchasing recommendations with savings calculations, storage analysis, and usage patterns
 
 ### Backend Architecture
 - **Database**: PostgreSQL via Supabase with Row Level Security (RLS)

@@ -141,3 +141,25 @@ The application uses environment variables for configuration. Copy `.env.example
 - Dynamic recipe scaling with mathematical precision and equipment considerations
 - Intelligent recipe variations for dietary preferences and cooking styles
 - Comprehensive nutritional analysis with daily value tracking and health recommendations
+
+## v1.3 Intelligent Shopping List Features
+- ✅ **Price Comparison Integration**: Real-time price comparison across major grocery stores with availability tracking, delivery options, and savings analysis
+- ✅ **Smart Ingredient Substitutions**: AI-powered substitution suggestions with price, health, and availability considerations
+- ✅ **Pantry Inventory Management**: Complete pantry tracking with low stock alerts, expiration monitoring, and automatic shopping list integration
+- ✅ **Shopping List Optimization**: Store layout-based route optimization with time estimates, aisle organization, and efficiency improvements
+- ✅ **Bulk Buying Recommendations**: Intelligent bulk purchasing suggestions with savings calculations, storage requirements, and usage frequency analysis
+
+### New Components Added:
+- `src/lib/shoppingOptimization.ts` - Core business logic for price comparison, substitutions, pantry management, route optimization, and bulk buying
+- `src/components/PriceComparisonWidget.tsx` - Multi-store price comparison with real-time updates and savings analysis
+- `src/components/SmartSubstitutionsPanel.tsx` - AI-powered ingredient substitutions with confidence scoring and health benefits
+- `src/components/PantryInventoryManager.tsx` - Complete pantry management with inventory tracking and smart reordering
+- `src/components/ShoppingListOptimizer.tsx` - Store layout optimization with route planning and progress tracking
+- `src/components/BulkBuyingRecommendations.tsx` - Intelligent bulk purchasing with savings analysis and storage considerations
+
+### Enhanced Shopping Functionality:
+- Real-time price comparison across multiple grocery stores with availability and delivery tracking
+- Smart ingredient substitutions with price, health, and availability optimization
+- Comprehensive pantry inventory management with expiration monitoring and low stock alerts
+- Intelligent shopping route optimization based on store layouts for maximum efficiency
+- Advanced bulk buying recommendations with detailed savings analysis and storage planning
