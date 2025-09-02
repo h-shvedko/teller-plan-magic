@@ -4,7 +4,11 @@
       "Bash(npm run lint)",
       "Bash(rm:*)",
       "Bash(npm install:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(npm outdated)",
+      "Bash(npm run test:*)",
+      "Bash(git tag:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []

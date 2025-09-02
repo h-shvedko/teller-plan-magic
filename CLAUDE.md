@@ -99,3 +99,23 @@ The application uses environment variables for configuration. Copy `.env.example
 - ✅ Added comprehensive test setup with Vitest
 - ✅ Removed duplicate files
 - ✅ All ESLint errors and warnings resolved
+
+## v1.1 New Features (Smart Meal Plan Generation)
+- ✅ **Meal Plan Templates**: Implemented pre-built templates (Busy Week, Family Friendly, Budget Conscious) with customizable preferences and meal suggestions
+- ✅ **Seasonal Meal Planning**: Added seasonal ingredient suggestions, peak season tracking, storage/budget tips, and seasonal recipe recommendations
+- ✅ **Calendar Integration**: Created comprehensive meal plan scheduling with calendar view, meal status tracking, and prep time management
+- ✅ **Batch Cooking Optimization**: Implemented intelligent batch cooking suggestions with time savings calculations, storage optimization, and step-by-step instructions
+
+### New Components Added:
+- `src/lib/mealPlanTemplates.ts` - Core logic for templates, seasonal ingredients, and batch cooking
+- `src/components/MealPlanTemplateSelector.tsx` - Template selection with detailed preview and customization
+- `src/components/SeasonalMealPlanning.tsx` - Seasonal ingredient planning with recipe suggestions
+- `src/components/MealPlanCalendar.tsx` - Calendar-based meal scheduling with status tracking
+- `src/components/BatchCookingOptimizer.tsx` - Intelligent batch cooking optimization with time savings
+
+### Enhanced Functionality:
+- Smart meal plan generation with template-based approach
+- Seasonal awareness with ingredient peak season tracking
+- Calendar integration for better meal scheduling
+- Batch cooking optimization to save preparation time
+- Advanced meal planning logic with preferences integration
