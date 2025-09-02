@@ -55,6 +55,11 @@ src/
 │   ├── SeasonalMealPlanning.tsx        # v1.1: Seasonal ingredient planning
 │   ├── MealPlanCalendar.tsx            # v1.1: Calendar-based meal scheduling
 │   ├── BatchCookingOptimizer.tsx       # v1.1: Batch cooking optimization
+│   ├── RecipeRatingReview.tsx          # v1.2: Recipe rating and review system
+│   ├── CookingTimeEstimator.tsx        # v1.2: Skill-based cooking time estimation
+│   ├── RecipeScaler.tsx                # v1.2: Recipe scaling for different serving sizes
+│   ├── RecipeVariations.tsx            # v1.2: Recipe variation suggestions and substitutions
+│   ├── NutritionalAnalysis.tsx         # v1.2: Complete nutritional analysis and tracking
 │   ├── ai/                       # AI-powered components
 │   │   ├── AIMealPlanSuggestion.tsx    # AI meal plan generation
 │   │   └── AIRecipeSuggestion.tsx      # AI recipe suggestions
@@ -130,7 +135,8 @@ src/
 │   ├── createAdminUser.ts        # Admin user creation utilities
 │   ├── recipes.ts                # Recipe data structures and utilities
 │   ├── utils.ts                  # General utility functions
-│   └── mealPlanTemplates.ts      # v1.1: Meal plan templates and seasonal logic
+│   ├── mealPlanTemplates.ts      # v1.1: Meal plan templates and seasonal logic
+│   └── recipeEnhancements.ts     # v1.2: Recipe rating, scaling, variations, nutrition, and time estimation logic
 ├── pages/                        # Route-based page components
 │   ├── Index.tsx                 # Landing page
 │   ├── Auth.tsx                  # Authentication page
@@ -214,6 +220,13 @@ supabase/
 - **Seasonal Planning**: Season-aware ingredient suggestions and recipe matching
 - **Calendar Integration**: Date-based meal scheduling with status tracking
 - **Batch Cooking**: Optimization algorithms for time and effort savings
+
+### New v1.2 Enhanced Recipe Integration Architecture
+- **Recipe Rating System**: Comprehensive rating and review system with analytics and user feedback
+- **Cooking Time Estimation**: Skill-based time estimation with confidence levels and adjustment factors
+- **Recipe Scaling**: Mathematical recipe scaling with precision tracking and equipment considerations
+- **Recipe Variations**: Intelligent recipe variations with dietary substitutions and cuisine adaptations
+- **Nutritional Analysis**: Complete nutritional breakdown with macro/micronutrient tracking and daily values
 
 ### Backend Architecture
 - **Database**: PostgreSQL via Supabase with Row Level Security (RLS)

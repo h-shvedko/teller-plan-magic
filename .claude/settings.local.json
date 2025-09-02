@@ -8,7 +8,8 @@
       "Bash(npm outdated)",
       "Bash(npm run test:*)",
       "Bash(git tag:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
