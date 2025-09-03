@@ -183,3 +183,28 @@ The application uses environment variables for configuration. Copy `.env.example
 - Intelligent taste profile building that learns from user interactions and adapts recommendations over time
 - Seasonal awareness with peak ingredient recommendations, weather-appropriate cooking methods, and location-based preferences
 - Confidence scoring system that improves recommendation accuracy as more user data is collected
+
+## v1.5 Social & Community Features
+- ✅ **Recipe Sharing with Friends/Family**: Comprehensive recipe sharing system with granular permissions, friend connections, and family group management
+- ✅ **Meal Plan Collaboration**: Real-time family collaboration on meal plans with role-based permissions, activity tracking, and voting systems
+- ✅ **Community Recipe Collections**: Curated recipe collections with community features, subscriptions, ratings, and featured content
+- ✅ **Cooking Achievement System**: Gamified cooking experience with badges, levels, progress tracking, and milestone rewards
+- ✅ **Recipe Import from URLs/Photos**: AI-powered recipe import with URL extraction and OCR-based photo processing
+
+### New Components Added:
+- `src/lib/socialFeatures.ts` - Core social features service with user profiles, friend connections, family groups, sharing permissions, achievements, and recipe import functionality
+- `src/components/RecipeSharing.tsx` - Advanced recipe sharing interface with friend selection, family groups, permission management, and sharing analytics
+- `src/components/FamilyMealPlanCollaboration.tsx` - Family collaboration system with real-time activity feeds, role management, and collaborative meal planning
+- `src/components/CommunityRecipeCollections.tsx` - Community-driven recipe collections with curation tools, subscription management, and discovery features
+- `src/components/CookingAchievements.tsx` - Comprehensive achievement system with progress tracking, badge management, and gamification elements
+- `src/components/RecipeImportWizard.tsx` - Multi-step recipe import wizard with URL extraction, photo OCR, AI validation, and manual editing capabilities
+
+### Enhanced Social Functionality:
+- Friend connections with pending/accepted status management and privacy controls
+- Family group creation and management with role-based permissions and invitation systems
+- Recipe sharing with granular permissions (view, cook, modify, reshare) and expiration settings
+- Real-time meal plan collaboration with activity feeds, notifications, and approval workflows
+- Community recipe collections with rating systems, subscriber counts, and featured content curation
+- Comprehensive achievement system with multiple categories (cooking, social, collection, sharing, milestone)
+- AI-powered recipe import supporting both URL extraction and photo OCR with confidence scoring and manual review
+- Social interaction tracking for personalized recommendations and community engagement metrics
