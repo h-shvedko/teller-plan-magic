@@ -13,7 +13,6 @@ services:
   supabase-db:
     volumes:
       - ./supabase/migrations:/docker-entrypoint-initdb.d:ro
-      - ./supabase/seed.sql:/docker-entrypoint-initdb.d/seed.sql:ro
     ports:
       - "54322:5432"
 

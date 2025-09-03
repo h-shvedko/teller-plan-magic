@@ -110,7 +110,7 @@ services:
 
   # Supabase Studio
   supabase-studio:
-    image: supabase/studio:20240101-ce42139
+    image: supabase/studio:latest
     ports:
       - "54324:3000"
     environment:
@@ -128,7 +128,7 @@ services:
     ports:
       - "54325:9000" # web ui
       - "54326:2500" # smtp
-      - "54327:1100" # pop3
+      - "54329:1100" # pop3
     environment:
       - INBUCKET_WEB_ADDR=0.0.0.0:9000
       - INBUCKET_POP3_ADDR=0.0.0.0:1100
