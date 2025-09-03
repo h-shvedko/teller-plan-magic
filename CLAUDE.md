@@ -37,6 +37,8 @@ src/
 - Admin panel for user and payment management
 
 ## Development Commands
+
+### Local Development (Node.js)
 ```bash
 npm run dev          # Start development server
 npm run build        # Production build
@@ -46,6 +48,36 @@ npm run preview      # Preview production build
 npm run test         # Run tests with Vitest
 npm run test:run     # Run tests once
 npm run test:ui      # Run tests with UI
+```
+
+### Docker Development Environment
+```bash
+# Using Docker helper scripts
+./scripts/docker-dev.sh start     # Start full development environment
+./scripts/docker-dev.sh stop      # Stop development environment
+./scripts/docker-dev.sh logs      # View all logs
+./scripts/docker-dev.sh status    # Check service status
+./scripts/docker-dev.sh reset-db  # Reset development database
+
+# Manual Docker commands
+docker-compose up -d               # Start all services in background
+docker-compose down                # Stop and remove containers
+docker-compose logs -f app         # Follow app logs
+docker-compose restart app         # Restart specific service
+```
+
+### Production Docker Environment
+```bash
+# Using Docker production scripts
+./scripts/docker-prod.sh deploy    # Build and deploy production
+./scripts/docker-prod.sh start     # Start production environment
+./scripts/docker-prod.sh stop      # Stop production environment
+./scripts/docker-prod.sh backup-db # Backup production database
+./scripts/docker-prod.sh update-supabase # Update Supabase services
+
+# Manual Docker commands
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
 ```
 
 ## Database Schema
@@ -208,3 +240,224 @@ The application uses environment variables for configuration. Copy `.env.example
 - Comprehensive achievement system with multiple categories (cooking, social, collection, sharing, milestone)
 - AI-powered recipe import supporting both URL extraction and photo OCR with confidence scoring and manual review
 - Social interaction tracking for personalized recommendations and community engagement metrics
+
+## Docker Environment Setup
+
+### Overview
+The project includes comprehensive Docker support for both development and production environments. The Docker setup includes:
+- React application with Vite development server
+- Complete Supabase stack (PostgreSQL, Auth, Storage, Studio, Edge Functions)
+- Production-ready Nginx configuration
+- Multi-stage builds for optimization
+- Health checks and monitoring
+- Automated backup and restore capabilities
+
+### Docker Services
+- **app**: React application (development with hot reload)
+- **app-prod**: Production React app with Nginx
+- **supabase-db**: PostgreSQL database
+- **supabase-api**: Supabase Auth service (GoTrue)
+- **supabase-storage**: Supabase Storage API
+- **supabase-rest**: PostgREST API server
+- **supabase-studio**: Supabase Dashboard
+- **supabase-inbucket**: Email testing service
+- **supabase-imgproxy**: Image processing service
+
+### Quick Start with Docker
+
+#### Development Environment
+```bash
+# Clone the repository
+git clone <repository-url>
+cd teller-plan-magic
+
+# Start development environment
+./scripts/docker-dev.sh start
+
+# The application will be available at:
+# - React App: http://localhost:8080
+# - Supabase Studio: http://localhost:54324
+# - Supabase API: http://localhost:54321
+# - Database: postgresql://postgres:postgres@localhost:54322/postgres
+```
+
+#### Production Environment
+```bash
+# Configure production environment
+cp .env.docker.prod .env
+# Edit .env with your production Supabase credentials
+
+# Deploy production environment
+./scripts/docker-prod.sh deploy
+
+# The application will be available at:
+# - Production App: http://localhost (port 80)
+# - HTTPS: https://localhost (port 443, if configured)
+```
+
+### Environment Configuration
+
+#### Development (.env.docker)
+- Uses local Supabase instance with default development keys
+- Hot reload enabled for React development
+- All services running locally
+
+#### Production (.env.docker.prod)
+- Uses production Supabase instance
+- Production-optimized builds
+- Nginx with security headers and caching
+- SSL/TLS ready configuration
+
+### File Structure
+```
+├── Dockerfile                     # Multi-stage Docker build
+├── docker-compose.yml            # Main Docker Compose configuration
+├── docker-compose.override.yml   # Development overrides
+├── docker-compose.prod.yml       # Production configuration
+├── nginx.conf                    # Production Nginx configuration
+├── .dockerignore                 # Docker ignore file
+├── .env.docker                   # Development environment variables
+├── .env.docker.prod              # Production environment variables
+└── scripts/
+    ├── docker-dev.sh             # Development helper script
+    └── docker-prod.sh            # Production helper script
+```
+
+### Docker Features
+
+#### Multi-Stage Builds
+- **Base**: Node.js environment with build dependencies
+- **Development**: Development server with hot reload
+- **Build**: Production build generation
+- **Production**: Optimized Nginx deployment
+
+#### Volume Management
+- **supabase-db-data**: Persistent database storage
+- **supabase-storage-data**: File storage persistence
+- **App volumes**: Source code mounting for development
+
+#### Health Checks
+- Application health endpoints
+- Database connectivity checks
+- Service dependency management
+
+#### Security Features
+- Non-root user execution
+- Security headers configuration
+- Network isolation
+- Environment variable protection
+
+### Development Workflow
+
+1. **Start Development Environment**
+   ```bash
+   ./scripts/docker-dev.sh start
+   ```
+
+2. **View Logs**
+   ```bash
+   ./scripts/docker-dev.sh logs        # All services
+   ./scripts/docker-dev.sh logs app    # Specific service
+   ```
+
+3. **Database Operations**
+   ```bash
+   ./scripts/docker-dev.sh reset-db    # Reset database
+   ./scripts/docker-dev.sh migrate     # Run migrations
+   ```
+
+4. **Stop Environment**
+   ```bash
+   ./scripts/docker-dev.sh stop
+   ```
+
+### Production Deployment
+
+1. **Configure Environment**
+   ```bash
+   cp .env.docker.prod .env
+   # Edit with production values
+   ```
+
+2. **Deploy Application**
+   ```bash
+   ./scripts/docker-prod.sh deploy
+   ```
+
+3. **Backup Database**
+   ```bash
+   ./scripts/docker-prod.sh backup-db
+   ```
+
+4. **Update Supabase**
+   ```bash
+   ./scripts/docker-prod.sh update-supabase
+   ```
+
+### Supabase Integration
+
+#### Local Development
+- Complete Supabase stack running in Docker
+- Database migrations automatically applied
+- Studio interface for database management
+- Email testing with Inbucket
+
+#### Production Updates
+- Automated migration deployment
+- Database backup before updates
+- Health checks during deployment
+- Rollback capabilities
+
+### Troubleshooting
+
+#### Common Issues
+1. **Port Conflicts**: Ensure ports 8080, 54321-54328, and 80 are available
+2. **Database Connection**: Check if Supabase services are fully started
+3. **Environment Variables**: Verify .env file configuration
+4. **Docker Permissions**: Ensure Docker daemon is running with proper permissions
+
+#### Useful Commands
+```bash
+# Check service status
+docker-compose ps
+
+# View service logs
+docker-compose logs -f [service-name]
+
+# Restart specific service
+docker-compose restart [service-name]
+
+# Clean up resources
+docker-compose down -v --remove-orphans
+docker system prune -f
+
+# Access database directly
+docker-compose exec supabase-db psql -U postgres postgres
+```
+
+### Performance Optimization
+
+#### Development
+- Source code mounting for instant updates
+- Optimized layer caching
+- Minimal service startup time
+
+#### Production
+- Multi-stage builds for minimal image size
+- Nginx with caching and compression
+- Health checks for reliability
+- Resource limits and monitoring
+
+### Monitoring and Logging
+
+#### Service Health
+- Health check endpoints for all services
+- Dependency checks between services
+- Automated restart policies
+
+#### Logging
+- Centralized logging with Docker
+- Service-specific log filtering
+- Log rotation and retention
+
+This Docker environment provides a complete, production-ready setup that mirrors your production Supabase configuration while enabling local development with hot reload capabilities.

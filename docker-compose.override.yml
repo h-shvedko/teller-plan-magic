@@ -1,0 +1,24 @@
+# Override file for development - extends docker-compose.yml
+services:
+  app:
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true # For file watching in Docker
+      - WATCHPACK_POLLING=true
+    stdin_open: true
+    tty: true
+
+  supabase-db:
+    volumes:
+      - ./supabase/migrations:/docker-entrypoint-initdb.d:ro
+      - ./supabase/seed.sql:/docker-entrypoint-initdb.d/seed.sql:ro
+    ports:
+      - "54322:5432"
+
+  supabase-studio:
+    environment:
+      - SUPABASE_URL=http://localhost:54321
+      - SUPABASE_REST_URL=http://localhost:54323
+      - POSTGRES_PASSWORD=postgres
