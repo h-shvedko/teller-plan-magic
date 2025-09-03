@@ -57,7 +57,7 @@ export const PriceComparisonWidget = ({
   };
 
   const getSortedPrices = () => {
-    let filtered = showOnlyAvailable 
+    const filtered = showOnlyAvailable 
       ? priceComparisons.filter(p => p.availability === 'in_stock')
       : priceComparisons;
 

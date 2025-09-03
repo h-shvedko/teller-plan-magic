@@ -263,7 +263,7 @@ export function optimizeShoppingRoute(items: ShoppingItem[], storeId: string): O
 
   // Categorize items by aisle
   const itemsByAisle: { [key: number]: ShoppingItem[] } = {};
-  let uncategorizedItems: ShoppingItem[] = [];
+  const uncategorizedItems: ShoppingItem[] = [];
 
   items.forEach(item => {
     let assigned = false;
