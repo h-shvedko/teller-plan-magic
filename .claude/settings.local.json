@@ -17,7 +17,10 @@
       "Bash(docker:*)",
       "Bash(docker-compose:*)",
       "Bash(./scripts/docker-dev.sh:*)",
-      "Bash(./scripts/docker-prod.sh:*)"
+      "Bash(./scripts/docker-prod.sh:*)",
+      "Bash(./scripts/docker-fresh-start.sh:*)",
+      "Bash(./scripts/docker-restart.sh:*)",
+      "Bash(./scripts/docker-seed.sh:*)"
     ],
     "deny": [],
     "ask": []

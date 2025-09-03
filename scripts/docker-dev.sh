@@ -131,6 +131,17 @@ migrate() {
     fi
 }
 
+# Function to run database seeding
+seed_db() {
+    print_info "Running database seeding..."
+    if [ -f "./scripts/docker-seed.sh" ]; then
+        ./scripts/docker-seed.sh
+    else
+        print_warning "Database seed script not found at ./scripts/docker-seed.sh"
+        print_info "You can run seeding manually once the environment is running"
+    fi
+}
+
 # Function to show help
 show_help() {
     echo "Teller Plan Magic - Docker Development Helper"
@@ -146,12 +157,19 @@ show_help() {
     echo "  cleanup     Clean up Docker environment and volumes"
     echo "  reset-db    Reset the development database"
     echo "  migrate     Run Supabase migrations"
+    echo "  seed        Run database seeding"
     echo "  help        Show this help message"
+    echo ""
+    echo "Additional Scripts:"
+    echo "  ./scripts/docker-fresh-start.sh   Complete fresh setup (destructive)"
+    echo "  ./scripts/docker-restart.sh       Restart existing stopped environment"
+    echo "  ./scripts/docker-seed.sh          Database seeding with options"
     echo ""
     echo "Examples:"
     echo "  $0 start"
     echo "  $0 logs app"
     echo "  $0 status"
+    echo "  $0 seed"
 }
 
 # Main script logic
@@ -180,6 +198,9 @@ case "$1" in
         ;;
     "migrate")
         migrate
+        ;;
+    "seed")
+        seed_db
         ;;
     "help"|"--help"|"-h")
         show_help

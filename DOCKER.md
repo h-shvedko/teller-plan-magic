@@ -12,7 +12,9 @@ This guide provides detailed instructions for setting up and running Teller Plan
 
 ## Quick Start
 
-### Development Environment
+### Development Environment (Fresh Start)
+
+**Recommended for first-time setup:**
 
 1. **Clone the repository**
    ```bash
@@ -20,16 +22,43 @@ This guide provides detailed instructions for setting up and running Teller Plan
    cd teller-plan-magic
    ```
 
-2. **Start the development environment**
+2. **Complete fresh setup**
    ```bash
-   ./scripts/docker-dev.sh start
+   ./scripts/docker-fresh-start.sh
    ```
+   
+   This script will:
+   - Clean up any existing Docker resources
+   - Start all services from scratch
+   - Run database migrations
+   - Populate database with seed data
+   - Verify the installation
 
 3. **Access the applications**
    - React App: http://localhost:8080
    - Supabase Studio: http://localhost:54324
    - Supabase API: http://localhost:54321
    - Database: postgresql://postgres:postgres@localhost:54322/postgres
+
+### Development Environment (Restart Existing)
+
+**For restarting a previously set up environment:**
+
+1. **Navigate to project directory**
+   ```bash
+   cd teller-plan-magic
+   ```
+
+2. **Restart existing environment**
+   ```bash
+   ./scripts/docker-restart.sh
+   ```
+   
+   This script will:
+   - Detect existing Docker volumes and data
+   - Start all services preserving data
+   - Check for and apply new migrations
+   - Verify service health
 
 ### Production Environment
 
@@ -128,6 +157,105 @@ SMTP_PASS=your-email-password
 ADMIN_EMAIL=admin@yourdomain.com
 ```
 
+## Script Management
+
+### Available Scripts
+
+#### 1. Fresh Start Script (`docker-fresh-start.sh`)
+Complete setup from scratch (destructive):
+```bash
+./scripts/docker-fresh-start.sh        # Full fresh setup
+```
+- Removes all existing Docker resources
+- Starts clean environment
+- Runs migrations and seeds
+- Creates helpful shortcuts
+
+#### 2. Restart Script (`docker-restart.sh`)
+Restart existing environment:
+```bash
+./scripts/docker-restart.sh            # Normal restart
+./scripts/docker-restart.sh --force    # Force restart all services
+```
+- Preserves existing data
+- Applies new migrations
+- Handles partial service failures
+
+#### 3. Database Seeding Script (`docker-seed.sh`)
+Manage database seed data:
+```bash
+./scripts/docker-seed.sh               # Run all seeds
+./scripts/docker-seed.sh --reset       # Reset and re-run seeds
+./scripts/docker-seed.sh --verify      # Check seed data
+./scripts/docker-seed.sh --create      # Create seed file structure
+```
+
+#### 4. Development Helper (`docker-dev.sh`)
+Day-to-day development operations:
+```bash
+./scripts/docker-dev.sh start          # Start environment
+./scripts/docker-dev.sh stop           # Stop environment
+./scripts/docker-dev.sh restart        # Restart environment
+./scripts/docker-dev.sh logs [service] # View logs
+./scripts/docker-dev.sh status         # Check service status
+./scripts/docker-dev.sh seed           # Run seeding
+./scripts/docker-dev.sh reset-db       # Reset database
+./scripts/docker-dev.sh migrate        # Run migrations
+./scripts/docker-dev.sh cleanup        # Clean up resources
+```
+
+#### 5. Production Script (`docker-prod.sh`)
+Production deployment and management:
+```bash
+./scripts/docker-prod.sh deploy        # Build and deploy
+./scripts/docker-prod.sh backup-db     # Backup database
+./scripts/docker-prod.sh update-supabase # Update Supabase
+```
+
+### Usage Scenarios
+
+#### First Time Setup
+```bash
+# Clone project and start fresh
+git clone <repository-url>
+cd teller-plan-magic
+./scripts/docker-fresh-start.sh
+```
+
+#### Daily Development
+```bash
+# Start development environment
+./scripts/docker-dev.sh start
+
+# View application logs
+./scripts/docker-dev.sh logs app
+
+# Stop when done
+./scripts/docker-dev.sh stop
+```
+
+#### After Git Pull (New Changes)
+```bash
+# Restart with new migrations
+./scripts/docker-restart.sh
+
+# Or use development helper
+./scripts/docker-dev.sh restart
+./scripts/docker-dev.sh migrate
+```
+
+#### Database Management
+```bash
+# Reset database completely
+./scripts/docker-dev.sh reset-db
+
+# Re-seed database with fresh data
+./scripts/docker-seed.sh --reset
+
+# Check what data exists
+./scripts/docker-seed.sh --verify
+```
+
 ## Database Management
 
 ### Development Database
@@ -138,8 +266,43 @@ ADMIN_EMAIL=admin@yourdomain.com
 # Run migrations
 ./scripts/docker-dev.sh migrate
 
+# Run database seeding
+./scripts/docker-dev.sh seed
+
 # Access database directly
 docker-compose exec supabase-db psql -U postgres postgres
+```
+
+### Database Seeding
+The project includes comprehensive database seeding:
+
+#### Seed Data Includes:
+- **Cuisines**: 15 different cuisine types with descriptions
+- **Dietary Preferences**: Vegetarian, Vegan, Gluten-Free, etc.
+- **Health Goals**: Weight Loss, High Protein, Quick Meals, etc.
+- **Recipe Tags**: One-Pot, 30-Minute, Kid-Friendly, etc.
+- **Sample Recipes**: Optional sample recipes for development
+
+#### Seed File Structure:
+```
+db/seeds/
+├── 001_basic_lookups.sql      # Essential lookup data
+└── 002_sample_recipes.sql     # Sample recipes for testing
+```
+
+#### Seeding Commands:
+```bash
+# Create seed file structure
+./scripts/docker-seed.sh --create
+
+# Run all seed files
+./scripts/docker-seed.sh
+
+# Reset all seed data and re-run
+./scripts/docker-seed.sh --reset
+
+# Only verify existing data
+./scripts/docker-seed.sh --verify
 ```
 
 ### Production Database

@@ -52,12 +52,22 @@ npm run test:ui      # Run tests with UI
 
 ### Docker Development Environment
 ```bash
+# Quick Start Scripts
+./scripts/docker-fresh-start.sh   # Complete fresh setup (destructive)
+./scripts/docker-restart.sh       # Restart existing stopped environment
+
 # Using Docker helper scripts
 ./scripts/docker-dev.sh start     # Start full development environment
 ./scripts/docker-dev.sh stop      # Stop development environment
 ./scripts/docker-dev.sh logs      # View all logs
 ./scripts/docker-dev.sh status    # Check service status
 ./scripts/docker-dev.sh reset-db  # Reset development database
+./scripts/docker-dev.sh seed      # Run database seeding
+
+# Database seeding options
+./scripts/docker-seed.sh          # Run all seeds
+./scripts/docker-seed.sh --reset  # Reset and re-run all seeds
+./scripts/docker-seed.sh --verify # Verify existing seed data
 
 # Manual Docker commands
 docker-compose up -d               # Start all services in background
@@ -266,19 +276,30 @@ The project includes comprehensive Docker support for both development and produ
 ### Quick Start with Docker
 
 #### Development Environment
+
+**Fresh Start (Recommended for first time setup):**
 ```bash
 # Clone the repository
 git clone <repository-url>
 cd teller-plan-magic
 
-# Start development environment
-./scripts/docker-dev.sh start
+# Complete fresh setup with migrations and seeding
+./scripts/docker-fresh-start.sh
 
 # The application will be available at:
 # - React App: http://localhost:8080
 # - Supabase Studio: http://localhost:54324
 # - Supabase API: http://localhost:54321
 # - Database: postgresql://postgres:postgres@localhost:54322/postgres
+```
+
+**Restart Existing Environment:**
+```bash
+# If you have a previously set up environment that's stopped
+./scripts/docker-restart.sh
+
+# Or use the standard development helper
+./scripts/docker-dev.sh start
 ```
 
 #### Production Environment
