@@ -79,6 +79,10 @@ src/
 │   ├── LeftoverManager.tsx             # v1.6: Leftover inventory tracking with expiration alerts and meal rotation
 │   ├── SpecialOccasionPlanner.tsx      # v1.6: Event planning interface with timeline management and guest requirements
 │   ├── MealPlanAnalytics.tsx           # v1.6: Analytics dashboard with interactive charts and trend analysis
+│   ├── OfflineShoppingList.tsx        # v1.7: Comprehensive offline shopping list management with sync status tracking
+│   ├── VoiceActivatedCooking.tsx       # v1.7: Voice-controlled cooking interface with speech recognition and synthesis
+│   ├── CookingTimer.tsx                # v1.7: Advanced timer system with notifications, presets, and background operation
+│   ├── PWAManager.tsx                  # v1.7: PWA status dashboard with installation prompts, cache management, and settings
 │   ├── ai/                       # AI-powered components
 │   │   ├── AIMealPlanSuggestion.tsx    # AI meal plan generation
 │   │   └── AIRecipeSuggestion.tsx      # AI recipe suggestions
@@ -159,7 +163,8 @@ src/
 │   ├── shoppingOptimization.ts   # v1.3: Price comparison, substitutions, pantry management, route optimization, and bulk buying logic
 │   ├── smartRecommendations.ts   # v1.4: ML recommendation engine with taste profiling, success tracking, and seasonal adaptation
 │   ├── socialFeatures.ts         # v1.5: Social features service with user profiles, friend connections, sharing permissions, and achievements
-│   └── advancedPlanningTools.ts  # v1.6: Nutritional tracking, budget management, leftover handling, special events, and analytics
+│   ├── advancedPlanningTools.ts  # v1.6: Nutritional tracking, budget management, leftover handling, special events, and analytics
+│   └── pwaUtils.ts               # v1.7: Core PWA utilities with offline storage, network management, and service worker integration
 ├── pages/                        # Route-based page components
 │   ├── Index.tsx                 # Landing page
 │   ├── Auth.tsx                  # Authentication page
@@ -277,6 +282,15 @@ supabase/
 - **Leftover Management Engine**: Smart leftover tracking with expiration monitoring, storage optimization, meal rotation rules, and waste reduction algorithms
 - **Special Occasion Planning**: Complete event planning system for holidays and celebrations with guest management, dietary requirements, and preparation timelines
 - **Analytics Platform**: Advanced analytics dashboard with cost trends, nutrition analysis, time tracking, preference insights, and machine learning-powered recommendations
+
+### New v1.7 Progressive Web App Architecture
+- **Service Worker Framework**: Comprehensive caching strategies with network-first for APIs, cache-first for static assets, and intelligent offline fallback mechanisms
+- **Offline Storage System**: IndexedDB-based persistent storage with structured data management, sync status tracking, and conflict resolution algorithms
+- **Voice Interface Engine**: Speech recognition and synthesis with natural language processing, cooking-specific command recognition, and customizable voice settings
+- **Timer Management System**: Advanced multi-timer functionality with background operation, push notifications, wake lock support, and preset configurations
+- **PWA Installation Framework**: Native app installation prompts, manifest configuration, shortcut management, and platform-specific optimizations
+- **Background Sync Engine**: Automatic synchronization with conflict detection, retry mechanisms, and offline operation continuity
+- **Cache Management System**: Intelligent storage quota monitoring, cleanup utilities, and performance optimization for offline-first experience
 
 ### Backend Architecture
 - **Database**: PostgreSQL via Supabase with Row Level Security (RLS)
