@@ -98,6 +98,11 @@ src/
 │   ├── CustomerLifecycleAnalysis.tsx   # v2.0: Customer lifecycle tracking dashboard with stage progression and retention optimization
 │   ├── ChurnPredictionDashboard.tsx    # v2.0: Churn prediction and prevention dashboard with risk assessment and intervention management
 │   ├── FeatureUsageAnalytics.tsx       # v2.0: Feature usage analytics platform with adoption tracking and performance analysis
+│   ├── PremiumRecipeCollections.tsx  # v2.1: Celebrity chef recipe collections with premium content browser and chef profiles
+│   ├── AINutritionistConsultation.tsx # v2.1: AI nutritionist consultation platform with health metrics and goal management
+│   ├── MealPlanHistoryManager.tsx     # v2.1: Unlimited meal plan history with advanced filtering and detailed analytics
+│   ├── PrioritySupportCenter.tsx      # v2.1: Priority support system with real-time chat and agent management
+│   ├── ExportManager.tsx              # v2.1: Advanced export functionality with multiple formats and custom styling
 │   ├── ai/                       # AI-powered components
 │   │   ├── AIMealPlanSuggestion.tsx    # AI meal plan generation
 │   │   └── AIRecipeSuggestion.tsx      # AI recipe suggestions
@@ -182,7 +187,8 @@ src/
 │   ├── pwaUtils.ts               # v1.7: Core PWA utilities with offline storage, network management, and service worker integration
 │   ├── thirdPartyIntegrations.ts # v1.8: Comprehensive integration service layer with mock API implementations for all third-party services
 │   ├── userAnalytics.ts          # v1.9: Core analytics service with comprehensive tracking capabilities and statistical analysis algorithms
-│   └── adminBusinessIntelligence.ts # v2.0: Comprehensive business intelligence service with user engagement analytics, A/B testing framework, and churn prediction models
+│   ├── adminBusinessIntelligence.ts # v2.0: Comprehensive business intelligence service with user engagement analytics, A/B testing framework, and churn prediction models
+│   └── premiumFeatures.ts        # v2.1: Premium subscription service with celebrity chef collections, AI nutritionist, unlimited history, priority support, and export functionality
 ├── pages/                        # Route-based page components
 │   ├── Index.tsx                 # Landing page
 │   ├── Auth.tsx                  # Authentication page
@@ -337,6 +343,13 @@ supabase/
 - **Feature Usage Analytics Platform**: Advanced feature adoption tracking with usage pattern analysis, discovery funnel optimization, performance metrics, engagement depth measurement, and data-driven product development insights
 - **Business Intelligence Infrastructure**: Unified analytics service layer with comprehensive data aggregation, statistical analysis algorithms, predictive modeling capabilities, real-time dashboard systems, and automated reporting frameworks
 - **Intervention Management System**: Automated intervention triggering based on user behavior patterns with success tracking, A/B testing integration, personalized messaging systems, and comprehensive ROI measurement for retention campaigns
+
+### New v2.1 Premium Subscription Tier Enhancements Architecture
+- **Celebrity Chef Recipe Collections**: Premium content management system with chef profiles, exclusive recipes, achievement tracking, and subscription-based access control
+- **AI Nutritionist Consultation Platform**: Advanced AI-powered nutrition consultation system with health metric tracking, personalized recommendations, goal management, and expert chat interface
+- **Unlimited Meal Plan History Manager**: Comprehensive meal plan archive system with advanced filtering, search capabilities, detailed analytics, and success rate tracking across unlimited time periods
+- **Priority Customer Support Center**: Premium support system with priority ticket routing, real-time chat interface, agent assignment, and satisfaction tracking with dedicated support channels
+- **Advanced Export & Sharing System**: Professional export functionality supporting multiple formats (PDF, Excel, Word, CSV, JSON) with custom styling, branding options, template library, and comprehensive sharing capabilities
 
 ### Backend Architecture
 - **Database**: PostgreSQL via Supabase with Row Level Security (RLS)
