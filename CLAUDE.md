@@ -688,3 +688,42 @@ docker-compose exec supabase-db psql -U postgres postgres
 - Log rotation and retention
 
 This Docker environment provides a complete, production-ready setup that mirrors your production Supabase configuration while enabling local development with hot reload capabilities.
+
+## v2.4 Real-time Features
+- ✅ **Real-time Shopping List Collaboration**: WebSocket-based collaborative shopping lists with live item addition/completion, user presence tracking, and conflict resolution
+- ✅ **Live Cooking Session Sharing**: Interactive cooking sessions with step-by-step guidance, participant tracking, real-time messaging, and host controls
+- ✅ **Real-time Meal Plan Updates**: Collaborative meal planning with live updates, assignment tracking, status changes, and multi-user editing
+- ✅ **Push Notifications for Meal Reminders**: Comprehensive notification system with meal preparation alerts, cooking reminders, and shopping list notifications
+
+### New Components Added:
+- `src/lib/realtime.ts` - Core real-time infrastructure with Socket.IO client management, event handling, and WebSocket communication services
+- `src/components/RealtimeShoppingList.tsx` - Collaborative shopping list interface with live updates, user presence, and conflict resolution
+- `src/components/LiveCookingSession.tsx` - Interactive cooking session platform with step guidance, participant management, and real-time messaging
+- `src/components/RealtimeMealPlan.tsx` - Collaborative meal planning with live editing, assignment tracking, and multi-user synchronization
+
+### Real-time Infrastructure:
+- **Socket.IO Server** (`realtime-services/socketio/server.js`): Complete WebSocket server with Redis adapter for scaling, room-based communication, and event handling
+- **Docker Services** (`docker-compose.realtime.yml`): Microservices architecture with Socket.IO server, Redis for pub/sub, notification service, message queue (RabbitMQ), job processor, and WebSocket adapter
+- **Push Notification Service**: Web Push API integration with VAPID keys, service worker support, and notification scheduling
+- **Background Job Processing**: RabbitMQ-based job queue for handling scheduled notifications, email alerts, and data synchronization tasks
+
+### Enhanced Real-time Functionality:
+- **Collaborative Shopping Lists**: Real-time item addition, completion status updates, collaborator management, and user presence indicators with conflict resolution
+- **Live Cooking Sessions**: Interactive cooking experiences with step-by-step guidance, participant tracking, real-time chat, session controls, and progress synchronization
+- **Dynamic Meal Planning**: Multi-user meal plan editing with live updates, assignment management, status tracking, and collaborative decision-making
+- **Smart Notifications**: Intelligent push notifications for meal reminders, preparation alerts, cooking timers, and shopping list updates with personalized scheduling
+- **Scalable Architecture**: Redis-powered scaling for multiple Socket.IO instances, horizontal scaling support, and high-availability real-time communication
+- **Offline Support**: Service worker integration for offline functionality with background sync and queue management for when connectivity is restored
+
+### Real-time Docker Environment:
+```bash
+# Start real-time services with main application
+docker-compose -f docker-compose.yml -f docker-compose.realtime.yml up -d
+
+# Real-time Services Available:
+# - Socket.IO Server: http://localhost:3001
+# - Redis: localhost:6379  
+# - Notification Service: http://localhost:3002
+# - RabbitMQ Management: http://localhost:15672
+# - Push Notifications: Web Push API with VAPID keys
+```

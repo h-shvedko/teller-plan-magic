@@ -108,6 +108,9 @@ src/
 │   ├── RecipeLicensingSystem.tsx      # v2.2: Recipe licensing platform with agreement management and royalty collection
 │   ├── OptimizedImage.tsx             # v2.3: Advanced image component with progressive loading, WebP support, and lazy loading
 │   ├── PerformanceDashboard.tsx       # v2.3: Performance monitoring dashboard with cache analytics and optimization controls
+│   ├── RealtimeShoppingList.tsx       # v2.4: Real-time collaborative shopping list interface with live updates and user presence
+│   ├── LiveCookingSession.tsx          # v2.4: Interactive cooking session platform with step guidance and participant management
+│   ├── RealtimeMealPlan.tsx            # v2.4: Collaborative meal planning with live editing and multi-user synchronization
 │   ├── ai/                       # AI-powered components
 │   │   ├── AIMealPlanSuggestion.tsx    # AI meal plan generation
 │   │   └── AIRecipeSuggestion.tsx      # AI recipe suggestions
@@ -195,7 +198,8 @@ src/
 │   ├── adminBusinessIntelligence.ts # v2.0: Comprehensive business intelligence service with user engagement analytics, A/B testing framework, and churn prediction models
 │   ├── premiumFeatures.ts        # v2.1: Premium subscription service with celebrity chef collections, AI nutritionist, unlimited history, priority support, and export functionality
 │   ├── marketplaceFeatures.ts    # v2.2: Marketplace service layer with chef profiles, affiliate marketing, sponsorship management, and licensing framework
-│   └── caching.ts                # v2.3: Complete caching infrastructure with Redis, memory cache, CDN service, and database optimization
+│   ├── caching.ts                # v2.3: Complete caching infrastructure with Redis, memory cache, CDN service, and database optimization
+│   └── realtime.ts               # v2.4: Real-time infrastructure with Socket.IO client management, event handling, and WebSocket communication
 ├── pages/                        # Route-based page components
 │   ├── Index.tsx                 # Landing page
 │   ├── Auth.tsx                  # Authentication page
@@ -258,6 +262,42 @@ supabase/
     ├── 20250817170248_*.sql      # Meal plan details
     ├── 20250817174216_*.sql      # Shopping list items
     └── 20250818151453_*.sql      # OpenAI API call logging
+```
+
+## Real-time Services Structure (`realtime-services/`)
+```
+realtime-services/
+├── socketio/                     # Socket.IO WebSocket server
+│   ├── server.js                 # Main Socket.IO server with Redis adapter
+│   ├── package.json              # Node.js dependencies for real-time services
+│   └── .env                      # Real-time service environment variables
+├── notifications/                # Push notification service
+│   ├── server.js                 # Web Push notification server
+│   ├── package.json              # Notification service dependencies
+│   └── templates/                # Notification message templates
+├── jobs/                         # Background job processor
+│   ├── processor.js              # RabbitMQ job queue processor
+│   ├── package.json              # Job processor dependencies
+│   └── schedulers/               # Scheduled job definitions
+└── ws-adapter/                   # WebSocket scaling adapter
+    ├── adapter.js                # Redis-based Socket.IO adapter
+    └── package.json              # Adapter service dependencies
+```
+
+## Docker Infrastructure
+```
+├── docker-compose.yml            # Main application services
+├── docker-compose.realtime.yml   # Real-time services extension
+├── docker-compose.override.yml   # Development overrides
+├── docker-compose.prod.yml       # Production configuration
+├── Dockerfile                    # Multi-stage Docker build
+├── nginx.conf                    # Production Nginx configuration
+├── redis.conf                    # Redis server configuration
+└── scripts/                      # Docker management scripts
+    ├── docker-dev.sh             # Development environment helper
+    ├── docker-prod.sh            # Production deployment helper
+    ├── docker-fresh-start.sh     # Complete environment reset
+    └── docker-restart.sh         # Quick restart helper
 ```
 
 ## Key Architecture Patterns
@@ -373,6 +413,15 @@ supabase/
 - **Progressive Loading Infrastructure**: Smart content loading system with intersection observer, lazy loading, preloading strategies, image compression, and fallback handling for optimal user experience
 - **Performance Monitoring & Analytics**: Real-time performance dashboard with cache hit rates, query performance metrics, image loading analytics, Core Web Vitals tracking, and automated optimization alerts
 - **Resource Management System**: Advanced resource optimization with memory management, garbage collection monitoring, asset bundling, code splitting, and performance budgeting
+
+### New v2.4 Real-time Features Architecture
+- **WebSocket Communication Infrastructure**: Socket.IO-based real-time communication with Redis adapter for horizontal scaling, room-based messaging, and connection management
+- **Collaborative Shopping List System**: Real-time collaborative shopping with live item updates, user presence tracking, conflict resolution, and synchronized state management
+- **Live Cooking Session Platform**: Interactive cooking sessions with step-by-step guidance, participant management, real-time messaging, host controls, and progress synchronization
+- **Real-time Meal Plan Collaboration**: Multi-user meal planning with live updates, assignment tracking, status changes, collaborative editing, and conflict resolution
+- **Push Notification Service**: Comprehensive notification system with Web Push API, VAPID key management, service worker integration, and scheduled notification delivery
+- **Microservices Architecture**: Docker-based microservices with Socket.IO server, Redis pub/sub, RabbitMQ message queue, background job processing, and notification services
+- **Offline-First Real-time**: Service worker integration with background sync, offline queuing, and seamless reconnection handling for uninterrupted collaborative experiences
 
 ### Backend Architecture
 - **Database**: PostgreSQL via Supabase with Row Level Security (RLS)
