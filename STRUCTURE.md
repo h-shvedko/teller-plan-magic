@@ -111,6 +111,10 @@ src/
 │   ├── RealtimeShoppingList.tsx       # v2.4: Real-time collaborative shopping list interface with live updates and user presence
 │   ├── LiveCookingSession.tsx          # v2.4: Interactive cooking session platform with step guidance and participant management
 │   ├── RealtimeMealPlan.tsx            # v2.4: Collaborative meal planning with live editing and multi-user synchronization
+│   ├── AIRecipeImageAnalyzer.tsx       # v2.5: Advanced AI image analysis for recipe creation with computer vision and ingredient detection
+│   ├── NaturalLanguageRecipeParser.tsx # v2.5: Intelligent recipe parsing from unstructured text with natural language processing
+│   ├── AIAdvancedNutritionAnalyzer.tsx # v2.5: Comprehensive AI-powered nutrition analysis with health scoring and personalized insights
+│   ├── IntelligentMealTimingSuggester.tsx # v2.5: Smart meal timing optimization with circadian rhythm analysis and energy pattern recognition
 │   ├── ai/                       # AI-powered components
 │   │   ├── AIMealPlanSuggestion.tsx    # AI meal plan generation
 │   │   └── AIRecipeSuggestion.tsx      # AI recipe suggestions
@@ -199,7 +203,8 @@ src/
 │   ├── premiumFeatures.ts        # v2.1: Premium subscription service with celebrity chef collections, AI nutritionist, unlimited history, priority support, and export functionality
 │   ├── marketplaceFeatures.ts    # v2.2: Marketplace service layer with chef profiles, affiliate marketing, sponsorship management, and licensing framework
 │   ├── caching.ts                # v2.3: Complete caching infrastructure with Redis, memory cache, CDN service, and database optimization
-│   └── realtime.ts               # v2.4: Real-time infrastructure with Socket.IO client management, event handling, and WebSocket communication
+│   ├── realtime.ts               # v2.4: Real-time infrastructure with Socket.IO client management, event handling, and WebSocket communication
+│   └── enhancedAI.ts             # v2.5: Comprehensive AI service layer with fine-tuned models, image analysis, recipe parsing, nutrition analysis, and meal timing intelligence
 ├── pages/                        # Route-based page components
 │   ├── Index.tsx                 # Landing page
 │   ├── Auth.tsx                  # Authentication page
@@ -246,7 +251,17 @@ supabase/
 │   │   └── index.ts
 │   ├── manage-user-roles/        # User role management
 │   │   └── index.ts
-│   └── send-contact-email/       # Contact form email handling
+│   ├── send-contact-email/       # Contact form email handling
+│   │   └── index.ts
+│   ├── enhanced-ai-recipe-generation/ # v2.5: Fine-tuned AI recipe generation with specialized models
+│   │   └── index.ts
+│   ├── ai-image-recipe-analysis/ # v2.5: Computer vision recipe analysis from food photos
+│   │   └── index.ts
+│   ├── ai-recipe-parser/         # v2.5: Natural language recipe parsing from unstructured text
+│   │   └── index.ts
+│   ├── ai-nutrition-analysis/    # v2.5: Comprehensive AI-powered nutritional analysis
+│   │   └── index.ts
+│   └── ai-meal-timing/           # v2.5: Intelligent meal timing optimization with circadian rhythm analysis
 │       └── index.ts
 └── migrations/                   # Database schema migrations
     ├── 20250814055316_*.sql      # Initial schema setup
@@ -422,6 +437,15 @@ realtime-services/
 - **Push Notification Service**: Comprehensive notification system with Web Push API, VAPID key management, service worker integration, and scheduled notification delivery
 - **Microservices Architecture**: Docker-based microservices with Socket.IO server, Redis pub/sub, RabbitMQ message queue, background job processing, and notification services
 - **Offline-First Real-time**: Service worker integration with background sync, offline queuing, and seamless reconnection handling for uninterrupted collaborative experiences
+
+### New v2.5 Enhanced AI Capabilities Architecture
+- **Fine-tuned OpenAI Integration**: Specialized OpenAI models trained for recipe creation, nutrition analysis, meal timing optimization, and natural language processing with domain-specific expertise
+- **Computer Vision Recipe Analysis**: GPT-4 Vision API integration for comprehensive food image analysis with ingredient detection, cooking method recognition, recipe estimation, and nutritional assessment
+- **Natural Language Processing Engine**: Advanced text parsing capabilities for extracting structured recipe data from unstructured text sources including blogs, social media posts, and handwritten notes
+- **Comprehensive Nutrition Analysis System**: Scientific nutritional analysis with macronutrient tracking, micronutrient analysis, health scoring algorithms, glycemic index calculation, and personalized dietary insights
+- **Intelligent Meal Timing Optimization**: Chronobiology-based meal scheduling with circadian rhythm analysis, energy pattern recognition, metabolic optimization, and personalized timing recommendations
+- **Multi-modal AI Integration**: Seamless integration of text, image, and structured data AI capabilities with unified API interfaces and consistent confidence scoring across all AI services
+- **Advanced Health Intelligence**: AI-powered health recommendations with ingredient synergy analysis, bioavailability optimization, anti-inflammatory scoring, and personalized nutrition guidance
 
 ### Backend Architecture
 - **Database**: PostgreSQL via Supabase with Row Level Security (RLS)
