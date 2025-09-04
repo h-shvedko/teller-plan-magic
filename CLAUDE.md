@@ -251,6 +251,28 @@ The application uses environment variables for configuration. Copy `.env.example
 - AI-powered recipe import supporting both URL extraction and photo OCR with confidence scoring and manual review
 - Social interaction tracking for personalized recommendations and community engagement metrics
 
+## v1.6 Advanced Planning Tools
+- ✅ **Nutritional Goal Tracking and Meal Balancing**: Comprehensive nutritional goal setting with daily/weekly/monthly targets, real-time balance scoring, and intelligent recommendations for macro/micronutrient optimization
+- ✅ **Budget Tracking per Meal Plan**: Detailed budget management with category allocations, spending tracking, variance analysis, and savings opportunities identification
+- ✅ **Leftover Management and Meal Rotation**: Smart leftover tracking with expiration monitoring, storage optimization, meal rotation rules, and recipe variety management
+- ✅ **Special Occasion Meal Planning**: Complete event planning system for holidays, parties, and celebrations with guest management, dietary requirements, preparation timelines, and shopping lists
+- ✅ **Meal Plan Analytics**: Advanced analytics dashboard with cost trends, nutrition analysis, time tracking, preference insights, and actionable recommendations
+
+### New Components Added:
+- `src/lib/advancedPlanningTools.ts` - Core business logic for nutritional tracking, budget management, leftover handling, special events, and comprehensive analytics
+- `src/components/NutritionalGoalTracker.tsx` - Goal setting and real-time nutritional balance tracking with visual progress indicators and personalized recommendations
+- `src/components/MealPlanBudgetTracker.tsx` - Budget management with spending analysis, category breakdowns, and savings opportunity identification
+- `src/components/LeftoverManager.tsx` - Leftover inventory tracking with expiration alerts, meal rotation rules, and waste reduction suggestions
+- `src/components/SpecialOccasionPlanner.tsx` - Event planning interface with timeline management, guest dietary requirements, and comprehensive preparation workflows
+- `src/components/MealPlanAnalytics.tsx` - Analytics dashboard with interactive charts, trend analysis, and actionable insights across cost, nutrition, time, and preferences
+
+### Enhanced Planning Functionality:
+- Intelligent nutritional goal tracking with balance scoring and recommendation engine for optimal macro/micronutrient distribution
+- Comprehensive budget management with real-time spending tracking, category allocations, and AI-powered savings opportunity identification
+- Smart leftover management system with expiration monitoring, quality rating, meal rotation algorithms, and waste reduction optimization
+- Complete special occasion planning with event-specific timelines, dietary requirement management, and collaborative preparation workflows
+- Advanced analytics platform with multi-dimensional insights, trend analysis, and machine learning-powered recommendations for continuous meal planning improvement
+
 ## Docker Environment Setup
 
 ### Overview

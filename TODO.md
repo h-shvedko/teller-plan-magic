@@ -130,12 +130,12 @@
   - ✅ Add cooking achievement system and badges
   - ✅ Implement recipe import from URLs/photos
 
-- [ ] **Advanced Planning Tools**
-  - Add nutritional goal tracking and meal balancing
-  - Implement budget tracking per meal plan
-  - Create leftover management and meal rotation
-  - Add special occasion meal planning (holidays, parties)
-  - Implement meal plan analytics (cost, nutrition, time trends)
+- ✅ **Advanced Planning Tools** (v1.6 COMPLETED)
+  - ✅ Add nutritional goal tracking and meal balancing
+  - ✅ Implement budget tracking per meal plan
+  - ✅ Create leftover management and meal rotation
+  - ✅ Add special occasion meal planning (holidays, parties)
+  - ✅ Implement meal plan analytics (cost, nutrition, time trends)
 
 #### **Mobile & Offline Experience**
 - [ ] **Progressive Web App Features**

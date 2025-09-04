@@ -65,6 +65,20 @@ src/
 │   ├── PantryInventoryManager.tsx      # v1.3: Complete pantry management with inventory tracking
 │   ├── ShoppingListOptimizer.tsx       # v1.3: Store layout optimization with route planning
 │   ├── BulkBuyingRecommendations.tsx   # v1.3: Intelligent bulk purchasing with savings analysis
+│   ├── SmartRecommendationDisplay.tsx  # v1.4: Intelligent recommendation display with categorized suggestions
+│   ├── MealPlanSuccessTracker.tsx      # v1.4: Comprehensive meal plan tracking with detailed feedback collection
+│   ├── TasteProfileLearning.tsx        # v1.4: Taste profile visualization with learning insights
+│   ├── SeasonalPreferenceAdaptation.tsx # v1.4: Seasonal adaptation interface with ingredient recommendations
+│   ├── RecipeSharing.tsx               # v1.5: Advanced recipe sharing interface with friend selection and permission management
+│   ├── FamilyMealPlanCollaboration.tsx # v1.5: Family collaboration system with real-time activity feeds
+│   ├── CommunityRecipeCollections.tsx  # v1.5: Community-driven recipe collections with curation tools
+│   ├── CookingAchievements.tsx         # v1.5: Comprehensive achievement system with progress tracking
+│   ├── RecipeImportWizard.tsx          # v1.5: Multi-step recipe import wizard with URL extraction and photo OCR
+│   ├── NutritionalGoalTracker.tsx      # v1.6: Goal setting and real-time nutritional balance tracking
+│   ├── MealPlanBudgetTracker.tsx       # v1.6: Budget management with spending analysis and category breakdowns
+│   ├── LeftoverManager.tsx             # v1.6: Leftover inventory tracking with expiration alerts and meal rotation
+│   ├── SpecialOccasionPlanner.tsx      # v1.6: Event planning interface with timeline management and guest requirements
+│   ├── MealPlanAnalytics.tsx           # v1.6: Analytics dashboard with interactive charts and trend analysis
 │   ├── ai/                       # AI-powered components
 │   │   ├── AIMealPlanSuggestion.tsx    # AI meal plan generation
 │   │   └── AIRecipeSuggestion.tsx      # AI recipe suggestions
@@ -142,7 +156,10 @@ src/
 │   ├── utils.ts                  # General utility functions
 │   ├── mealPlanTemplates.ts      # v1.1: Meal plan templates and seasonal logic
 │   ├── recipeEnhancements.ts     # v1.2: Recipe rating, scaling, variations, nutrition, and time estimation logic
-│   └── shoppingOptimization.ts   # v1.3: Price comparison, substitutions, pantry management, route optimization, and bulk buying logic
+│   ├── shoppingOptimization.ts   # v1.3: Price comparison, substitutions, pantry management, route optimization, and bulk buying logic
+│   ├── smartRecommendations.ts   # v1.4: ML recommendation engine with taste profiling, success tracking, and seasonal adaptation
+│   ├── socialFeatures.ts         # v1.5: Social features service with user profiles, friend connections, sharing permissions, and achievements
+│   └── advancedPlanningTools.ts  # v1.6: Nutritional tracking, budget management, leftover handling, special events, and analytics
 ├── pages/                        # Route-based page components
 │   ├── Index.tsx                 # Landing page
 │   ├── Auth.tsx                  # Authentication page
@@ -240,6 +257,26 @@ supabase/
 - **Pantry Inventory Management**: Complete inventory tracking with expiration monitoring, low stock alerts, and automated reordering
 - **Shopping Route Optimization**: Store layout-based route planning with time estimates, aisle organization, and progress tracking
 - **Bulk Buying Intelligence**: Advanced bulk purchasing recommendations with savings calculations, storage analysis, and usage patterns
+
+### New v1.4 User Experience & Personalization Architecture
+- **Smart Recommendations Engine**: Machine learning-powered personalized recipe recommendations with ML-based scoring algorithms
+- **Meal Plan Success Rate Tracking**: Comprehensive tracking of what users actually cook vs. what they plan, with success rate analytics
+- **Taste Profile Learning**: AI system that learns from user interactions (views, likes, saves, cooks) to build detailed taste preferences
+- **Seasonal Preference Adaptation**: Dynamic seasonal recommendations based on ingredient availability, weather patterns, and user seasonal cooking history
+
+### New v1.5 Social & Community Architecture
+- **Recipe Sharing System**: Comprehensive recipe sharing with granular permissions, friend connections, and family group management
+- **Meal Plan Collaboration**: Real-time family collaboration on meal plans with role-based permissions, activity tracking, and voting systems
+- **Community Recipe Collections**: Curated recipe collections with community features, subscriptions, ratings, and featured content
+- **Cooking Achievement System**: Gamified cooking experience with badges, levels, progress tracking, and milestone rewards
+- **Recipe Import Engine**: AI-powered recipe import with URL extraction and OCR-based photo processing
+
+### New v1.6 Advanced Planning Tools Architecture
+- **Nutritional Goal System**: Comprehensive nutritional goal setting with daily/weekly/monthly targets, real-time balance scoring, and intelligent recommendations
+- **Budget Management System**: Detailed budget tracking with category allocations, spending analysis, variance monitoring, and savings opportunities identification
+- **Leftover Management Engine**: Smart leftover tracking with expiration monitoring, storage optimization, meal rotation rules, and waste reduction algorithms
+- **Special Occasion Planning**: Complete event planning system for holidays and celebrations with guest management, dietary requirements, and preparation timelines
+- **Analytics Platform**: Advanced analytics dashboard with cost trends, nutrition analysis, time tracking, preference insights, and machine learning-powered recommendations
 
 ### Backend Architecture
 - **Database**: PostgreSQL via Supabase with Row Level Security (RLS)
