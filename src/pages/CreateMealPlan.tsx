@@ -11,20 +11,41 @@ import { Loader2, Save, ArrowLeft } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { AIMealPlanSuggestion } from '@/components/ai/AIMealPlanSuggestion';
 
+interface MealPlanMeal {
+  day: number;
+  recipe_name: string;
+  meal_type: string;
+  recipe_id?: string;
+}
+
+interface MealPlan {
+  name: string;
+  week_start_date: string;
+  is_active: boolean;
+  meals: MealPlanMeal[];
+}
+
+interface AIMealPlan {
+  name?: string;
+  week_start_date?: string;
+  is_active?: boolean;
+  meals?: MealPlanMeal[];
+}
+
 export const CreateMealPlan = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showAI, setShowAI] = useState(false);
   
-  const [mealPlan, setMealPlan] = useState({
+  const [mealPlan, setMealPlan] = useState<MealPlan>({
     name: '',
     week_start_date: '',
     is_active: true,
-    meals: [] as any[]
+    meals: []
   });
 
-  const handleAIMealPlanSelect = (aiMealPlan: any) => {
+  const handleAIMealPlanSelect = (aiMealPlan: AIMealPlan) => {
     setMealPlan({
       name: aiMealPlan.name || '',
       week_start_date: aiMealPlan.week_start_date || '',

@@ -11,16 +11,43 @@ import { Loader2, Wand2, User } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useSettings } from '@/hooks/useSettings';
+import type { Database } from '@/integrations/supabase/types';
+
+interface AISuggestedRecipe {
+  name: string;
+  cuisine: string;
+  description: string;
+  prep_time: number;
+  cook_time: number;
+  difficulty: string;
+  dietary_tags?: string[];
+  meal_type?: string;
+  servings?: number;
+  ingredients?: string[];
+  instructions?: string[];
+}
+
+interface ManualRecipe {
+  name: string;
+  cuisine: string;
+  description: string;
+  prep_time: number;
+  cook_time: number;
+  difficulty: string;
+  dietary_tags: string[];
+  meal_type: string;
+  servings: number;
+}
 
 interface AIRecipeSuggestionProps {
-  onRecipeSelect: (recipe: any) => void;
+  onRecipeSelect: (recipe: AISuggestedRecipe | ManualRecipe) => void;
 }
 
 export const AIRecipeSuggestion = ({ onRecipeSelect }: AIRecipeSuggestionProps) => {
   const [activeMode, setActiveMode] = useState<'manual' | 'ai'>('manual');
   const [loading, setLoading] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<AISuggestedRecipe[]>([]);
   const { settings, loading: settingsLoading } = useSettings();
 
   // AI preferences state
@@ -98,7 +125,7 @@ export const AIRecipeSuggestion = ({ onRecipeSelect }: AIRecipeSuggestionProps) 
       return;
     }
 
-    const recipe = {
+    const recipe: ManualRecipe = {
       ...manualRecipe,
       prep_time: parseInt(manualRecipe.prep_time) || 0,
       cook_time: parseInt(manualRecipe.cook_time) || 0,
