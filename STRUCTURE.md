@@ -186,6 +186,32 @@ src/
 │   ├── useUserStats.tsx          # User statistics and analytics
 │   ├── use-mobile.tsx            # Mobile device detection
 │   └── use-toast.ts              # Toast notifications (duplicate)
+├── __tests__/                    # Comprehensive test suite
+│   ├── hooks/                    # Custom hook unit tests
+│   │   ├── useAuth.test.tsx      # Authentication hook testing with mock Supabase
+│   │   ├── useSubscription.test.tsx # Subscription management testing
+│   │   ├── useSettings.test.tsx  # Settings loading and error handling tests
+│   │   └── useUserStats.test.tsx # User statistics aggregation tests
+│   ├── components/               # Component testing
+│   │   ├── Header.test.tsx       # Navigation and user menu testing
+│   │   └── ui/                   # UI component tests
+│   │       └── Button.test.tsx   # Button variants and interaction tests
+│   ├── pages/                    # Page component integration tests
+│   │   └── Dashboard.test.tsx    # Dashboard functionality and state management
+│   ├── utils/                    # Utility function tests
+│   │   ├── utils.test.ts         # className utility (cn function) tests
+│   │   └── recipes.test.ts       # Recipe utilities and alternative finding tests
+│   └── integration/              # Integration and end-to-end tests
+│       └── auth.test.tsx         # Complete authentication flow testing
+├── test/                         # Test configuration and utilities
+│   ├── setup.ts                  # Global test setup, mocks, and configuration
+│   ├── mocks/                    # Mock implementations
+│   │   └── supabase.ts          # Comprehensive Supabase client mocks
+│   ├── fixtures/                 # Test data factories
+│   │   └── index.ts             # Reusable test data generation
+│   └── utils/                    # Test utility functions
+└── test-utils/                   # Custom testing utilities
+    └── render.tsx               # Enhanced React Testing Library render function
 ├── integrations/                 # External service integrations
 │   └── supabase/                 # Supabase backend integration
 │       ├── client.ts             # Supabase client configuration

@@ -125,11 +125,110 @@ The application uses environment variables for configuration. Copy `.env.example
 - Context providers for global state
 - Comprehensive test setup with Vitest
 
-## Testing
-- Test framework: Vitest with React Testing Library
-- Test files: `src/test/*.test.tsx`
-- Run tests: `npm run test`
-- Mocked dependencies: Supabase client, toast notifications
+## Testing Infrastructure
+
+### Framework & Tools
+- **Test Framework**: Vitest with React Testing Library
+- **Mock Library**: Vitest native mocking system
+- **Coverage**: Built-in coverage reporting with Vitest
+- **Browser Testing**: JSDOM environment for component testing
+
+### Test Commands
+```bash
+npm run test         # Run all tests in watch mode
+npm run test:run     # Run tests once and exit
+npm run test:ui      # Run tests with Vitest UI
+```
+
+### Test Directory Structure
+```
+src/
+├── __tests__/              # Test files organized by type
+│   ├── hooks/              # Custom hook unit tests
+│   │   ├── useAuth.test.tsx
+│   │   ├── useSubscription.test.tsx
+│   │   ├── useSettings.test.tsx
+│   │   └── useUserStats.test.tsx
+│   ├── components/         # Component tests
+│   │   ├── Header.test.tsx
+│   │   └── ui/
+│   │       └── Button.test.tsx
+│   ├── pages/             # Page component tests
+│   │   └── Dashboard.test.tsx
+│   ├── utils/             # Utility function tests
+│   │   ├── utils.test.ts
+│   │   └── recipes.test.ts
+│   └── integration/       # Integration tests
+│       └── auth.test.tsx
+├── test/                  # Test configuration and utilities
+│   ├── setup.ts          # Global test setup and mocks
+│   ├── mocks/            # Mock data and functions
+│   │   └── supabase.ts
+│   └── fixtures/         # Test data fixtures
+│       └── index.ts
+└── test-utils/           # Custom render utilities
+    └── render.tsx        # React Testing Library wrapper
+```
+
+### Test Setup & Configuration
+- **Setup File**: `src/test/setup.ts` - Global test configuration
+- **Mock Strategy**: Comprehensive mocking of external dependencies
+  - Supabase client with auth, database, and functions
+  - React Router navigation
+  - Toast notifications
+  - Web APIs (ResizeObserver, IntersectionObserver, clipboard)
+
+### Test Categories
+
+#### 1. Unit Tests - Custom Hooks
+- **useAuth**: Authentication state management, sign in/up/out flows, role management
+- **useSubscription**: Subscription checking, loading states, error handling
+- **useSettings**: Application settings loading and caching
+- **useUserStats**: User statistics aggregation and refresh functionality
+
+#### 2. Component Tests
+- **UI Components**: Button variants, props handling, event handling
+- **Header**: Navigation, user menu, authentication states
+- **Dashboard**: User stats display, subscription status, quick actions
+
+#### 3. Integration Tests
+- **Authentication Flow**: Complete sign up/in workflows with form validation
+- **End-to-end Scenarios**: Multi-component interactions and state management
+
+#### 4. Utility Tests
+- **utils.ts**: className merging utility (cn function)
+- **recipes.ts**: Recipe data validation and alternative finding logic
+
+### Mocking Strategy
+
+#### Supabase Mocking
+- Complete client mock with auth, database, and functions
+- Configurable responses for different test scenarios
+- Session and user state management
+- Error simulation capabilities
+
+#### Test Utilities
+- Custom render wrapper with providers
+- Mock fixtures for consistent test data
+- Helper functions for common test scenarios
+
+### Test Data Management
+- **Fixtures**: Reusable test data factories
+- **Mock Functions**: Consistent mock implementations
+- **Test Isolation**: Each test runs with clean state
+
+### Coverage Goals
+- **Hooks**: 100% coverage for critical authentication and data flows
+- **Components**: Focus on user interactions and error states
+- **Utilities**: Complete coverage for pure functions
+- **Integration**: Key user journeys and error scenarios
+
+### Best Practices
+- Tests focus on behavior, not implementation details
+- Comprehensive error scenario testing
+- Proper cleanup and state isolation
+- Meaningful test descriptions and organization
+- Mock external dependencies completely
 
 ## Recent Improvements (Applied)
 - ✅ Enabled TypeScript strict mode
