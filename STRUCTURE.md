@@ -118,6 +118,7 @@ src/
 │   ├── DataAnalyticsDashboard.tsx        # v3.0: Advanced analytics dashboard with multi-dimensional data visualization and behavioral insights
 │   ├── SecurityDashboard.tsx             # v3.1: Comprehensive security dashboard with rate limiting, audit logs, GDPR compliance, 2FA, and role management
 │   ├── OnboardingDashboard.tsx           # v3.2: Interactive onboarding dashboard with tutorials, skill assessment, wizard workflows, and sample meal plans
+│   ├── RetentionDashboard.tsx            # v3.3: Comprehensive retention dashboard with cooking streaks, habit tracking, reminders, challenges, milestones, and referral program
 │   ├── ai/                       # AI-powered components
 │   │   ├── AIMealPlanSuggestion.tsx    # AI meal plan generation
 │   │   └── AIRecipeSuggestion.tsx      # AI recipe suggestions
@@ -210,7 +211,8 @@ src/
 │   ├── enhancedAI.ts             # v2.5: Comprehensive AI service layer with fine-tuned models, image analysis, recipe parsing, nutrition analysis, and meal timing intelligence
 │   ├── dataAnalytics.ts          # v3.0: Comprehensive data analytics service with user behavior tracking, recipe success analytics, seasonal analysis, and cost optimization algorithms
 │   ├── enhancedSecurity.ts       # v3.1: Comprehensive security service with rate limiting, audit logging, GDPR compliance, two-factor authentication, and enhanced role-based permissions
-│   └── improvedOnboarding.ts     # v3.2: Comprehensive onboarding service with tutorial management, skill assessment, preference learning, wizard workflows, and sample meal plan generation
+│   ├── improvedOnboarding.ts     # v3.2: Comprehensive onboarding service with tutorial management, skill assessment, preference learning, wizard workflows, and sample meal plan generation
+│   └── retentionFeatures.ts      # v3.3: Comprehensive retention service with cooking streak tracking, habit management, reminder scheduling, challenge creation, milestone monitoring, and referral program functionality
 ├── pages/                        # Route-based page components
 │   ├── Index.tsx                 # Landing page
 │   ├── Auth.tsx                  # Authentication page
