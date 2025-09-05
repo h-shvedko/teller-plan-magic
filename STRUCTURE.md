@@ -116,6 +116,7 @@ src/
 │   ├── AIAdvancedNutritionAnalyzer.tsx # v2.5: Comprehensive AI-powered nutrition analysis with health scoring and personalized insights
 │   ├── IntelligentMealTimingSuggester.tsx # v2.5: Smart meal timing optimization with circadian rhythm analysis and energy pattern recognition
 │   ├── DataAnalyticsDashboard.tsx        # v3.0: Advanced analytics dashboard with multi-dimensional data visualization and behavioral insights
+│   ├── SecurityDashboard.tsx             # v3.1: Comprehensive security dashboard with rate limiting, audit logs, GDPR compliance, 2FA, and role management
 │   ├── ai/                       # AI-powered components
 │   │   ├── AIMealPlanSuggestion.tsx    # AI meal plan generation
 │   │   └── AIRecipeSuggestion.tsx      # AI recipe suggestions
@@ -206,7 +207,8 @@ src/
 │   ├── caching.ts                # v2.3: Complete caching infrastructure with Redis, memory cache, CDN service, and database optimization
 │   ├── realtime.ts               # v2.4: Real-time infrastructure with Socket.IO client management, event handling, and WebSocket communication
 │   ├── enhancedAI.ts             # v2.5: Comprehensive AI service layer with fine-tuned models, image analysis, recipe parsing, nutrition analysis, and meal timing intelligence
-│   └── dataAnalytics.ts          # v3.0: Comprehensive data analytics service with user behavior tracking, recipe success analytics, seasonal analysis, and cost optimization algorithms
+│   ├── dataAnalytics.ts          # v3.0: Comprehensive data analytics service with user behavior tracking, recipe success analytics, seasonal analysis, and cost optimization algorithms
+│   └── enhancedSecurity.ts       # v3.1: Comprehensive security service with rate limiting, audit logging, GDPR compliance, two-factor authentication, and enhanced role-based permissions
 ├── pages/                        # Route-based page components
 │   ├── Index.tsx                 # Landing page
 │   ├── Auth.tsx                  # Authentication page
@@ -456,6 +458,14 @@ realtime-services/
 - **Cost Optimization Intelligence System**: AI-powered cost optimization with ingredient substitution algorithms, bulk buying recommendations, seasonal optimization strategies, store selection analysis, and portion adjustment calculations
 - **Analytics Dashboard & Visualization**: Interactive analytics dashboard with real-time data visualization, multi-dimensional trend analysis, comparative metrics, behavioral insights, and actionable recommendations across all analytical dimensions
 - **Predictive Analytics Engine**: Machine learning-powered insights for user engagement optimization, recipe performance prediction, seasonal trend forecasting, cost reduction strategies, and personalized improvement recommendations
+
+### New v3.1 Enhanced Security Architecture
+- **Rate Limiting Engine**: Multi-tier API rate limiting with configurable thresholds, automatic IP blocking, violation tracking, and intelligent reset mechanisms with Redis-compatible storage and real-time monitoring
+- **Audit Logging Framework**: Comprehensive security event logging with severity classification, metadata collection, IP address tracking, user agent monitoring, and local backup storage for compliance and forensic analysis
+- **GDPR Compliance Platform**: Complete data portability system with automated user data export, secure file generation, download link management, expiration handling, and comprehensive data type coverage for privacy compliance
+- **Two-Factor Authentication System**: Full 2FA implementation with TOTP secret generation, QR code creation, backup code management, verification workflows, and security event integration for enhanced account protection
+- **Advanced Role Management**: Extended permission system with custom role creation, hierarchical access control, permission inheritance, dynamic role assignment, and fine-grained resource access control beyond basic admin/user roles
+- **Security Monitoring Dashboard**: Real-time security analytics with violation tracking, failed authentication monitoring, blocked IP management, security metrics visualization, and comprehensive security event correlation
 
 ### Backend Architecture
 - **Database**: PostgreSQL via Supabase with Row Level Security (RLS)
