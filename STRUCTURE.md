@@ -117,6 +117,7 @@ src/
 │   ├── IntelligentMealTimingSuggester.tsx # v2.5: Smart meal timing optimization with circadian rhythm analysis and energy pattern recognition
 │   ├── DataAnalyticsDashboard.tsx        # v3.0: Advanced analytics dashboard with multi-dimensional data visualization and behavioral insights
 │   ├── SecurityDashboard.tsx             # v3.1: Comprehensive security dashboard with rate limiting, audit logs, GDPR compliance, 2FA, and role management
+│   ├── OnboardingDashboard.tsx           # v3.2: Interactive onboarding dashboard with tutorials, skill assessment, wizard workflows, and sample meal plans
 │   ├── ai/                       # AI-powered components
 │   │   ├── AIMealPlanSuggestion.tsx    # AI meal plan generation
 │   │   └── AIRecipeSuggestion.tsx      # AI recipe suggestions
@@ -208,7 +209,8 @@ src/
 │   ├── realtime.ts               # v2.4: Real-time infrastructure with Socket.IO client management, event handling, and WebSocket communication
 │   ├── enhancedAI.ts             # v2.5: Comprehensive AI service layer with fine-tuned models, image analysis, recipe parsing, nutrition analysis, and meal timing intelligence
 │   ├── dataAnalytics.ts          # v3.0: Comprehensive data analytics service with user behavior tracking, recipe success analytics, seasonal analysis, and cost optimization algorithms
-│   └── enhancedSecurity.ts       # v3.1: Comprehensive security service with rate limiting, audit logging, GDPR compliance, two-factor authentication, and enhanced role-based permissions
+│   ├── enhancedSecurity.ts       # v3.1: Comprehensive security service with rate limiting, audit logging, GDPR compliance, two-factor authentication, and enhanced role-based permissions
+│   └── improvedOnboarding.ts     # v3.2: Comprehensive onboarding service with tutorial management, skill assessment, preference learning, wizard workflows, and sample meal plan generation
 ├── pages/                        # Route-based page components
 │   ├── Index.tsx                 # Landing page
 │   ├── Auth.tsx                  # Authentication page
@@ -466,6 +468,14 @@ realtime-services/
 - **Two-Factor Authentication System**: Full 2FA implementation with TOTP secret generation, QR code creation, backup code management, verification workflows, and security event integration for enhanced account protection
 - **Advanced Role Management**: Extended permission system with custom role creation, hierarchical access control, permission inheritance, dynamic role assignment, and fine-grained resource access control beyond basic admin/user roles
 - **Security Monitoring Dashboard**: Real-time security analytics with violation tracking, failed authentication monitoring, blocked IP management, security metrics visualization, and comprehensive security event correlation
+
+### New v3.2 Improved Onboarding Architecture
+- **Interactive Tutorial System**: Progressive tutorial framework with step-by-step guidance, contextual help, prerequisite management, progress tracking, and adaptive flow based on user behavior and skill level
+- **Guided Wizard Framework**: Multi-step workflow management with data persistence, step validation, adaptive questioning, progress tracking, and personalized meal plan generation based on user inputs
+- **Preference Learning Engine**: Intelligent behavioral analysis system that infers user preferences from interactions, cooking attempts, recipe views, and engagement patterns with confidence scoring and dynamic updating
+- **Skill Assessment Platform**: Comprehensive cooking skill evaluation across 8 categories with scoring algorithms, weakness identification, personalized recommendations, and skill-based content customization
+- **Sample Content Management**: Curated meal plan library with difficulty matching, preference filtering, instant application workflows, and personalized recommendation algorithms
+- **Onboarding Analytics Engine**: Progress tracking, completion rate analysis, engagement metrics, user journey optimization, and continuous improvement through data-driven insights
 
 ### Backend Architecture
 - **Database**: PostgreSQL via Supabase with Row Level Security (RLS)
