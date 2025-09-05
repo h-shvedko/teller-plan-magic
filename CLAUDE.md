@@ -4,14 +4,50 @@
 A React-based meal planning application built with TypeScript, Vite, and Supabase. The app allows users to create meal plans, manage recipes, generate shopping lists, and handle subscription-based features with Stripe integration.
 
 ## Tech Stack
-- **Frontend**: React 18, TypeScript, Vite
-- **Backend**: Supabase (PostgreSQL, Auth, Edge Functions)
+- **Frontend**: React 19.1.1, TypeScript 5.9.2, Vite 7.1.4
+- **Backend**: Supabase 2.57.0 (PostgreSQL, Auth, Edge Functions)
 - **UI Framework**: Shadcn/ui components with Radix UI primitives
 - **Styling**: Tailwind CSS
 - **State Management**: Tanstack Query, React Context
 - **Payment Processing**: Stripe
 - **Internationalization**: i18next
 - **Charts**: Recharts
+- **Testing**: Vitest 3.2.4, React Testing Library 16.3.0
+
+## Security & Environment
+
+### Environment Configuration
+The application uses environment variables for configuration management:
+
+- **Production Environment**: Uses `.env` (excluded from Git)
+- **Example Template**: `.env.example` with placeholder values
+- **Docker Environments**: `.env.docker` (development), `.env.docker.prod` (production)
+
+### Security Best Practices
+- ✅ **Environment Variable Protection**: All sensitive credentials excluded from Git tracking
+- ✅ **Credential Rotation**: Regular rotation schedule for API keys and database credentials
+- ✅ **Gitignore Configuration**: Comprehensive patterns for environment files
+- ✅ **Template-based Setup**: `.env.example` provides setup guidance without exposing secrets
+- ⚠️ **Security Advisory**: See `SECURITY-ADVISORY.md` for critical security information
+
+### Required Environment Variables
+```bash
+# Supabase Configuration (Required)
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# Development
+NODE_ENV=development
+```
+
+### Dependency Updates (2025-09-05)
+- **React**: 18.3.1 → 19.1.1 (with legacy peer deps for compatibility)
+- **TypeScript**: 5.8.3 → 5.9.2
+- **Supabase**: 2.55.0 → 2.57.0
+- **Vite**: 5.4.19 → 7.1.4
+- **ESLint**: 9.32.0 → 9.35.0
+- **React Testing Library**: Updated to latest compatible version
+- **Type Definitions**: Updated @types/react, @types/react-dom, @types/node
 
 ## Architecture
 ```

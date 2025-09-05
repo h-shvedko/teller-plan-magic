@@ -7,8 +7,9 @@ A comprehensive React-based meal planning application with AI integration, subsc
 ```
 teller-plan-magic/
 ├── .claude/                      # Claude Code configuration
-├── .env                          # Environment variables
-├── .env.example                  # Environment template
+├── .env                          # Environment variables (excluded from Git)
+├── .env.example                  # Environment template with placeholder values
+├── SECURITY-ADVISORY.md          # Critical security information and response
 ├── .gitignore                    # Git ignore patterns
 ├── CLAUDE.md                     # Development context and instructions
 ├── TODO.md                       # Feature roadmap and improvement tasks
@@ -348,6 +349,33 @@ realtime-services/
     ├── docker-fresh-start.sh     # Complete environment reset
     └── docker-restart.sh         # Quick restart helper
 ```
+
+## Security Considerations
+
+### Environment Variable Management
+- **Production Credentials**: Stored in `.env` (excluded from Git tracking)
+- **Template Configuration**: `.env.example` provides setup guidance with placeholder values
+- **Docker Environments**: Separate configuration for development and production containers
+- **Security Advisory**: `SECURITY-ADVISORY.md` contains critical security information and response procedures
+
+### Security Best Practices Implemented
+- ✅ **Credential Protection**: All sensitive data excluded from version control
+- ✅ **Environment Isolation**: Separate configurations for different deployment environments
+- ✅ **Access Control**: Supabase Row Level Security policies enforce data access restrictions
+- ✅ **Template-based Setup**: Safe environment configuration without credential exposure
+- ⚠️ **Regular Audits**: Periodic security reviews and credential rotation
+
+### Critical Security Files
+- `SECURITY-ADVISORY.md`: Emergency response procedures and exposed credential tracking
+- `.gitignore`: Comprehensive patterns to prevent credential commits
+- `.env.example`: Safe template for environment setup
+- `supabase/`: Database security policies and authentication rules
+
+### Security Incident Response
+1. **Immediate Actions**: Stop services, assess damage, rotate credentials
+2. **Investigation**: Review logs, check for unauthorized access, document timeline
+3. **Recovery**: Implement fixes, test security measures, resume operations
+4. **Prevention**: Update procedures, improve monitoring, conduct training
 
 ## Key Architecture Patterns
 
