@@ -20,7 +20,10 @@
       "Bash(./scripts/docker-prod.sh:*)",
       "Bash(./scripts/docker-fresh-start.sh:*)",
       "Bash(./scripts/docker-restart.sh:*)",
-      "Bash(./scripts/docker-seed.sh:*)"
+      "Bash(./scripts/docker-seed.sh:*)",
+      "Bash(npm update:*)",
+      "Bash(git rm:*)",
+      "Bash(npx husky init:*)"
     ],
     "deny": [],
     "ask": []

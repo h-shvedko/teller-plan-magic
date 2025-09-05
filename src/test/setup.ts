@@ -24,11 +24,12 @@ vi.mock('@/integrations/supabase/client', () => ({
       update: vi.fn().mockReturnThis(),
       delete: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
-      single: vi.fn(),
+      single: vi.fn().mockResolvedValue({ data: null, error: null }),
       order: vi.fn().mockReturnThis(),
+      then: vi.fn().mockResolvedValue({ data: [], error: null }),
     })),
     functions: {
-      invoke: vi.fn(),
+      invoke: vi.fn().mockResolvedValue({ data: null, error: null }),
     },
   },
 }));
@@ -113,7 +114,7 @@ Object.assign(navigator, {
 });
 
 // Mock window.location
-delete (window as any).location;
+delete (window as unknown as { location?: unknown }).location;
 window.location = {
   href: 'http://localhost:3000/',
   origin: 'http://localhost:3000',
@@ -127,4 +128,4 @@ window.location = {
   assign: vi.fn(),
   replace: vi.fn(),
   reload: vi.fn(),
-} as any;
+} as Location;

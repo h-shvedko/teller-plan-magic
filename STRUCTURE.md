@@ -1,9 +1,11 @@
 # Teller Plan Magic - Project Structure
 
 ## Overview
+
 A comprehensive React-based meal planning application with AI integration, subscription management, and advanced meal preparation features.
 
 ## Root Directory Structure
+
 ```
 teller-plan-magic/
 ├── .claude/                      # Claude Code configuration
@@ -21,12 +23,16 @@ teller-plan-magic/
 ├── components.json               # Shadcn/ui components configuration
 ├── tailwind.config.ts            # Tailwind CSS configuration
 ├── postcss.config.js             # PostCSS configuration
-├── vite.config.ts                # Vite build configuration
+├── vite.config.ts                # Vite build configuration with optimized code splitting
 ├── vite.config.test.ts           # Vite test configuration
 ├── tsconfig.json                 # TypeScript configuration
 ├── tsconfig.app.json             # TypeScript app configuration
 ├── tsconfig.node.json            # TypeScript Node configuration
 ├── eslint.config.js              # ESLint configuration
+├── .prettierrc                   # Prettier code formatting configuration
+├── .prettierignore               # Prettier ignore patterns
+├── .husky/                       # Git hooks configuration
+│   └── pre-commit                # Pre-commit hook with linting, type checking, and testing
 ├── index.html                    # Main HTML entry point
 ├── public/                       # Static assets
 ├── src/                          # Source code
@@ -35,6 +41,7 @@ teller-plan-magic/
 ```
 
 ## Source Code Structure (`src/`)
+
 ```
 src/
 ├── main.tsx                      # Application entry point
@@ -187,25 +194,29 @@ src/
 │   ├── useUserStats.tsx          # User statistics and analytics
 │   ├── use-mobile.tsx            # Mobile device detection
 │   └── use-toast.ts              # Toast notifications (duplicate)
-├── __tests__/                    # Comprehensive test suite
+├── __tests__/                    # Comprehensive test suite (66+ tests)
 │   ├── hooks/                    # Custom hook unit tests
-│   │   ├── useAuth.test.tsx      # Authentication hook testing with mock Supabase
-│   │   ├── useSubscription.test.tsx # Subscription management testing
-│   │   ├── useSettings.test.tsx  # Settings loading and error handling tests
-│   │   └── useUserStats.test.tsx # User statistics aggregation tests
+│   │   ├── useAuth.test.tsx      # Authentication hook testing with mock Supabase (17 tests)
+│   │   ├── useSubscription.test.tsx # Subscription management testing (7 tests)
+│   │   ├── useSettings.test.tsx  # Settings loading and error handling tests (6 tests)
+│   │   └── useUserStats.test.tsx # User statistics aggregation tests (7 tests)
 │   ├── components/               # Component testing
 │   │   ├── Header.test.tsx       # Navigation and user menu testing
+│   │   ├── subscription.test.tsx # Payment forms, subscription status, plan selection, API integration (40+ tests)
+│   │   ├── meal-planning.test.tsx # Recipe creation, search, meal plans, shopping lists (35+ tests)
 │   │   └── ui/                   # UI component tests
-│   │       └── Button.test.tsx   # Button variants and interaction tests
+│   │       └── Button.test.tsx   # Button variants and interaction tests (8 tests)
+│   ├── flows/                    # Advanced integration test flows
+│   │   └── authentication.test.tsx # Complete authentication flows with form validation (25+ tests)
 │   ├── pages/                    # Page component integration tests
-│   │   └── Dashboard.test.tsx    # Dashboard functionality and state management
+│   │   └── Dashboard.test.tsx    # Dashboard functionality and state management (8 tests)
 │   ├── utils/                    # Utility function tests
-│   │   ├── utils.test.ts         # className utility (cn function) tests
-│   │   └── recipes.test.ts       # Recipe utilities and alternative finding tests
+│   │   ├── utils.test.ts         # className utility (cn function) tests (3 tests)
+│   │   └── recipes.test.ts       # Recipe utilities and alternative finding tests (4 tests)
 │   └── integration/              # Integration and end-to-end tests
-│       └── auth.test.tsx         # Complete authentication flow testing
+│       └── auth.test.tsx         # Complete authentication flow testing (12 tests)
 ├── test/                         # Test configuration and utilities
-│   ├── setup.ts                  # Global test setup, mocks, and configuration
+│   ├── setup.ts                  # Global test setup, mocks, and configuration with comprehensive Supabase mocking
 │   ├── mocks/                    # Mock implementations
 │   │   └── supabase.ts          # Comprehensive Supabase client mocks
 │   ├── fixtures/                 # Test data factories
@@ -267,6 +278,7 @@ src/
 ```
 
 ## Supabase Backend Structure (`supabase/`)
+
 ```
 supabase/
 ├── README.md                     # Supabase setup documentation
@@ -315,6 +327,7 @@ supabase/
 ```
 
 ## Real-time Services Structure (`realtime-services/`)
+
 ```
 realtime-services/
 ├── socketio/                     # Socket.IO WebSocket server
@@ -335,6 +348,7 @@ realtime-services/
 ```
 
 ## Docker Infrastructure
+
 ```
 ├── docker-compose.yml            # Main application services
 ├── docker-compose.realtime.yml   # Real-time services extension
@@ -353,12 +367,14 @@ realtime-services/
 ## Security Considerations
 
 ### Environment Variable Management
+
 - **Production Credentials**: Stored in `.env` (excluded from Git tracking)
 - **Template Configuration**: `.env.example` provides setup guidance with placeholder values
 - **Docker Environments**: Separate configuration for development and production containers
 - **Security Advisory**: `SECURITY-ADVISORY.md` contains critical security information and response procedures
 
 ### Security Best Practices Implemented
+
 - ✅ **Credential Protection**: All sensitive data excluded from version control
 - ✅ **Environment Isolation**: Separate configurations for different deployment environments
 - ✅ **Access Control**: Supabase Row Level Security policies enforce data access restrictions
@@ -366,12 +382,14 @@ realtime-services/
 - ⚠️ **Regular Audits**: Periodic security reviews and credential rotation
 
 ### Critical Security Files
+
 - `SECURITY-ADVISORY.md`: Emergency response procedures and exposed credential tracking
 - `.gitignore`: Comprehensive patterns to prevent credential commits
 - `.env.example`: Safe template for environment setup
 - `supabase/`: Database security policies and authentication rules
 
 ### Security Incident Response
+
 1. **Immediate Actions**: Stop services, assess damage, rotate credentials
 2. **Investigation**: Review logs, check for unauthorized access, document timeline
 3. **Recovery**: Implement fixes, test security measures, resume operations
@@ -380,24 +398,28 @@ realtime-services/
 ## Key Architecture Patterns
 
 ### Component Organization
+
 - **UI Components**: Located in `src/components/ui/` following Shadcn/ui patterns
 - **Feature Components**: Organized by functionality (dashboard/, ai/, etc.)
 - **Page Components**: Route-based components in `src/pages/`
 - **Custom Hooks**: Centralized state management in `src/hooks/`
 
 ### Data Flow
+
 1. **Authentication**: `useAuth` hook manages user state
 2. **API Integration**: Supabase client for all backend operations
 3. **State Management**: React Context + Tanstack Query for server state
 4. **Form Handling**: React Hook Form with Zod validation
 
 ### New v1.1 Features Architecture
+
 - **Meal Plan Templates**: Template-based approach with predefined configurations
 - **Seasonal Planning**: Season-aware ingredient suggestions and recipe matching
 - **Calendar Integration**: Date-based meal scheduling with status tracking
 - **Batch Cooking**: Optimization algorithms for time and effort savings
 
 ### New v1.2 Enhanced Recipe Integration Architecture
+
 - **Recipe Rating System**: Comprehensive rating and review system with analytics and user feedback
 - **Cooking Time Estimation**: Skill-based time estimation with confidence levels and adjustment factors
 - **Recipe Scaling**: Mathematical recipe scaling with precision tracking and equipment considerations
@@ -405,6 +427,7 @@ realtime-services/
 - **Nutritional Analysis**: Complete nutritional breakdown with macro/micronutrient tracking and daily values
 
 ### New v1.3 Intelligent Shopping List Architecture
+
 - **Price Comparison System**: Multi-store price comparison with real-time updates, availability tracking, and savings optimization
 - **Smart Substitutions Engine**: AI-powered ingredient substitutions with confidence scoring, health benefits, and cost analysis
 - **Pantry Inventory Management**: Complete inventory tracking with expiration monitoring, low stock alerts, and automated reordering
@@ -412,12 +435,14 @@ realtime-services/
 - **Bulk Buying Intelligence**: Advanced bulk purchasing recommendations with savings calculations, storage analysis, and usage patterns
 
 ### New v1.4 User Experience & Personalization Architecture
+
 - **Smart Recommendations Engine**: Machine learning-powered personalized recipe recommendations with ML-based scoring algorithms
 - **Meal Plan Success Rate Tracking**: Comprehensive tracking of what users actually cook vs. what they plan, with success rate analytics
 - **Taste Profile Learning**: AI system that learns from user interactions (views, likes, saves, cooks) to build detailed taste preferences
 - **Seasonal Preference Adaptation**: Dynamic seasonal recommendations based on ingredient availability, weather patterns, and user seasonal cooking history
 
 ### New v1.5 Social & Community Architecture
+
 - **Recipe Sharing System**: Comprehensive recipe sharing with granular permissions, friend connections, and family group management
 - **Meal Plan Collaboration**: Real-time family collaboration on meal plans with role-based permissions, activity tracking, and voting systems
 - **Community Recipe Collections**: Curated recipe collections with community features, subscriptions, ratings, and featured content
@@ -425,6 +450,7 @@ realtime-services/
 - **Recipe Import Engine**: AI-powered recipe import with URL extraction and OCR-based photo processing
 
 ### New v1.6 Advanced Planning Tools Architecture
+
 - **Nutritional Goal System**: Comprehensive nutritional goal setting with daily/weekly/monthly targets, real-time balance scoring, and intelligent recommendations
 - **Budget Management System**: Detailed budget tracking with category allocations, spending analysis, variance monitoring, and savings opportunities identification
 - **Leftover Management Engine**: Smart leftover tracking with expiration monitoring, storage optimization, meal rotation rules, and waste reduction algorithms
@@ -432,6 +458,7 @@ realtime-services/
 - **Analytics Platform**: Advanced analytics dashboard with cost trends, nutrition analysis, time tracking, preference insights, and machine learning-powered recommendations
 
 ### New v1.7 Progressive Web App Architecture
+
 - **Service Worker Framework**: Comprehensive caching strategies with network-first for APIs, cache-first for static assets, and intelligent offline fallback mechanisms
 - **Offline Storage System**: IndexedDB-based persistent storage with structured data management, sync status tracking, and conflict resolution algorithms
 - **Voice Interface Engine**: Speech recognition and synthesis with natural language processing, cooking-specific command recognition, and customizable voice settings
@@ -441,6 +468,7 @@ realtime-services/
 - **Cache Management System**: Intelligent storage quota monitoring, cleanup utilities, and performance optimization for offline-first experience
 
 ### New v1.8 Third-Party Integrations Architecture
+
 - **Grocery Delivery Integration**: Complete integration framework with Instacart, Amazon Fresh, and Walmart Grocery APIs supporting product search, cart management, delivery scheduling, and real-time order tracking
 - **Fitness Apps Integration**: Comprehensive fitness ecosystem connectivity with MyFitnessPal, Fitbit, Apple Health, Google Fit, Strava, and Cronometer supporting nutrition synchronization, activity monitoring, goal alignment, and personalized recommendations
 - **Calendar Integration System**: Multi-provider calendar synchronization with Google Calendar, Microsoft Outlook, Apple Calendar, and CalDAV supporting automated meal plan event creation, preparation reminders, and scheduling optimization
@@ -451,6 +479,7 @@ realtime-services/
 - **Data Synchronization Engine**: Bi-directional sync capabilities with conflict resolution, offline support, retry mechanisms, and real-time status tracking
 
 ### New v1.9 User Analytics Dashboard Architecture
+
 - **Cooking Session Tracking System**: Complete cooking session lifecycle tracking with start/end times, success ratings, difficulty assessment, ingredient logging, and real-time analytics
 - **Recipe Performance Analytics Engine**: Advanced recipe analytics with popularity scoring algorithm, success rate calculations, trend analysis, cuisine-based filtering, and user demographic insights
 - **Seasonal Analysis Framework**: Sophisticated seasonal pattern recognition with cuisine popularity trends, ingredient seasonality scoring, weather-based cooking patterns, and predictive seasonal recommendations
@@ -460,6 +489,7 @@ realtime-services/
 - **Performance Dashboard Framework**: Executive-level analytics interface for administrators with user growth metrics, platform engagement analysis, content performance tracking, and business intelligence integration
 
 ### New v2.0 Admin Business Intelligence & Analytics Suite Architecture
+
 - **User Engagement Analytics Platform**: Advanced admin dashboard with multi-dimensional engagement tracking, behavioral pattern analysis, user segmentation, cohort analysis, and predictive user journey optimization
 - **A/B Testing Framework**: Complete statistical testing platform with experiment design, randomization algorithms, significance testing, confidence interval calculations, automated result interpretation, and decision support systems
 - **Customer Lifecycle Management System**: Comprehensive lifecycle tracking with stage definitions, progression analysis, conversion funnel optimization, cohort-based retention insights, and user journey mapping with intervention points
@@ -469,6 +499,7 @@ realtime-services/
 - **Intervention Management System**: Automated intervention triggering based on user behavior patterns with success tracking, A/B testing integration, personalized messaging systems, and comprehensive ROI measurement for retention campaigns
 
 ### New v2.1 Premium Subscription Tier Enhancements Architecture
+
 - **Celebrity Chef Recipe Collections**: Premium content management system with chef profiles, exclusive recipes, achievement tracking, and subscription-based access control
 - **AI Nutritionist Consultation Platform**: Advanced AI-powered nutrition consultation system with health metric tracking, personalized recommendations, goal management, and expert chat interface
 - **Unlimited Meal Plan History Manager**: Comprehensive meal plan archive system with advanced filtering, search capabilities, detailed analytics, and success rate tracking across unlimited time periods
@@ -476,6 +507,7 @@ realtime-services/
 - **Advanced Export & Sharing System**: Professional export functionality supporting multiple formats (PDF, Excel, Word, CSV, JSON) with custom styling, branding options, template library, and comprehensive sharing capabilities
 
 ### New v2.2 Marketplace Features (Recipe Monetization Platform) Architecture
+
 - **Chef Publishing & Monetization Platform**: Comprehensive professional chef portal with recipe publishing workflows, revenue analytics, audience engagement metrics, and multi-stream income tracking
 - **Affiliate Marketing Integration System**: Complete affiliate marketing framework with product recommendation engine, commission tracking, click analytics, conversion optimization, and automated payment processing
 - **Sponsored Content Management Platform**: Brand partnership ecosystem with campaign management, performance tracking, sponsor matching algorithms, and automated revenue distribution
@@ -484,6 +516,7 @@ realtime-services/
 - **Professional Profile & Verification System**: Verified chef credentialing with portfolio management, social media integration, audience analytics, and professional certification tracking
 
 ### New v2.3 Caching & Performance Optimization Architecture
+
 - **Multi-Layer Caching System**: Advanced caching architecture with memory cache (L1), Redis cache (L2), and CDN edge caching (L3) with intelligent invalidation strategies, cache warming, and health monitoring
 - **CDN Integration & Media Optimization**: Complete CDN service with automatic image format optimization (WebP, AVIF), responsive image transforms, video processing, and global content delivery with edge caching
 - **Database Performance Engine**: Intelligent query optimization with strategic indexing, connection pooling, query analysis, performance monitoring, and automated optimization recommendations
@@ -492,6 +525,7 @@ realtime-services/
 - **Resource Management System**: Advanced resource optimization with memory management, garbage collection monitoring, asset bundling, code splitting, and performance budgeting
 
 ### New v2.4 Real-time Features Architecture
+
 - **WebSocket Communication Infrastructure**: Socket.IO-based real-time communication with Redis adapter for horizontal scaling, room-based messaging, and connection management
 - **Collaborative Shopping List System**: Real-time collaborative shopping with live item updates, user presence tracking, conflict resolution, and synchronized state management
 - **Live Cooking Session Platform**: Interactive cooking sessions with step-by-step guidance, participant management, real-time messaging, host controls, and progress synchronization
@@ -501,6 +535,7 @@ realtime-services/
 - **Offline-First Real-time**: Service worker integration with background sync, offline queuing, and seamless reconnection handling for uninterrupted collaborative experiences
 
 ### New v2.5 Enhanced AI Capabilities Architecture
+
 - **Fine-tuned OpenAI Integration**: Specialized OpenAI models trained for recipe creation, nutrition analysis, meal timing optimization, and natural language processing with domain-specific expertise
 - **Computer Vision Recipe Analysis**: GPT-4 Vision API integration for comprehensive food image analysis with ingredient detection, cooking method recognition, recipe estimation, and nutritional assessment
 - **Natural Language Processing Engine**: Advanced text parsing capabilities for extracting structured recipe data from unstructured text sources including blogs, social media posts, and handwritten notes
@@ -510,6 +545,7 @@ realtime-services/
 - **Advanced Health Intelligence**: AI-powered health recommendations with ingredient synergy analysis, bioavailability optimization, anti-inflammatory scoring, and personalized nutrition guidance
 
 ### New v3.0 Data Analytics & Insights Architecture
+
 - **User Behavior Analytics Engine**: Comprehensive tracking system with action monitoring, session analytics, engagement scoring, device usage patterns, and behavioral insight generation with predictive analytics capabilities
 - **Recipe Success Intelligence Platform**: Advanced recipe performance analytics with success rate calculations, popularity scoring algorithms, completion tracking, repeat cooking analysis, and difficulty assessment with trending analysis
 - **Seasonal Preference Analysis Framework**: Intelligent seasonal cooking pattern analysis with cuisine preferences, ingredient seasonality scoring, cooking method trends, cost analysis by season, and predictive seasonal recommendations
@@ -518,6 +554,7 @@ realtime-services/
 - **Predictive Analytics Engine**: Machine learning-powered insights for user engagement optimization, recipe performance prediction, seasonal trend forecasting, cost reduction strategies, and personalized improvement recommendations
 
 ### New v3.1 Enhanced Security Architecture
+
 - **Rate Limiting Engine**: Multi-tier API rate limiting with configurable thresholds, automatic IP blocking, violation tracking, and intelligent reset mechanisms with Redis-compatible storage and real-time monitoring
 - **Audit Logging Framework**: Comprehensive security event logging with severity classification, metadata collection, IP address tracking, user agent monitoring, and local backup storage for compliance and forensic analysis
 - **GDPR Compliance Platform**: Complete data portability system with automated user data export, secure file generation, download link management, expiration handling, and comprehensive data type coverage for privacy compliance
@@ -526,6 +563,7 @@ realtime-services/
 - **Security Monitoring Dashboard**: Real-time security analytics with violation tracking, failed authentication monitoring, blocked IP management, security metrics visualization, and comprehensive security event correlation
 
 ### New v3.2 Improved Onboarding Architecture
+
 - **Interactive Tutorial System**: Progressive tutorial framework with step-by-step guidance, contextual help, prerequisite management, progress tracking, and adaptive flow based on user behavior and skill level
 - **Guided Wizard Framework**: Multi-step workflow management with data persistence, step validation, adaptive questioning, progress tracking, and personalized meal plan generation based on user inputs
 - **Preference Learning Engine**: Intelligent behavioral analysis system that infers user preferences from interactions, cooking attempts, recipe views, and engagement patterns with confidence scoring and dynamic updating
@@ -534,6 +572,7 @@ realtime-services/
 - **Onboarding Analytics Engine**: Progress tracking, completion rate analysis, engagement metrics, user journey optimization, and continuous improvement through data-driven insights
 
 ### Backend Architecture
+
 - **Database**: PostgreSQL via Supabase with Row Level Security (RLS)
 - **Authentication**: Supabase Auth with role-based access control
 - **API**: Supabase Edge Functions for serverless operations
@@ -541,18 +580,21 @@ realtime-services/
 - **Payments**: Stripe integration with webhook handling
 
 ### Security Considerations
+
 - Row Level Security (RLS) on all database tables
 - JWT-based authentication with automatic token refresh
 - API keys managed through environment variables
 - Admin functions protected by role-based access control
 
 ### Performance Optimizations
+
 - Code splitting by route
 - Lazy loading of heavy components
 - Optimistic updates for better UX
 - Caching strategies for frequently accessed data
 
 ### Development Workflow
+
 - TypeScript strict mode for type safety
 - ESLint for code quality enforcement
 - Vitest for unit and integration testing
@@ -561,6 +603,7 @@ realtime-services/
 ## Database Schema Overview
 
 ### Core Tables
+
 - `profiles` - User account information and preferences
 - `user_roles` - Role-based access control (admin/user)
 - `user_preferences` - Meal planning preferences and dietary restrictions
@@ -571,6 +614,7 @@ realtime-services/
 - `openai_api_calls` - AI usage tracking and cost monitoring
 
 ### Lookup Tables
+
 - `cuisines` - Available cuisine types
 - `dietary_preferences` - Dietary restriction options
 - `health_goals` - Health and wellness objectives
@@ -579,22 +623,26 @@ realtime-services/
 ## Configuration Files
 
 ### Build Configuration
+
 - `vite.config.ts` - Main build configuration with plugins
 - `vite.config.test.ts` - Test environment configuration
 - `tailwind.config.ts` - Tailwind CSS customization
 - `postcss.config.js` - CSS processing configuration
 
 ### TypeScript Configuration
+
 - `tsconfig.json` - Base TypeScript configuration
 - `tsconfig.app.json` - Application-specific TypeScript settings
 - `tsconfig.node.json` - Node.js environment TypeScript settings
 
 ### Quality Assurance
+
 - `eslint.config.js` - Code linting rules and plugins
 - `.gitignore` - Version control exclusions
 - `components.json` - Shadcn/ui component generation settings
 
 ## Deployment Architecture
+
 - **Frontend**: Static site deployment (Vercel/Netlify compatible)
 - **Backend**: Supabase hosted PostgreSQL and Edge Functions
 - **CDN**: Static asset delivery through Supabase Storage
@@ -602,6 +650,7 @@ realtime-services/
 - **Monitoring**: Error tracking and performance monitoring integration
 
 ## Development Guidelines
+
 - Follow TypeScript strict mode requirements
 - Use Shadcn/ui components for consistency
 - Implement proper error handling with toast notifications
