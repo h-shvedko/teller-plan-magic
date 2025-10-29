@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Teller Plan Magic</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .offline-container {
+            text-align: center;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .offline-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        
+        h1 {
+            margin: 0 0 20px 0;
+            font-size: 2.5em;
+            font-weight: 600;
+        }
+        
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .features-list {
+            list-style: none;
+            padding: 0;
+            margin: 30px 0;
+        }
+        
+        .features-list li {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #4ade80;
+        }
+        
+        .features-list li strong {
+            color: #4ade80;
+        }
+        
+        .retry-button {
+            background: linear-gradient(45deg, #4ade80, #22d3ee);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 20px;
+        }
+        
+        .retry-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .network-status {
+            margin-top: 30px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        
+        .network-status.offline {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .network-status.online {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">🍽️</div>
+        <h1>You're Offline</h1>
+        <p>Don't worry! You can still access your cached recipes and shopping lists while offline.</p>
+        
+        <ul class="features-list">
+            <li>
+                <strong>Cached Recipes:</strong> View recipes you've accessed recently
+            </li>
+            <li>
+                <strong>Shopping Lists:</strong> Continue editing your shopping lists
+            </li>
+            <li>
+                <strong>Cooking Timers:</strong> Use timers for your cooking steps
+            </li>
+            <li>
+                <strong>Voice Commands:</strong> Navigate hands-free while cooking
+            </li>
+        </ul>
+        
+        <div id="networkStatus" class="network-status offline">
+            📡 Currently offline
+        </div>
+        
+        <button class="retry-button" onclick="retryConnection()">
+            Try Again
+        </button>
+    </div>
+
+    <script>
+        // Update network status
+        function updateNetworkStatus() {
+            const statusElement = document.getElementById('networkStatus');
+            if (navigator.onLine) {
+                statusElement.textContent = '🌐 Back online!';
+                statusElement.className = 'network-status online';
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                statusElement.textContent = '📡 Currently offline';
+                statusElement.className = 'network-status offline';
+            }
+        }
+
+        // Listen for network status changes
+        window.addEventListener('online', updateNetworkStatus);
+        window.addEventListener('offline', updateNetworkStatus);
+
+        // Initial status check
+        updateNetworkStatus();
+
+        // Retry connection
+        function retryConnection() {
+            if (navigator.onLine) {
+                window.location.reload();
+            } else {
+                // Try to access a small resource to test connectivity
+                fetch('/', { 
+                    method: 'HEAD', 
+                    cache: 'no-cache' 
+                })
+                .then(() => {
+                    window.location.reload();
+                })
+                .catch(() => {
+                    alert('Still offline. Please check your internet connection.');
+                });
+            }
+        }
+
+        // Auto-retry every 30 seconds
+        setInterval(() => {
+            if (navigator.onLine) {
+                retryConnection();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

@@ -136,7 +136,18 @@ interface EditingItem {
 }
 
 type AdminTableItem = ProfileItem | RecipeItem | MealPlanItem | ShoppingListItem | SettingItem | OpenAICallItem;
-type AdminFormData = Record<string, any>;
+interface AdminFormData {
+  id?: string;
+  name?: string;
+  description?: string;
+  cuisine?: string;
+  difficulty?: string;
+  is_public?: boolean;
+  table?: string;
+  user_email?: string;
+  created_at?: string;
+  [key: string]: unknown;
+}
 
 export const AdminDashboard = () => {
   const { user } = useAuth();

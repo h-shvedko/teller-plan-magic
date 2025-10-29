@@ -12,6 +12,20 @@ import { Loader2, Save, ArrowLeft } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { AIRecipeSuggestion } from '@/components/ai/AIRecipeSuggestion';
 
+interface AIRecipe {
+  name?: string;
+  description?: string;
+  cuisine?: string;
+  prep_time?: number;
+  cook_time?: number;
+  servings?: number;
+  difficulty?: string;
+  ingredients?: string[];
+  instructions?: string[];
+  dietary_tags?: string[];
+  meal_type?: string;
+}
+
 export const CreateRecipe = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -33,7 +47,7 @@ export const CreateRecipe = () => {
     is_public: true
   });
 
-  const handleAIRecipeSelect = (aiRecipe: any) => {
+  const handleAIRecipeSelect = (aiRecipe: AIRecipe) => {
     setRecipe({
       ...recipe,
       name: aiRecipe.name || '',

@@ -11,16 +11,41 @@ import { Loader2, Wand2, User, Calendar } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useSettings } from '@/hooks/useSettings';
+import type { Database } from '@/integrations/supabase/types';
+
+interface MealPlanMeal {
+  day: number;
+  recipe_name: string;
+  meal_type: string;
+  recipe_id?: string;
+}
+
+interface AISuggestedMealPlan {
+  name: string;
+  description: string;
+  days: number;
+  week_start_date?: string;
+  is_active?: boolean;
+  meals?: MealPlanMeal[];
+}
+
+interface ManualMealPlan {
+  name: string;
+  week_start_date: string;
+  days: number;
+  is_active: boolean;
+  meals: MealPlanMeal[];
+}
 
 interface AIMealPlanSuggestionProps {
-  onMealPlanSelect: (mealPlan: any) => void;
+  onMealPlanSelect: (mealPlan: AISuggestedMealPlan | ManualMealPlan) => void;
 }
 
 export const AIMealPlanSuggestion = ({ onMealPlanSelect }: AIMealPlanSuggestionProps) => {
   const [activeMode, setActiveMode] = useState<'manual' | 'ai'>('manual');
   const [loading, setLoading] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<AISuggestedMealPlan[]>([]);
   const { settings, loading: settingsLoading } = useSettings();
 
   // AI preferences state
@@ -93,7 +118,7 @@ export const AIMealPlanSuggestion = ({ onMealPlanSelect }: AIMealPlanSuggestionP
       return;
     }
 
-    const mealPlan = {
+    const mealPlan: ManualMealPlan = {
       ...manualPlan,
       is_active: true,
       meals: [] // Empty meals array for manual creation

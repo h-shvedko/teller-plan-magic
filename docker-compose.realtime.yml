@@ -1,0 +1,188 @@
+# Real-time Services Docker Compose Configuration
+# This extends the main docker-compose.yml with real-time and notification services
+
+version: '3.8'
+
+services:
+  # Socket.IO Server for Real-time Communication
+  socketio-server:
+    image: node:18-alpine
+    container_name: teller-plan-socketio
+    working_dir: /app
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./realtime-services/socketio:/app
+    command: >
+      sh -c "
+        if [ ! -f package.json ]; then
+          npm init -y &&
+          npm install socket.io express cors helmet dotenv &&
+          npm install --save-dev nodemon;
+        fi &&
+        npm start
+      "
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - CORS_ORIGIN=http://localhost:8080
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+    networks:
+      - teller-plan-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis for Socket.IO Session Store and Pub/Sub
+  redis:
+    image: redis:7-alpine
+    container_name: teller-plan-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+    networks:
+      - teller-plan-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Push Notification Service
+  notification-service:
+    image: node:18-alpine
+    container_name: teller-plan-notifications
+    working_dir: /app
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./realtime-services/notifications:/app
+    command: >
+      sh -c "
+        if [ ! -f package.json ]; then
+          npm init -y &&
+          npm install web-push express cors helmet dotenv node-cron &&
+          npm install --save-dev nodemon;
+        fi &&
+        npm start
+      "
+    environment:
+      - NODE_ENV=development
+      - PORT=3002
+      - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY}
+      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY}
+      - VAPID_SUBJECT=${VAPID_SUBJECT:-mailto:support@tellerplan.com}
+      - DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@supabase-db:5432/postgres}
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+      - supabase-db
+    networks:
+      - teller-plan-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Message Queue Service (for background processing)
+  message-queue:
+    image: rabbitmq:3-management-alpine
+    container_name: teller-plan-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-admin123}
+      - RABBITMQ_DEFAULT_VHOST=/
+    networks:
+      - teller-plan-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Background Job Processor
+  job-processor:
+    image: node:18-alpine
+    container_name: teller-plan-jobs
+    working_dir: /app
+    volumes:
+      - ./realtime-services/jobs:/app
+    command: >
+      sh -c "
+        if [ ! -f package.json ]; then
+          npm init -y &&
+          npm install amqplib node-cron dotenv &&
+          npm install --save-dev nodemon;
+        fi &&
+        npm start
+      "
+    environment:
+      - NODE_ENV=development
+      - RABBITMQ_URL=amqp://admin:${RABBITMQ_PASSWORD:-admin123}@message-queue:5672
+      - DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@supabase-db:5432/postgres}
+      - REDIS_URL=redis://redis:6379
+      - NOTIFICATION_SERVICE_URL=http://notification-service:3002
+    depends_on:
+      - message-queue
+      - redis
+      - supabase-db
+      - notification-service
+    networks:
+      - teller-plan-network
+    restart: unless-stopped
+
+  # WebSocket Scaling Service (for multiple Socket.IO instances)
+  websocket-adapter:
+    image: node:18-alpine
+    container_name: teller-plan-ws-adapter
+    working_dir: /app
+    volumes:
+      - ./realtime-services/ws-adapter:/app
+    command: >
+      sh -c "
+        if [ ! -f package.json ]; then
+          npm init -y &&
+          npm install @socket.io/redis-adapter redis socket.io-client &&
+          npm install --save-dev nodemon;
+        fi &&
+        npm start
+      "
+    environment:
+      - NODE_ENV=development
+      - REDIS_URL=redis://redis:6379
+      - SOCKETIO_URL=http://socketio-server:3001
+    depends_on:
+      - redis
+      - socketio-server
+    networks:
+      - teller-plan-network
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+    driver: local
+  rabbitmq-data:
+    driver: local
+
+networks:
+  teller-plan-network:
+    external: true
